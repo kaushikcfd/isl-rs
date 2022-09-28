@@ -22,13 +22,16 @@ fn main() {
         panic!("Could not cd into isl/")
     }
 
-    Command::new("./autogen.sh")
-        .status()
-        .expect("failed to autoreconf!");
-    Command::new("./configure")
-        .args(["--prefix", out_dir.as_str()])
-        .status()
-        .expect("failed to configure!");
+    if !Path::new("config.status").is_file() {
+        Command::new("./autogen.sh")
+            .status()
+            .expect("failed to autoreconf!");
+        Command::new("./configure")
+            .args(["--prefix", out_dir.as_str()])
+            .status()
+            .expect("failed to configure!");
+    }
+
     Command::new("make")
         .args(&["-j", num_jobs.as_str()])
         .status()
