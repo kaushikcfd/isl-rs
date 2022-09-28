@@ -1,0 +1,6 @@
+fn_args_layout = "Compressed"
+indent_style = "Visual"
+wrap_comments = true
+ignore = [
+  "src/macros.rs",  # See https://github.com/rust-lang/rustfmt/issues/5044
+]
