@@ -9,16 +9,19 @@ fn main() {
     let pwd_at_build_start_path = env::current_dir().unwrap();
 
     if !isl_dir_path.is_dir() {
+        // ISL not found  (clone the submodule)
         Command::new("git").args(&["submodule", "update", "--init", "--recursive"])
                            .status()
                            .expect("failed to call git!");
     }
 
     if !Path::new("isl/imath").is_dir() {
-        panic!("imath directory not found. Most likely `git submdoule update --init --recursive` failed.");
+        panic!(concat!("imath directory not found. Possibly an indication",
+                       " that `git submdoule update --init --recursive` failed."));
     }
 
-    // Got to isl/ before building anything
+    // Goto isl/ before building anything
+    // (Not ideal but better than `make` emitting intermediary files into tree)
     env::set_current_dir(&isl_dir_path).expect("Could not cd into isl/");
 
     if !Path::new("config.status").is_file() {
@@ -36,7 +39,7 @@ fn main() {
                         .status()
                         .expect("failed to make install!");
 
-    // Got to out_dir/ before building anything
+    // Go back to old_pwd
     env::set_current_dir(pwd_at_build_start_path).expect("Could not cd back into OUT_DIR");
 
     let isl_lib_dir = Path::new(out_dir.as_str()).join("lib/");
