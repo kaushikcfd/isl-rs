@@ -1,21 +1,23 @@
+use libc::uintptr_t;
+
 pub struct Context {
-    ptr: u64
+    ptr: uintptr_t
 }
 
 pub struct BasicSet {
-    ptr: u64
+    ptr: uintptr_t
 }
 
 
 extern "C" {
     // context
-    fn isl_ctx_alloc() -> u64;
-    fn isl_ctx_free(x: u64);
+    fn isl_ctx_alloc() -> uintptr_t;
+    fn isl_ctx_free(x: uintptr_t);
 
     // basic_set
-    fn isl_basic_set_read_from_str(ctx: u64, code: &str) -> u64;
-    fn isl_basic_set_dump(x: u64);
-    fn isl_basic_set_free(x: u64);
+    fn isl_basic_set_read_from_str(ctx: uintptr_t, code: &str) -> uintptr_t;
+    fn isl_basic_set_dump(x: uintptr_t);
+    fn isl_basic_set_free(x: uintptr_t);
 
 }
 

@@ -13,3 +13,4 @@ name = "isl_rs"
 path = "src/lib.rs"
 
 [dependencies]
+libc = "0.2.133"
