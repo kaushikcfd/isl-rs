@@ -9,15 +9,13 @@ fn main() {
     let pwd_at_build_start_path = env::current_dir().unwrap();
 
     if !isl_dir_path.is_dir() {
-        // ISL not found  (clone the submodule)
-        Command::new("git").args(&["submodule", "update", "--init", "--recursive"])
-                           .status()
-                           .expect("failed to call git!");
+        panic!(concat!("`isl/` directory not found. Most likely",
+                       " `git submdoule update --init --recursive` was not invoked."));
     }
 
     if !Path::new("isl/imath").is_dir() {
-        panic!(concat!("imath directory not found. Possibly an indication",
-                       " that `git submdoule update --init --recursive` failed."));
+        panic!(concat!("`isl/imath/` directory not found. Most likely",
+                       " `git submdoule update --init --recursive` was not invoked."));
     }
 
     // Goto isl/ before building anything

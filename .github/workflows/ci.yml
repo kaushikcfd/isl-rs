@@ -41,5 +41,5 @@ jobs:
           components: rustfmt
       - name: Run tests
         run: |
-          sudo apt install git
+          git submodule update --init --recursive
           cargo test 
