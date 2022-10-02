@@ -1,10 +1,10 @@
 [package]
-name = "isl_rs"
+name = "isl-rs"
 version = "0.1.0"
 authors = ["Kaushik Kulkarni <kaushikcfd@gmail.com>"]
 edition = "2021"
 description = "Rust bindings for Integer Set Library"
-documentation = "https://docs.rs/isl_rs"
+documentation = "https://docs.rs/isl-rs"
 license = "MIT"
 readme = "README.md"
 
