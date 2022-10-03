@@ -15,3 +15,6 @@ path = "src/lib.rs"
 
 [dependencies]
 libc = "0.2.133"
+
+[build-dependencies]
+fs_extra = "1.2.0"
