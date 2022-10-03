@@ -9,6 +9,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_id`.
 pub struct Id {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -37,7 +38,10 @@ impl Id {
         let id = self;
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_id_get_ctx(id) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -54,16 +58,20 @@ impl Id {
         let id = self;
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_id_copy(id) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_id_free`.
     pub fn free(self) -> Id {
         let id = self;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_id_free(id) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -83,7 +91,8 @@ impl Id {
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_id_read_from_str(ctx, str_) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -104,12 +113,19 @@ impl Id {
         let isl_rs_result = unsafe { isl_id_dump(id) };
         isl_rs_result
     }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
+    }
 }
 
 impl Drop for Id {
     fn drop(&mut self) {
-        unsafe {
-            isl_id_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_id_free(self.ptr);
+            }
         }
     }
 }

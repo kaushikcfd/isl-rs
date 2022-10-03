@@ -9,6 +9,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_pw_aff`.
 pub struct PwAff {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -216,7 +217,10 @@ impl PwAff {
         let pwaff = self;
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_ctx(pwaff) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -233,7 +237,8 @@ impl PwAff {
         let pwaff = self;
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_domain_space(pwaff) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -242,82 +247,116 @@ impl PwAff {
         let pwaff = self;
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_space(pwaff) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_from_aff`.
     pub fn from_aff(aff: Aff) -> PwAff {
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_from_aff(aff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_empty`.
     pub fn empty(space: Space) -> PwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_empty(space) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_alloc`.
     pub fn alloc(set: Set, aff: Aff) -> PwAff {
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_alloc(set, aff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_zero_on_domain`.
     pub fn zero_on_domain(ls: LocalSpace) -> PwAff {
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_zero_on_domain(ls) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_var_on_domain`.
     pub fn var_on_domain(ls: LocalSpace, type_: DimType, pos: u32) -> PwAff {
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_var_on_domain(ls, type_, pos) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_nan_on_domain_space`.
     pub fn nan_on_domain_space(space: Space) -> PwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_nan_on_domain_space(space) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_nan_on_domain`.
     pub fn nan_on_domain(ls: LocalSpace) -> PwAff {
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_nan_on_domain(ls) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_val_on_domain`.
     pub fn val_on_domain(domain: Set, v: Val) -> PwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_val_on_domain(domain, v) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_param_on_domain_id`.
     pub fn param_on_domain_id(domain: Set, id: Id) -> PwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_param_on_domain_id(domain, id) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -349,17 +388,23 @@ impl PwAff {
         let pa = self;
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_dim_id(pa, type_, pos) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_set_dim_id`.
     pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> PwAff {
         let pma = self;
+        let mut pma = pma;
+        pma.do_not_free_on_drop();
         let pma = pma.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_set_dim_id(pma, type_, pos, id) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -439,30 +484,45 @@ impl PwAff {
     /// Wraps `isl_pw_aff_union_min`.
     pub fn union_min(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_union_min(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_union_max`.
     pub fn union_max(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_union_max(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_union_add`.
     pub fn union_add(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_union_add(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -471,16 +531,20 @@ impl PwAff {
         let pwaff = self;
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_copy(pwaff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_free`.
     pub fn free(self) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_free(pwaff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -535,38 +599,54 @@ impl PwAff {
     /// Wraps `isl_pw_aff_insert_domain`.
     pub fn insert_domain(self, domain: Space) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_insert_domain(pa, domain) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_project_domain_on_params`.
     pub fn project_domain_on_params(self) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_project_domain_on_params(pa) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_align_params`.
     pub fn align_params(self, model: Space) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
+        let mut model = model;
+        model.do_not_free_on_drop();
         let model = model.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_align_params(pwaff, model) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_drop_unused_params`.
     pub fn drop_unused_params(self) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_drop_unused_params(pa) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -588,288 +668,416 @@ impl PwAff {
         let pa = self;
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_tuple_id(pa, type_) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_set_tuple_id`.
     pub fn set_tuple_id(self, type_: DimType, id: Id) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_set_tuple_id(pwaff, type_, id) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_reset_tuple_id`.
     pub fn reset_tuple_id(self, type_: DimType) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_reset_tuple_id(pa, type_) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_reset_user`.
     pub fn reset_user(self) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_reset_user(pa) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_params`.
     pub fn params(self) -> Set {
         let pwa = self;
+        let mut pwa = pwa;
+        pwa.do_not_free_on_drop();
         let pwa = pwa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_params(pwa) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_domain`.
     pub fn domain(self) -> Set {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_domain(pwaff) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_from_range`.
     pub fn from_range(self) -> PwAff {
         let pwa = self;
+        let mut pwa = pwa;
+        pwa.do_not_free_on_drop();
         let pwa = pwa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_from_range(pwa) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_min`.
     pub fn min(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_min(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_max`.
     pub fn max(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_max(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_mul`.
     pub fn mul(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_mul(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_div`.
     pub fn div(self, pa2: PwAff) -> PwAff {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_div(pa1, pa2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_add`.
     pub fn add(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_add(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_sub`.
     pub fn sub(self, pwaff2: PwAff) -> PwAff {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_sub(pwaff1, pwaff2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_neg`.
     pub fn neg(self) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_neg(pwaff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_ceil`.
     pub fn ceil(self) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_ceil(pwaff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_floor`.
     pub fn floor(self) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_floor(pwaff) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_mod_val`.
     pub fn mod_val(self, mod_: Val) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut mod_ = mod_;
+        mod_.do_not_free_on_drop();
         let mod_ = mod_.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_mod_val(pa, mod_) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_tdiv_q`.
     pub fn tdiv_q(self, pa2: PwAff) -> PwAff {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_tdiv_q(pa1, pa2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_tdiv_r`.
     pub fn tdiv_r(self, pa2: PwAff) -> PwAff {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_tdiv_r(pa1, pa2) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_intersect_params`.
     pub fn intersect_params(self, set: Set) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_intersect_params(pa, set) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_intersect_domain`.
     pub fn intersect_domain(self, set: Set) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_intersect_domain(pa, set) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_intersect_domain_wrapped_domain`.
     pub fn intersect_domain_wrapped_domain(self, set: Set) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_intersect_domain_wrapped_domain(pa, set) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_intersect_domain_wrapped_range`.
     pub fn intersect_domain_wrapped_range(self, set: Set) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_intersect_domain_wrapped_range(pa, set) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_subtract_domain`.
     pub fn subtract_domain(self, set: Set) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_subtract_domain(pa, set) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_cond`.
     pub fn cond(self, pwaff_true: PwAff, pwaff_false: PwAff) -> PwAff {
         let cond = self;
+        let mut cond = cond;
+        cond.do_not_free_on_drop();
         let cond = cond.ptr;
+        let mut pwaff_true = pwaff_true;
+        pwaff_true.do_not_free_on_drop();
         let pwaff_true = pwaff_true.ptr;
+        let mut pwaff_false = pwaff_false;
+        pwaff_false.do_not_free_on_drop();
         let pwaff_false = pwaff_false.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_cond(cond, pwaff_true, pwaff_false) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_add_constant_val`.
     pub fn add_constant_val(self, v: Val) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_add_constant_val(pa, v) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_scale_val`.
     pub fn scale_val(self, v: Val) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_scale_val(pa, v) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_scale_down_val`.
     pub fn scale_down_val(self, f: Val) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut f = f;
+        f.do_not_free_on_drop();
         let f = f.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_scale_down_val(pa, f) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_insert_dims`.
     pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_insert_dims(pwaff, type_, first, n) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_add_dims`.
     pub fn add_dims(self, type_: DimType, n: u32) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_add_dims(pwaff, type_, n) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -878,58 +1086,82 @@ impl PwAff {
                      n: u32)
                      -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result =
             unsafe { isl_pw_aff_move_dims(pa, dst_type, dst_pos, src_type, src_pos, n) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_drop_dims`.
     pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_drop_dims(pwaff, type_, first, n) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_coalesce`.
     pub fn coalesce(self) -> PwAff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_coalesce(pa) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_gist`.
     pub fn gist(self, context: Set) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_gist(pwaff, context) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_gist_params`.
     pub fn gist_params(self, context: Set) -> PwAff {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_gist_params(pwaff, context) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_eval`.
     pub fn eval(self, pnt: Point) -> Val {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut pnt = pnt;
+        pnt.do_not_free_on_drop();
         let pnt = pnt.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_eval(pa, pnt) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -957,174 +1189,252 @@ impl PwAff {
     /// Wraps `isl_pw_aff_as_aff`.
     pub fn as_aff(self) -> Aff {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_as_aff(pa) };
-        let isl_rs_result = Aff { ptr: isl_rs_result };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_as_map`.
     pub fn as_map(self) -> Map {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_as_map(pa) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_pos_set`.
     pub fn pos_set(self) -> Set {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_pos_set(pa) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_nonneg_set`.
     pub fn nonneg_set(self) -> Set {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_nonneg_set(pwaff) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_zero_set`.
     pub fn zero_set(self) -> Set {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_zero_set(pwaff) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_non_zero_set`.
     pub fn non_zero_set(self) -> Set {
         let pwaff = self;
+        let mut pwaff = pwaff;
+        pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_non_zero_set(pwaff) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_eq_set`.
     pub fn eq_set(self, pwaff2: PwAff) -> Set {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_eq_set(pwaff1, pwaff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_ne_set`.
     pub fn ne_set(self, pwaff2: PwAff) -> Set {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_ne_set(pwaff1, pwaff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_le_set`.
     pub fn le_set(self, pwaff2: PwAff) -> Set {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_le_set(pwaff1, pwaff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_lt_set`.
     pub fn lt_set(self, pwaff2: PwAff) -> Set {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_lt_set(pwaff1, pwaff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_ge_set`.
     pub fn ge_set(self, pwaff2: PwAff) -> Set {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_ge_set(pwaff1, pwaff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_gt_set`.
     pub fn gt_set(self, pwaff2: PwAff) -> Set {
         let pwaff1 = self;
+        let mut pwaff1 = pwaff1;
+        pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
+        let mut pwaff2 = pwaff2;
+        pwaff2.do_not_free_on_drop();
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_gt_set(pwaff1, pwaff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_eq_map`.
     pub fn eq_map(self, pa2: PwAff) -> Map {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_eq_map(pa1, pa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_le_map`.
     pub fn le_map(self, pa2: PwAff) -> Map {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_le_map(pa1, pa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_lt_map`.
     pub fn lt_map(self, pa2: PwAff) -> Map {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_lt_map(pa1, pa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_ge_map`.
     pub fn ge_map(self, pa2: PwAff) -> Map {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_ge_map(pa1, pa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_gt_map`.
     pub fn gt_map(self, pa2: PwAff) -> Map {
         let pa1 = self;
+        let mut pa1 = pa1;
+        pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
+        let mut pa2 = pa2;
+        pa2.do_not_free_on_drop();
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_gt_map(pa1, pa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_pw_aff_bind_id`.
     pub fn bind_id(self, id: Id) -> Set {
         let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
         let pa = pa.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_bind_id(pa, id) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1134,7 +1444,8 @@ impl PwAff {
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_pw_aff_read_from_str(ctx, str_) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1155,12 +1466,19 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_dump(pwaff) };
         isl_rs_result
     }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
+    }
 }
 
 impl Drop for PwAff {
     fn drop(&mut self) {
-        unsafe {
-            isl_pw_aff_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_pw_aff_free(self.ptr);
+            }
         }
     }
 }

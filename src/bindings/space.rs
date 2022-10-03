@@ -9,6 +9,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_space`.
 pub struct Space {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -223,7 +224,10 @@ impl Space {
         let space = self;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_ctx(space) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -231,7 +235,8 @@ impl Space {
     pub fn unit(ctx: &Context) -> Space {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_unit(ctx) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -239,7 +244,8 @@ impl Space {
     pub fn alloc(ctx: &Context, nparam: u32, n_in: u32, n_out: u32) -> Space {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_alloc(ctx, nparam, n_in, n_out) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -247,7 +253,8 @@ impl Space {
     pub fn set_alloc(ctx: &Context, nparam: u32, dim: u32) -> Space {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_set_alloc(ctx, nparam, dim) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -255,7 +262,8 @@ impl Space {
     pub fn params_alloc(ctx: &Context, nparam: u32) -> Space {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_params_alloc(ctx, nparam) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -264,16 +272,20 @@ impl Space {
         let space = self;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_copy(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_free`.
     pub fn free(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_free(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -319,21 +331,29 @@ impl Space {
     /// Wraps `isl_space_add_param_id`.
     pub fn add_param_id(self, id: Id) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_space_add_param_id(space, id) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_set_tuple_name`.
     pub fn set_tuple_name(self, type_: DimType, s: &str) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let s = CString::new(s).unwrap();
         let s = s.as_ptr();
         let isl_rs_result = unsafe { isl_space_set_tuple_name(space, type_, s) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -363,39 +383,57 @@ impl Space {
     /// Wraps `isl_space_set_domain_tuple_id`.
     pub fn set_domain_tuple_id(self, id: Id) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_space_set_domain_tuple_id(space, id) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_set_range_tuple_id`.
     pub fn set_range_tuple_id(self, id: Id) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_space_set_range_tuple_id(space, id) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_set_tuple_id`.
     pub fn set_tuple_id(self, type_: DimType, id: Id) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_space_set_tuple_id(space, type_, id) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_reset_tuple_id`.
     pub fn reset_tuple_id(self, type_: DimType) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_reset_tuple_id(space, type_) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -443,7 +481,8 @@ impl Space {
         let space = self;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_domain_tuple_id(space) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -452,7 +491,8 @@ impl Space {
         let space = self;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_range_tuple_id(space) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -461,26 +501,35 @@ impl Space {
         let space = self;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_tuple_id(space, type_) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_reset_user`.
     pub fn reset_user(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_reset_user(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_set_dim_id`.
     pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_space_set_dim_id(space, type_, pos, id) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -502,7 +551,8 @@ impl Space {
         let space = self;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_dim_id(space, type_, pos) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -541,11 +591,14 @@ impl Space {
     /// Wraps `isl_space_set_dim_name`.
     pub fn set_dim_name(self, type_: DimType, pos: u32, name: &str) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_space_set_dim_name(space, type_, pos, name) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -562,18 +615,24 @@ impl Space {
     /// Wraps `isl_space_extend`.
     pub fn extend(self, nparam: u32, n_in: u32, n_out: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_extend(space, nparam, n_in, n_out) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_add_dims`.
     pub fn add_dims(self, type_: DimType, n: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_add_dims(space, type_, n) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -582,323 +641,442 @@ impl Space {
                      n: u32)
                      -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result =
             unsafe { isl_space_move_dims(space, dst_type, dst_pos, src_type, src_pos, n) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_insert_dims`.
     pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_insert_dims(space, type_, pos, n) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_join`.
     pub fn join(self, right: Space) -> Space {
         let left = self;
+        let mut left = left;
+        left.do_not_free_on_drop();
         let left = left.ptr;
+        let mut right = right;
+        right.do_not_free_on_drop();
         let right = right.ptr;
         let isl_rs_result = unsafe { isl_space_join(left, right) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_product`.
     pub fn product(self, right: Space) -> Space {
         let left = self;
+        let mut left = left;
+        left.do_not_free_on_drop();
         let left = left.ptr;
+        let mut right = right;
+        right.do_not_free_on_drop();
         let right = right.ptr;
         let isl_rs_result = unsafe { isl_space_product(left, right) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain_product`.
     pub fn domain_product(self, right: Space) -> Space {
         let left = self;
+        let mut left = left;
+        left.do_not_free_on_drop();
         let left = left.ptr;
+        let mut right = right;
+        right.do_not_free_on_drop();
         let right = right.ptr;
         let isl_rs_result = unsafe { isl_space_domain_product(left, right) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_product`.
     pub fn range_product(self, right: Space) -> Space {
         let left = self;
+        let mut left = left;
+        left.do_not_free_on_drop();
         let left = left.ptr;
+        let mut right = right;
+        right.do_not_free_on_drop();
         let right = right.ptr;
         let isl_rs_result = unsafe { isl_space_range_product(left, right) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_factor_domain`.
     pub fn factor_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_factor_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_factor_range`.
     pub fn factor_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_factor_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain_factor_domain`.
     pub fn domain_factor_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_factor_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain_factor_range`.
     pub fn domain_factor_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_factor_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_factor_domain`.
     pub fn range_factor_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_factor_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_factor_range`.
     pub fn range_factor_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_factor_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain_wrapped_domain`.
     pub fn domain_wrapped_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_wrapped_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain_wrapped_range`.
     pub fn domain_wrapped_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_wrapped_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_wrapped_domain`.
     pub fn range_wrapped_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_wrapped_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_wrapped_range`.
     pub fn range_wrapped_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_wrapped_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_map_from_set`.
     pub fn map_from_set(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_map_from_set(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_map_from_domain_and_range`.
     pub fn map_from_domain_and_range(self, range: Space) -> Space {
         let domain = self;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
+        let mut range = range;
+        range.do_not_free_on_drop();
         let range = range.ptr;
         let isl_rs_result = unsafe { isl_space_map_from_domain_and_range(domain, range) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_reverse`.
     pub fn reverse(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_reverse(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_reverse`.
     pub fn range_reverse(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_reverse(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_drop_dims`.
     pub fn drop_dims(self, type_: DimType, first: u32, num: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_dims(space, type_, first, num) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_drop_inputs`.
     pub fn drop_inputs(self, first: u32, n: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_inputs(space, first, n) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_drop_outputs`.
     pub fn drop_outputs(self, first: u32, n: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_outputs(space, first, n) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_drop_all_params`.
     pub fn drop_all_params(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_all_params(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain`.
     pub fn domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_from_domain`.
     pub fn from_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_from_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range`.
     pub fn range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_from_range`.
     pub fn from_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_from_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_domain_map`.
     pub fn domain_map(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_map(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_range_map`.
     pub fn range_map(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_map(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_params`.
     pub fn params(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_params(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_add_unnamed_tuple_ui`.
     pub fn add_unnamed_tuple_ui(self, dim: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_add_unnamed_tuple_ui(space, dim) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_add_named_tuple_id_ui`.
     pub fn add_named_tuple_id_ui(self, tuple_id: Id, dim: u32) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut tuple_id = tuple_id;
+        tuple_id.do_not_free_on_drop();
         let tuple_id = tuple_id.ptr;
         let isl_rs_result = unsafe { isl_space_add_named_tuple_id_ui(space, tuple_id, dim) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_set_from_params`.
     pub fn set_from_params(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_set_from_params(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_align_params`.
     pub fn align_params(self, space2: Space) -> Space {
         let space1 = self;
+        let mut space1 = space1;
+        space1.do_not_free_on_drop();
         let space1 = space1.ptr;
+        let mut space2 = space2;
+        space2.do_not_free_on_drop();
         let space2 = space2.ptr;
         let isl_rs_result = unsafe { isl_space_align_params(space1, space2) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -957,18 +1135,24 @@ impl Space {
     /// Wraps `isl_space_wrap`.
     pub fn wrap(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_wrap(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_unwrap`.
     pub fn unwrap(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_unwrap(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -988,9 +1172,12 @@ impl Space {
     /// Wraps `isl_space_zip`.
     pub fn zip(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zip(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1010,9 +1197,12 @@ impl Space {
     /// Wraps `isl_space_curry`.
     pub fn curry(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_curry(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1032,9 +1222,12 @@ impl Space {
     /// Wraps `isl_space_range_curry`.
     pub fn range_curry(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_curry(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1054,9 +1247,12 @@ impl Space {
     /// Wraps `isl_space_uncurry`.
     pub fn uncurry(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_uncurry(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1169,18 +1365,24 @@ impl Space {
     /// Wraps `isl_space_flatten_domain`.
     pub fn flatten_domain(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_flatten_domain(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_space_flatten_range`.
     pub fn flatten_range(self) -> Space {
         let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_flatten_range(space) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1190,7 +1392,8 @@ impl Space {
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_space_read_from_str(ctx, str_) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1211,12 +1414,19 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_dump(space) };
         isl_rs_result
     }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
+    }
 }
 
 impl Drop for Space {
     fn drop(&mut self) {
-        unsafe {
-            isl_space_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_space_free(self.ptr);
+            }
         }
     }
 }

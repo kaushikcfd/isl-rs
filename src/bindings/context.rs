@@ -8,6 +8,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_ctx`.
 pub struct Context {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -46,7 +47,8 @@ impl Context {
     /// Wraps `isl_ctx_alloc`.
     pub fn alloc() -> Context {
         let isl_rs_result = unsafe { isl_ctx_alloc() };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -157,12 +159,19 @@ impl Context {
         let isl_rs_result = unsafe { isl_ctx_reset_error(ctx) };
         isl_rs_result
     }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
+    }
 }
 
 impl Drop for Context {
     fn drop(&mut self) {
-        unsafe {
-            isl_ctx_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_ctx_free(self.ptr);
+            }
         }
     }
 }

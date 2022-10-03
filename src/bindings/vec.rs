@@ -7,6 +7,7 @@ use libc::uintptr_t;
 /// Wraps `isl_vec`.
 pub struct Vec {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -74,7 +75,8 @@ impl Vec {
     pub fn alloc(ctx: &Context, size: u32) -> Vec {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_vec_alloc(ctx, size) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -82,7 +84,8 @@ impl Vec {
     pub fn zero(ctx: &Context, size: u32) -> Vec {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_vec_zero(ctx, size) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -91,16 +94,20 @@ impl Vec {
         let vec = self;
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_copy(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_free`.
     pub fn free(self) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_free(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -109,7 +116,10 @@ impl Vec {
         let vec = self;
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_get_ctx(vec) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -126,26 +136,35 @@ impl Vec {
         let vec = self;
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_get_element_val(vec, pos) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_set_element_si`.
     pub fn set_element_si(self, pos: i32, v: i32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_set_element_si(vec, pos, v) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_set_element_val`.
     pub fn set_element_val(self, pos: i32, v: Val) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_vec_set_element_val(vec, pos, v) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -183,155 +202,216 @@ impl Vec {
     /// Wraps `isl_vec_ceil`.
     pub fn ceil(self) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_ceil(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_normalize`.
     pub fn normalize(self) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_normalize(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_set_si`.
     pub fn set_si(self, v: i32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_set_si(vec, v) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_set_val`.
     pub fn set_val(self, v: Val) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_vec_set_val(vec, v) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_clr`.
     pub fn clr(self) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_clr(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_neg`.
     pub fn neg(self) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_neg(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_add`.
     pub fn add(self, vec2: Vec) -> Vec {
         let vec1 = self;
+        let mut vec1 = vec1;
+        vec1.do_not_free_on_drop();
         let vec1 = vec1.ptr;
+        let mut vec2 = vec2;
+        vec2.do_not_free_on_drop();
         let vec2 = vec2.ptr;
         let isl_rs_result = unsafe { isl_vec_add(vec1, vec2) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_extend`.
     pub fn extend(self, size: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_extend(vec, size) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_zero_extend`.
     pub fn zero_extend(self, size: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_zero_extend(vec, size) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_concat`.
     pub fn concat(self, vec2: Vec) -> Vec {
         let vec1 = self;
+        let mut vec1 = vec1;
+        vec1.do_not_free_on_drop();
         let vec1 = vec1.ptr;
+        let mut vec2 = vec2;
+        vec2.do_not_free_on_drop();
         let vec2 = vec2.ptr;
         let isl_rs_result = unsafe { isl_vec_concat(vec1, vec2) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_sort`.
     pub fn sort(self) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_sort(vec) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_drop_els`.
     pub fn drop_els(self, pos: u32, n: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_drop_els(vec, pos, n) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_add_els`.
     pub fn add_els(self, n: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_add_els(vec, n) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_insert_els`.
     pub fn insert_els(self, pos: u32, n: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_insert_els(vec, pos, n) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_insert_zero_els`.
     pub fn insert_zero_els(self, pos: u32, n: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_insert_zero_els(vec, pos, n) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_vec_move_els`.
     pub fn move_els(self, dst_col: u32, src_col: u32, n: u32) -> Vec {
         let vec = self;
+        let mut vec = vec;
+        vec.do_not_free_on_drop();
         let vec = vec.ptr;
         let isl_rs_result = unsafe { isl_vec_move_els(vec, dst_col, src_col, n) };
-        let isl_rs_result = Vec { ptr: isl_rs_result };
+        let isl_rs_result = Vec { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
+    }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
     }
 }
 
 impl Drop for Vec {
     fn drop(&mut self) {
-        unsafe {
-            isl_vec_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_vec_free(self.ptr);
+            }
         }
     }
 }

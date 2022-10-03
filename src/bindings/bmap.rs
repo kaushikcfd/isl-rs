@@ -9,6 +9,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_basic_map`.
 pub struct BasicMap {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -268,7 +269,10 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_ctx(bmap) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -277,7 +281,8 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_space(bmap) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -286,7 +291,8 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_div(bmap, pos) };
-        let isl_rs_result = Aff { ptr: isl_rs_result };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -295,18 +301,22 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_local_space(bmap) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_set_tuple_name`.
     pub fn set_tuple_name(self, type_: DimType, s: &str) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let s = CString::new(s).unwrap();
         let s = s.as_ptr();
         let isl_rs_result = unsafe { isl_basic_map_set_tuple_name(bmap, type_, s) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -333,21 +343,29 @@ impl BasicMap {
     /// Wraps `isl_basic_map_set_dim_name`.
     pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let s = CString::new(s).unwrap();
         let s = s.as_ptr();
         let isl_rs_result = unsafe { isl_basic_map_set_dim_name(bmap, type_, pos, s) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_set_tuple_id`.
     pub fn set_tuple_id(self, type_: DimType, id: Id) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_basic_map_set_tuple_id(bmap, type_, id) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -389,18 +407,24 @@ impl BasicMap {
 
     /// Wraps `isl_basic_map_identity`.
     pub fn identity(space: Space) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_identity(space) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_free`.
     pub fn free(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_free(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -409,214 +433,296 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_copy(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_equal`.
     pub fn equal(space: Space, n_equal: u32) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_equal(space, n_equal) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_less_at`.
     pub fn less_at(space: Space, pos: u32) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_less_at(space, pos) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_more_at`.
     pub fn more_at(space: Space, pos: u32) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_more_at(space, pos) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_empty`.
     pub fn empty(space: Space) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_empty(space) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_universe`.
     pub fn universe(space: Space) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_universe(space) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_nat_universe`.
     pub fn nat_universe(space: Space) -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_nat_universe(space) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_remove_redundancies`.
     pub fn remove_redundancies(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_remove_redundancies(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_intersect_domain`.
     pub fn intersect_domain(self, bset: BasicSet) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut bset = bset;
+        bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_map_intersect_domain(bmap, bset) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_intersect_range`.
     pub fn intersect_range(self, bset: BasicSet) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut bset = bset;
+        bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_map_intersect_range(bmap, bset) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_intersect`.
     pub fn intersect(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_intersect(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_union`.
     pub fn union(self, bmap2: BasicMap) -> Map {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_union(bmap1, bmap2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_apply_domain`.
     pub fn apply_domain(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_apply_domain(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_apply_range`.
     pub fn apply_range(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_apply_range(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_affine_hull`.
     pub fn affine_hull(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_affine_hull(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_reverse`.
     pub fn reverse(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_reverse(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_domain`.
     pub fn domain(self) -> BasicSet {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_domain(bmap) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_range`.
     pub fn range(self) -> BasicSet {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_range(bmap) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_domain_map`.
     pub fn domain_map(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_domain_map(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_range_map`.
     pub fn range_map(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_range_map(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_remove_dims`.
     pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_remove_dims(bmap, type_, first, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_eliminate`.
     pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_eliminate(bmap, type_, first, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_sample`.
     pub fn sample(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_sample(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_detect_equalities`.
     pub fn detect_equalities(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_detect_equalities(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -626,7 +732,8 @@ impl BasicMap {
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_basic_map_read_from_str(ctx, str_) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -651,56 +758,78 @@ impl BasicMap {
     /// Wraps `isl_basic_map_fix_si`.
     pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_fix_si(bmap, type_, pos, value) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_fix_val`.
     pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_basic_map_fix_val(bmap, type_, pos, v) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_lower_bound_si`.
     pub fn lower_bound_si(self, type_: DimType, pos: u32, value: i32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_lower_bound_si(bmap, type_, pos, value) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_upper_bound_si`.
     pub fn upper_bound_si(self, type_: DimType, pos: u32, value: i32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_upper_bound_si(bmap, type_, pos, value) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_sum`.
     pub fn sum(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_sum(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_neg`.
     pub fn neg(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_neg(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -735,18 +864,24 @@ impl BasicMap {
     /// Wraps `isl_basic_map_lexmin`.
     pub fn lexmin(self) -> Map {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_lexmin(bmap) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_lexmax`.
     pub fn lexmax(self) -> Map {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_lexmax(bmap) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -755,7 +890,8 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_plain_get_val_if_fixed(bmap, type_, pos) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -855,86 +991,123 @@ impl BasicMap {
     /// Wraps `isl_basic_map_product`.
     pub fn product(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_product(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_domain_product`.
     pub fn domain_product(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_domain_product(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_range_product`.
     pub fn range_product(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_range_product(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_flat_product`.
     pub fn flat_product(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flat_product(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_flat_range_product`.
     pub fn flat_range_product(self, bmap2: BasicMap) -> BasicMap {
         let bmap1 = self;
+        let mut bmap1 = bmap1;
+        bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
+        let mut bmap2 = bmap2;
+        bmap2.do_not_free_on_drop();
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flat_range_product(bmap1, bmap2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_deltas`.
     pub fn deltas(self) -> BasicSet {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_deltas(bmap) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_deltas_map`.
     pub fn deltas_map(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_deltas_map(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_add_dims`.
     pub fn add_dims(self, type_: DimType, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_add_dims(bmap, type_, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_insert_dims`.
     pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_insert_dims(bmap, type_, pos, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -943,126 +1116,170 @@ impl BasicMap {
                      n: u32)
                      -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result =
             unsafe { isl_basic_map_move_dims(bmap, dst_type, dst_pos, src_type, src_pos, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_project_out`.
     pub fn project_out(self, type_: DimType, first: u32, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_project_out(bmap, type_, first, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_remove_divs`.
     pub fn remove_divs(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_remove_divs(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_remove_divs_involving_dims`.
     pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result =
             unsafe { isl_basic_map_remove_divs_involving_dims(bmap, type_, first, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_equate`.
     pub fn equate(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_equate(bmap, type1, pos1, type2, pos2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_order_ge`.
     pub fn order_ge(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_order_ge(bmap, type1, pos1, type2, pos2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_order_gt`.
     pub fn order_gt(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_order_gt(bmap, type1, pos1, type2, pos2) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_wrap`.
     pub fn wrap(self) -> BasicSet {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_wrap(bmap) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_flatten`.
     pub fn flatten(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flatten(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_flatten_domain`.
     pub fn flatten_domain(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flatten_domain(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_flatten_range`.
     pub fn flatten_range(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flatten_range(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_from_domain`.
     pub fn from_domain(bset: BasicSet) -> BasicMap {
+        let mut bset = bset;
+        bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_domain(bset) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_from_range`.
     pub fn from_range(bset: BasicSet) -> BasicMap {
+        let mut bset = bset;
+        bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_range(bset) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_from_domain_and_range`.
     pub fn from_domain_and_range(domain: BasicSet, range: BasicSet) -> BasicMap {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
+        let mut range = range;
+        range.do_not_free_on_drop();
         let range = range.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_domain_and_range(domain, range) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1095,9 +1312,12 @@ impl BasicMap {
     /// Wraps `isl_basic_map_zip`.
     pub fn zip(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_zip(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1117,9 +1337,12 @@ impl BasicMap {
     /// Wraps `isl_basic_map_curry`.
     pub fn curry(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_curry(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1139,28 +1362,37 @@ impl BasicMap {
     /// Wraps `isl_basic_map_uncurry`.
     pub fn uncurry(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_uncurry(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_compute_divs`.
     pub fn compute_divs(self) -> Map {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_compute_divs(bmap) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_drop_constraints_involving_dims`.
     pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result =
             unsafe { isl_basic_map_drop_constraints_involving_dims(bmap, type_, first, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1168,10 +1400,13 @@ impl BasicMap {
     pub fn drop_constraints_not_involving_dims(self, type_: DimType, first: u32, n: u32)
                                                -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result =
             unsafe { isl_basic_map_drop_constraints_not_involving_dims(bmap, type_, first, n) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1191,39 +1426,57 @@ impl BasicMap {
     /// Wraps `isl_basic_map_gist_domain`.
     pub fn gist_domain(self, context: BasicSet) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_basic_map_gist_domain(bmap, context) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_gist`.
     pub fn gist(self, context: BasicMap) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_basic_map_gist(bmap, context) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_align_params`.
     pub fn align_params(self, model: Space) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
+        let mut model = model;
+        model.do_not_free_on_drop();
         let model = model.ptr;
         let isl_rs_result = unsafe { isl_basic_map_align_params(bmap, model) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_drop_unused_params`.
     pub fn drop_unused_params(self) -> BasicMap {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_drop_unused_params(bmap) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1234,7 +1487,8 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_equalities_matrix(bmap, c1, c2, c3, c4, c5) };
-        let isl_rs_result = Mat { ptr: isl_rs_result };
+        let isl_rs_result = Mat { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1245,7 +1499,8 @@ impl BasicMap {
         let bmap = self;
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_inequalities_matrix(bmap, c1, c2, c3, c4, c5) };
-        let isl_rs_result = Mat { ptr: isl_rs_result };
+        let isl_rs_result = Mat { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1253,28 +1508,45 @@ impl BasicMap {
     pub fn from_constraint_matrices(space: Space, eq: Mat, ineq: Mat, c1: DimType, c2: DimType,
                                     c3: DimType, c4: DimType, c5: DimType)
                                     -> BasicMap {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
+        let mut eq = eq;
+        eq.do_not_free_on_drop();
         let eq = eq.ptr;
+        let mut ineq = ineq;
+        ineq.do_not_free_on_drop();
         let ineq = ineq.ptr;
         let isl_rs_result =
             unsafe { isl_basic_map_from_constraint_matrices(space, eq, ineq, c1, c2, c3, c4, c5) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_basic_map_from_aff`.
     pub fn from_aff(aff: Aff) -> BasicMap {
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_aff(aff) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
+    }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
     }
 }
 
 impl Drop for BasicMap {
     fn drop(&mut self) {
-        unsafe {
-            isl_basic_map_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_basic_map_free(self.ptr);
+            }
         }
     }
 }

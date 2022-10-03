@@ -9,6 +9,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_val`.
 pub struct Val {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -150,7 +151,8 @@ impl Val {
     pub fn zero(ctx: &Context) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_zero(ctx) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -158,7 +160,8 @@ impl Val {
     pub fn one(ctx: &Context) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_one(ctx) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -166,7 +169,8 @@ impl Val {
     pub fn negone(ctx: &Context) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_negone(ctx) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -174,7 +178,8 @@ impl Val {
     pub fn nan(ctx: &Context) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_nan(ctx) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -182,7 +187,8 @@ impl Val {
     pub fn infty(ctx: &Context) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_infty(ctx) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -190,7 +196,8 @@ impl Val {
     pub fn neginfty(ctx: &Context) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_neginfty(ctx) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -198,7 +205,8 @@ impl Val {
     pub fn int_from_si(ctx: &Context, i: i64) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_int_from_si(ctx, i) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -206,7 +214,8 @@ impl Val {
     pub fn int_from_ui(ctx: &Context, u: u64) -> Val {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_val_int_from_ui(ctx, u) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -215,16 +224,20 @@ impl Val {
         let v = self;
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_copy(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_free`.
     pub fn free(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_free(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -233,7 +246,10 @@ impl Val {
         let val = self;
         let val = val.ptr;
         let isl_rs_result = unsafe { isl_val_get_ctx(val) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -266,7 +282,8 @@ impl Val {
         let v = self;
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_get_den_val(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -289,197 +306,276 @@ impl Val {
     /// Wraps `isl_val_set_si`.
     pub fn set_si(self, i: i64) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_set_si(v, i) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_abs`.
     pub fn abs(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_abs(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_neg`.
     pub fn neg(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_neg(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_inv`.
     pub fn inv(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_inv(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_floor`.
     pub fn floor(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_floor(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_ceil`.
     pub fn ceil(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_ceil(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_trunc`.
     pub fn trunc(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_trunc(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_2exp`.
     pub fn to_exp(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_2exp(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_pow2`.
     pub fn pow2(self) -> Val {
         let v = self;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_val_pow2(v) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_min`.
     pub fn min(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_min(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_max`.
     pub fn max(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_max(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_add`.
     pub fn add(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_add(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_add_ui`.
     pub fn add_ui(self, v2: u64) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
         let isl_rs_result = unsafe { isl_val_add_ui(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_sub`.
     pub fn sub(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_sub(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_sub_ui`.
     pub fn sub_ui(self, v2: u64) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
         let isl_rs_result = unsafe { isl_val_sub_ui(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_mul`.
     pub fn mul(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_mul(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_mul_ui`.
     pub fn mul_ui(self, v2: u64) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
         let isl_rs_result = unsafe { isl_val_mul_ui(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_div`.
     pub fn div(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_div(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_div_ui`.
     pub fn div_ui(self, v2: u64) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
         let isl_rs_result = unsafe { isl_val_div_ui(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_mod`.
     pub fn mod_(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_mod(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_val_gcd`.
     pub fn gcd(self, v2: Val) -> Val {
         let v1 = self;
+        let mut v1 = v1;
+        v1.do_not_free_on_drop();
         let v1 = v1.ptr;
+        let mut v2 = v2;
+        v2.do_not_free_on_drop();
         let v2 = v2.ptr;
         let isl_rs_result = unsafe { isl_val_gcd(v1, v2) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -799,7 +895,8 @@ impl Val {
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_val_read_from_str(ctx, str_) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -820,12 +917,19 @@ impl Val {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
+    }
 }
 
 impl Drop for Val {
     fn drop(&mut self) {
-        unsafe {
-            isl_val_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_val_free(self.ptr);
+            }
         }
     }
 }

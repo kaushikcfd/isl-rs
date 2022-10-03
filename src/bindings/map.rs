@@ -11,6 +11,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_map`.
 pub struct Map {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -430,7 +431,10 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_ctx(map) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
@@ -439,7 +443,8 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_space(map) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -469,11 +474,14 @@ impl Map {
     /// Wraps `isl_map_set_tuple_name`.
     pub fn set_tuple_name(self, type_: DimType, s: &str) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let s = CString::new(s).unwrap();
         let s = s.as_ptr();
         let isl_rs_result = unsafe { isl_map_set_tuple_name(map, type_, s) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -503,21 +511,29 @@ impl Map {
     /// Wraps `isl_map_set_dim_name`.
     pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let s = CString::new(s).unwrap();
         let s = s.as_ptr();
         let isl_rs_result = unsafe { isl_map_set_dim_name(map, type_, pos, s) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_set_dim_id`.
     pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_map_set_dim_id(map, type_, pos, id) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -539,46 +555,65 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_dim_id(map, type_, pos) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_set_domain_tuple_id`.
     pub fn set_domain_tuple_id(self, id: Id) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_map_set_domain_tuple_id(map, id) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_set_range_tuple_id`.
     pub fn set_range_tuple_id(self, id: Id) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_map_set_range_tuple_id(map, id) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_set_tuple_id`.
     pub fn set_tuple_id(self, type_: DimType, id: Id) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_map_set_tuple_id(map, type_, id) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_reset_tuple_id`.
     pub fn reset_tuple_id(self, type_: DimType) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_reset_tuple_id(map, type_) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -626,7 +661,8 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_domain_tuple_id(map) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -635,7 +671,8 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_range_tuple_id(map) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -644,16 +681,20 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_tuple_id(map, type_) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_reset_user`.
     pub fn reset_user(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_reset_user(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -679,36 +720,48 @@ impl Map {
     /// Wraps `isl_map_remove_redundancies`.
     pub fn remove_redundancies(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_remove_redundancies(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_simple_hull`.
     pub fn simple_hull(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_simple_hull(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_unshifted_simple_hull`.
     pub fn unshifted_simple_hull(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_unshifted_simple_hull(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_plain_unshifted_simple_hull`.
     pub fn plain_unshifted_simple_hull(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_plain_unshifted_simple_hull(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -718,7 +771,8 @@ impl Map {
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_map_read_from_str(ctx, str_) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -743,152 +797,210 @@ impl Map {
     /// Wraps `isl_map_sum`.
     pub fn sum(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_sum(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_neg`.
     pub fn neg(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_neg(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_floordiv_val`.
     pub fn floordiv_val(self, d: Val) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut d = d;
+        d.do_not_free_on_drop();
         let d = d.ptr;
         let isl_rs_result = unsafe { isl_map_floordiv_val(map, d) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lexmin`.
     pub fn lexmin(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_lexmin(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lexmax`.
     pub fn lexmax(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_lexmax(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_universe`.
     pub fn universe(space: Space) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_universe(space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_nat_universe`.
     pub fn nat_universe(space: Space) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_nat_universe(space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_empty`.
     pub fn empty(space: Space) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_empty(space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_identity`.
     pub fn identity(space: Space) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_identity(space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_lt_first`.
     pub fn lex_lt_first(space: Space, n: u32) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_lt_first(space, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_le_first`.
     pub fn lex_le_first(space: Space, n: u32) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_le_first(space, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_lt`.
     pub fn lex_lt(set_space: Space) -> Map {
+        let mut set_space = set_space;
+        set_space.do_not_free_on_drop();
         let set_space = set_space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_lt(set_space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_le`.
     pub fn lex_le(set_space: Space) -> Map {
+        let mut set_space = set_space;
+        set_space.do_not_free_on_drop();
         let set_space = set_space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_le(set_space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_gt_first`.
     pub fn lex_gt_first(space: Space, n: u32) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_gt_first(space, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_ge_first`.
     pub fn lex_ge_first(space: Space, n: u32) -> Map {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_ge_first(space, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_gt`.
     pub fn lex_gt(set_space: Space) -> Map {
+        let mut set_space = set_space;
+        set_space.do_not_free_on_drop();
         let set_space = set_space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_gt(set_space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_ge`.
     pub fn lex_ge(set_space: Space) -> Map {
+        let mut set_space = set_space;
+        set_space.do_not_free_on_drop();
         let set_space = set_space.ptr;
         let isl_rs_result = unsafe { isl_map_lex_ge(set_space) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_free`.
     pub fn free(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_free(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -897,205 +1009,302 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_copy(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_reverse`.
     pub fn reverse(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_reverse(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_range_reverse`.
     pub fn range_reverse(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_range_reverse(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_union`.
     pub fn union(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_union(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_union_disjoint`.
     pub fn union_disjoint(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_union_disjoint(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_domain`.
     pub fn intersect_domain(self, set: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_domain(map, set) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_range`.
     pub fn intersect_range(self, set: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_range(map, set) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_domain_factor_domain`.
     pub fn intersect_domain_factor_domain(self, factor: Map) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut factor = factor;
+        factor.do_not_free_on_drop();
         let factor = factor.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_domain_factor_domain(map, factor) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_domain_factor_range`.
     pub fn intersect_domain_factor_range(self, factor: Map) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut factor = factor;
+        factor.do_not_free_on_drop();
         let factor = factor.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_domain_factor_range(map, factor) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_range_factor_domain`.
     pub fn intersect_range_factor_domain(self, factor: Map) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut factor = factor;
+        factor.do_not_free_on_drop();
         let factor = factor.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_range_factor_domain(map, factor) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_range_factor_range`.
     pub fn intersect_range_factor_range(self, factor: Map) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut factor = factor;
+        factor.do_not_free_on_drop();
         let factor = factor.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_range_factor_range(map, factor) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_domain_wrapped_domain`.
     pub fn intersect_domain_wrapped_domain(self, domain: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_domain_wrapped_domain(map, domain) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_range_wrapped_domain`.
     pub fn intersect_range_wrapped_domain(self, domain: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_range_wrapped_domain(map, domain) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_apply_domain`.
     pub fn apply_domain(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_apply_domain(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_apply_range`.
     pub fn apply_range(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_apply_range(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_product`.
     pub fn product(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_product(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_domain_product`.
     pub fn domain_product(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_domain_product(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_range_product`.
     pub fn range_product(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_range_product(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_flat_product`.
     pub fn flat_product(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_flat_product(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_flat_domain_product`.
     pub fn flat_domain_product(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_flat_domain_product(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_flat_range_product`.
     pub fn flat_range_product(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_flat_range_product(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1141,251 +1350,348 @@ impl Map {
     /// Wraps `isl_map_factor_domain`.
     pub fn factor_domain(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_factor_domain(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_factor_range`.
     pub fn factor_range(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_factor_range(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_domain_factor_domain`.
     pub fn domain_factor_domain(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_domain_factor_domain(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_domain_factor_range`.
     pub fn domain_factor_range(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_domain_factor_range(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_range_factor_domain`.
     pub fn range_factor_domain(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_range_factor_domain(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_range_factor_range`.
     pub fn range_factor_range(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_range_factor_range(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect`.
     pub fn intersect(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_intersect(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_intersect_params`.
     pub fn intersect_params(self, params: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut params = params;
+        params.do_not_free_on_drop();
         let params = params.ptr;
         let isl_rs_result = unsafe { isl_map_intersect_params(map, params) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_subtract`.
     pub fn subtract(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_subtract(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_subtract_domain`.
     pub fn subtract_domain(self, dom: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut dom = dom;
+        dom.do_not_free_on_drop();
         let dom = dom.ptr;
         let isl_rs_result = unsafe { isl_map_subtract_domain(map, dom) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_subtract_range`.
     pub fn subtract_range(self, dom: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut dom = dom;
+        dom.do_not_free_on_drop();
         let dom = dom.ptr;
         let isl_rs_result = unsafe { isl_map_subtract_range(map, dom) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_complement`.
     pub fn complement(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_complement(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_fix_input_si`.
     pub fn fix_input_si(self, input: u32, value: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_fix_input_si(map, input, value) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_fix_si`.
     pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_fix_si(map, type_, pos, value) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_fix_val`.
     pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_map_fix_val(map, type_, pos, v) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lower_bound_si`.
     pub fn lower_bound_si(self, type_: DimType, pos: u32, value: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_lower_bound_si(map, type_, pos, value) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lower_bound_val`.
     pub fn lower_bound_val(self, type_: DimType, pos: u32, value: Val) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut value = value;
+        value.do_not_free_on_drop();
         let value = value.ptr;
         let isl_rs_result = unsafe { isl_map_lower_bound_val(map, type_, pos, value) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_upper_bound_si`.
     pub fn upper_bound_si(self, type_: DimType, pos: u32, value: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_upper_bound_si(map, type_, pos, value) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_upper_bound_val`.
     pub fn upper_bound_val(self, type_: DimType, pos: u32, value: Val) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut value = value;
+        value.do_not_free_on_drop();
         let value = value.ptr;
         let isl_rs_result = unsafe { isl_map_upper_bound_val(map, type_, pos, value) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_deltas`.
     pub fn deltas(self) -> Set {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_deltas(map) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_deltas_map`.
     pub fn deltas_map(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_deltas_map(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_detect_equalities`.
     pub fn detect_equalities(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_detect_equalities(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_affine_hull`.
     pub fn affine_hull(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_affine_hull(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_convex_hull`.
     pub fn convex_hull(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_convex_hull(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_polyhedral_hull`.
     pub fn polyhedral_hull(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_polyhedral_hull(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_add_dims`.
     pub fn add_dims(self, type_: DimType, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_add_dims(map, type_, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_insert_dims`.
     pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_insert_dims(map, type_, pos, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1394,259 +1700,348 @@ impl Map {
                      n: u32)
                      -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result =
             unsafe { isl_map_move_dims(map, dst_type, dst_pos, src_type, src_pos, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_project_out`.
     pub fn project_out(self, type_: DimType, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_project_out(map, type_, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_project_out_all_params`.
     pub fn project_out_all_params(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_project_out_all_params(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_remove_unknown_divs`.
     pub fn remove_unknown_divs(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_remove_unknown_divs(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_remove_divs`.
     pub fn remove_divs(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_remove_divs(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_eliminate`.
     pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_eliminate(map, type_, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_remove_dims`.
     pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_remove_dims(map, type_, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_remove_divs_involving_dims`.
     pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_remove_divs_involving_dims(map, type_, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_remove_inputs`.
     pub fn remove_inputs(self, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_remove_inputs(map, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_order_ge`.
     pub fn order_ge(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_order_ge(map, type1, pos1, type2, pos2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_order_le`.
     pub fn order_le(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_order_le(map, type1, pos1, type2, pos2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_equate`.
     pub fn equate(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_equate(map, type1, pos1, type2, pos2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_oppose`.
     pub fn oppose(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_oppose(map, type1, pos1, type2, pos2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_order_lt`.
     pub fn order_lt(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_order_lt(map, type1, pos1, type2, pos2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_order_gt`.
     pub fn order_gt(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_order_gt(map, type1, pos1, type2, pos2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_wrap`.
     pub fn wrap(self) -> Set {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_wrap(map) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_flatten`.
     pub fn flatten(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_flatten(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_flatten_domain`.
     pub fn flatten_domain(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_flatten_domain(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_flatten_range`.
     pub fn flatten_range(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_flatten_range(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_params`.
     pub fn params(self) -> Set {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_params(map) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_domain`.
     pub fn domain(self) -> Set {
         let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_map_domain(bmap) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_range`.
     pub fn range(self) -> Set {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_range(map) };
-        let isl_rs_result = Set { ptr: isl_rs_result };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_domain_map`.
     pub fn domain_map(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_domain_map(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_range_map`.
     pub fn range_map(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_range_map(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_from_basic_map`.
     pub fn from_basic_map(bmap: BasicMap) -> Map {
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_map_from_basic_map(bmap) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_from_domain`.
     pub fn from_domain(set: Set) -> Map {
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_map_from_domain(set) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_from_range`.
     pub fn from_range(set: Set) -> Map {
+        let mut set = set;
+        set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_map_from_range(set) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_from_domain_and_range`.
     pub fn from_domain_and_range(domain: Set, range: Set) -> Map {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
         let domain = domain.ptr;
+        let mut range = range;
+        range.do_not_free_on_drop();
         let range = range.ptr;
         let isl_rs_result = unsafe { isl_map_from_domain_and_range(domain, range) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_sample`.
     pub fn sample(self) -> BasicMap {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_sample(map) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1861,9 +2256,12 @@ impl Map {
     /// Wraps `isl_map_zip`.
     pub fn zip(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_zip(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1883,9 +2281,12 @@ impl Map {
     /// Wraps `isl_map_curry`.
     pub fn curry(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_curry(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1905,9 +2306,12 @@ impl Map {
     /// Wraps `isl_map_range_curry`.
     pub fn range_curry(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_range_curry(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1927,56 +2331,74 @@ impl Map {
     /// Wraps `isl_map_uncurry`.
     pub fn uncurry(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_uncurry(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_make_disjoint`.
     pub fn make_disjoint(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_make_disjoint(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_compute_divs`.
     pub fn compute_divs(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_compute_divs(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_align_divs`.
     pub fn align_divs(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_align_divs(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_drop_constraints_involving_dims`.
     pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result =
             unsafe { isl_map_drop_constraints_involving_dims(map, type_, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_drop_constraints_not_involving_dims`.
     pub fn drop_constraints_not_involving_dims(self, type_: DimType, first: u32, n: u32) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result =
             unsafe { isl_map_drop_constraints_not_involving_dims(map, type_, first, n) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1998,57 +2420,83 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_plain_get_val_if_fixed(map, type_, pos) };
-        let isl_rs_result = Val { ptr: isl_rs_result };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_gist`.
     pub fn gist(self, context: Map) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_map_gist(map, context) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_gist_domain`.
     pub fn gist_domain(self, context: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_map_gist_domain(map, context) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_gist_range`.
     pub fn gist_range(self, context: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_map_gist_range(map, context) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_gist_params`.
     pub fn gist_params(self, context: Set) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_map_gist_params(map, context) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_gist_basic_map`.
     pub fn gist_basic_map(self, context: BasicMap) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
         let context = context.ptr;
         let isl_rs_result = unsafe { isl_map_gist_basic_map(map, context) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -2057,7 +2505,8 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_range_stride_info(map, pos) };
-        let isl_rs_result = StrideInfo { ptr: isl_rs_result };
+        let isl_rs_result = StrideInfo { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -2066,7 +2515,8 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_range_lattice_tile(map) };
-        let isl_rs_result = FixedBox { ptr: isl_rs_result };
+        let isl_rs_result = FixedBox { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -2075,16 +2525,20 @@ impl Map {
         let map = self;
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_get_range_simple_fixed_box_hull(map) };
-        let isl_rs_result = FixedBox { ptr: isl_rs_result };
+        let isl_rs_result = FixedBox { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_coalesce`.
     pub fn coalesce(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_coalesce(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -2121,103 +2575,152 @@ impl Map {
     /// Wraps `isl_map_fixed_power_val`.
     pub fn fixed_power_val(self, exp: Val) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut exp = exp;
+        exp.do_not_free_on_drop();
         let exp = exp.ptr;
         let isl_rs_result = unsafe { isl_map_fixed_power_val(map, exp) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_le_map`.
     pub fn lex_le_map(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_lex_le_map(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_lt_map`.
     pub fn lex_lt_map(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_lex_lt_map(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_ge_map`.
     pub fn lex_ge_map(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_lex_ge_map(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_lex_gt_map`.
     pub fn lex_gt_map(self, map2: Map) -> Map {
         let map1 = self;
+        let mut map1 = map1;
+        map1.do_not_free_on_drop();
         let map1 = map1.ptr;
+        let mut map2 = map2;
+        map2.do_not_free_on_drop();
         let map2 = map2.ptr;
         let isl_rs_result = unsafe { isl_map_lex_gt_map(map1, map2) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_align_params`.
     pub fn align_params(self, model: Space) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
+        let mut model = model;
+        model.do_not_free_on_drop();
         let model = model.ptr;
         let isl_rs_result = unsafe { isl_map_align_params(map, model) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_drop_unused_params`.
     pub fn drop_unused_params(self) -> Map {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_drop_unused_params(map) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_from_aff`.
     pub fn from_aff(aff: Aff) -> Map {
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_map_from_aff(aff) };
-        let isl_rs_result = Map { ptr: isl_rs_result };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_dim_min`.
     pub fn dim_min(self, pos: i32) -> PwAff {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_dim_min(map, pos) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_map_dim_max`.
     pub fn dim_max(self, pos: i32) -> PwAff {
         let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_map_dim_max(map, pos) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
+    }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
     }
 }
 
 impl Drop for Map {
     fn drop(&mut self) {
-        unsafe {
-            isl_map_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_map_free(self.ptr);
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ use std::os::raw::c_char;
 /// Wraps `isl_local_space`.
 pub struct LocalSpace {
     pub ptr: uintptr_t,
+    pub should_free_on_drop: bool,
 }
 
 extern "C" {
@@ -85,15 +86,21 @@ impl LocalSpace {
         let ls = self;
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_get_ctx(ls) };
-        let isl_rs_result = Context { ptr: isl_rs_result };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        let mut isl_rs_result = isl_rs_result;
+        isl_rs_result.do_not_free_on_drop();
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_from_space`.
     pub fn from_space(space: Space) -> LocalSpace {
+        let mut space = space;
+        space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_local_space_from_space(space) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -102,16 +109,20 @@ impl LocalSpace {
         let ls = self;
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_copy(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_free`.
     pub fn free(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_free(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -144,10 +155,15 @@ impl LocalSpace {
     /// Wraps `isl_local_space_set_tuple_id`.
     pub fn set_tuple_id(self, type_: DimType, id: Id) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_local_space_set_tuple_id(ls, type_, id) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -185,11 +201,14 @@ impl LocalSpace {
     /// Wraps `isl_local_space_set_dim_name`.
     pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let s = CString::new(s).unwrap();
         let s = s.as_ptr();
         let isl_rs_result = unsafe { isl_local_space_set_dim_name(ls, type_, pos, s) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -211,17 +230,23 @@ impl LocalSpace {
         let ls = self;
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_get_dim_id(ls, type_, pos) };
-        let isl_rs_result = Id { ptr: isl_rs_result };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_set_dim_id`.
     pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_local_space_set_dim_id(ls, type_, pos, id) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -230,7 +255,8 @@ impl LocalSpace {
         let ls = self;
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_get_space(ls) };
-        let isl_rs_result = Space { ptr: isl_rs_result };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -239,7 +265,8 @@ impl LocalSpace {
         let ls = self;
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_get_div(ls, pos) };
-        let isl_rs_result = Aff { ptr: isl_rs_result };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -256,82 +283,111 @@ impl LocalSpace {
     /// Wraps `isl_local_space_domain`.
     pub fn domain(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_domain(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_range`.
     pub fn range(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_range(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_from_domain`.
     pub fn from_domain(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_from_domain(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_add_dims`.
     pub fn add_dims(self, type_: DimType, n: u32) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_add_dims(ls, type_, n) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_drop_dims`.
     pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_drop_dims(ls, type_, first, n) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_insert_dims`.
     pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_insert_dims(ls, type_, first, n) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_set_from_params`.
     pub fn set_from_params(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_set_from_params(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_intersect`.
     pub fn intersect(self, ls2: LocalSpace) -> LocalSpace {
         let ls1 = self;
+        let mut ls1 = ls1;
+        ls1.do_not_free_on_drop();
         let ls1 = ls1.ptr;
+        let mut ls2 = ls2;
+        ls2.do_not_free_on_drop();
         let ls2 = ls2.ptr;
         let isl_rs_result = unsafe { isl_local_space_intersect(ls1, ls2) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_wrap`.
     pub fn wrap(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_wrap(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -352,27 +408,36 @@ impl LocalSpace {
     /// Wraps `isl_local_space_lifting`.
     pub fn lifting(self) -> BasicMap {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_lifting(ls) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_flatten_domain`.
     pub fn flatten_domain(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_flatten_domain(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
     /// Wraps `isl_local_space_flatten_range`.
     pub fn flatten_range(self) -> LocalSpace {
         let ls = self;
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_local_space_flatten_range(ls) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -383,12 +448,19 @@ impl LocalSpace {
         let isl_rs_result = unsafe { isl_local_space_dump(ls) };
         isl_rs_result
     }
+
+    /// Does not call isl_xxx_free() on being dropped. (For internal use only.)
+    pub fn do_not_free_on_drop(&mut self) {
+        self.should_free_on_drop = false;
+    }
 }
 
 impl Drop for LocalSpace {
     fn drop(&mut self) {
-        unsafe {
-            isl_local_space_free(self.ptr);
+        if self.should_free_on_drop {
+            unsafe {
+                isl_local_space_free(self.ptr);
+            }
         }
     }
 }
