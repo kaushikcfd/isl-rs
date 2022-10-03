@@ -1,7 +1,7 @@
 use fs_extra::dir::{copy, CopyOptions};
-use std::env;
 use std::path::Path;
 use std::process::Command;
+use std::{env, fs};
 
 fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
@@ -24,6 +24,13 @@ fn main() {
     // Copy to out_dir and change isl path
     copy(isl_dir_path, out_dir.to_string().as_str(), &copy_options).unwrap();
     let isl_dir_path = Path::new(&out_dir).join("isl/");
+
+    if Path::new("isl/").join(".git").is_file() {
+        let mut copy_options = CopyOptions::new();
+        copy_options.overwrite = true;
+        fs::remove_file(isl_dir_path.join(".git")).unwrap();
+        copy(".git/modules/isl/", &isl_dir_path, &copy_options).unwrap();
+    }
 
     // Goto isl/ before building anything
     // (Not ideal but better than `make` emitting intermediary files into tree)
