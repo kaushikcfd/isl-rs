@@ -126,6 +126,10 @@ extern "C" {
 
     fn isl_space_reverse(space: uintptr_t) -> uintptr_t;
 
+    fn isl_space_wrapped_reverse(space: uintptr_t) -> uintptr_t;
+
+    fn isl_space_domain_reverse(space: uintptr_t) -> uintptr_t;
+
     fn isl_space_range_reverse(space: uintptr_t) -> uintptr_t;
 
     fn isl_space_drop_dims(space: uintptr_t, type_: DimType, first: u32, num: u32) -> uintptr_t;
@@ -877,6 +881,30 @@ impl Space {
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_reverse(space) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_space_wrapped_reverse`.
+    pub fn wrapped_reverse(self) -> Space {
+        let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_space_wrapped_reverse(space) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_space_domain_reverse`.
+    pub fn domain_reverse(self) -> Space {
+        let space = self;
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_space_domain_reverse(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
         isl_rs_result

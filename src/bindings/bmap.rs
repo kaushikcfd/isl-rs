@@ -64,6 +64,8 @@ extern "C" {
 
     fn isl_basic_map_remove_redundancies(bmap: uintptr_t) -> uintptr_t;
 
+    fn isl_basic_map_intersect_params(bmap: uintptr_t, bset: uintptr_t) -> uintptr_t;
+
     fn isl_basic_map_intersect_domain(bmap: uintptr_t, bset: uintptr_t) -> uintptr_t;
 
     fn isl_basic_map_intersect_range(bmap: uintptr_t, bset: uintptr_t) -> uintptr_t;
@@ -511,6 +513,21 @@ impl BasicMap {
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_remove_redundancies(bmap) };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_intersect_params`.
+    pub fn intersect_params(self, bset: BasicSet) -> BasicMap {
+        let bmap = self;
+        let mut bmap = bmap;
+        bmap.do_not_free_on_drop();
+        let bmap = bmap.ptr;
+        let mut bset = bset;
+        bset.do_not_free_on_drop();
+        let bset = bset.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_intersect_params(bmap, bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result

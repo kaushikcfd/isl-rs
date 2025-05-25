@@ -125,6 +125,8 @@ extern "C" {
 
     fn isl_aff_scale_down_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
 
+    fn isl_aff_domain_reverse(aff: uintptr_t) -> uintptr_t;
+
     fn isl_aff_insert_dims(aff: uintptr_t, type_: DimType, first: u32, n: u32) -> uintptr_t;
 
     fn isl_aff_add_dims(aff: uintptr_t, type_: DimType, n: u32) -> uintptr_t;
@@ -842,6 +844,18 @@ impl Aff {
         v.do_not_free_on_drop();
         let v = v.ptr;
         let isl_rs_result = unsafe { isl_aff_scale_down_val(aff, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_domain_reverse`.
+    pub fn domain_reverse(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_domain_reverse(aff) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
