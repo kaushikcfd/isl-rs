@@ -126,6 +126,8 @@ extern "C" {
 
     fn isl_set_bounded_simple_hull(set: uintptr_t) -> uintptr_t;
 
+    fn isl_set_wrapped_reverse(set: uintptr_t) -> uintptr_t;
+
     fn isl_set_union_disjoint(set1: uintptr_t, set2: uintptr_t) -> uintptr_t;
 
     fn isl_set_union(set1: uintptr_t, set2: uintptr_t) -> uintptr_t;
@@ -912,6 +914,18 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_bounded_simple_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_set_wrapped_reverse`.
+    pub fn wrapped_reverse(self) -> Set {
+        let set = self;
+        let mut set = set;
+        set.do_not_free_on_drop();
+        let set = set.ptr;
+        let isl_rs_result = unsafe { isl_set_wrapped_reverse(set) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 

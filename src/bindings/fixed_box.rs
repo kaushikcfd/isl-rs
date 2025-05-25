@@ -24,6 +24,8 @@ extern "C" {
 
     fn isl_fixed_box_free(box_: uintptr_t) -> uintptr_t;
 
+    fn isl_fixed_box_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+
     fn isl_fixed_box_to_str(box_: uintptr_t) -> *const c_char;
 
     fn isl_fixed_box_dump(box_: uintptr_t);
@@ -83,6 +85,17 @@ impl FixedBox {
         box_.do_not_free_on_drop();
         let box_ = box_.ptr;
         let isl_rs_result = unsafe { isl_fixed_box_free(box_) };
+        let isl_rs_result = FixedBox { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_fixed_box_read_from_str`.
+    pub fn read_from_str(ctx: &Context, str_: &str) -> FixedBox {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_fixed_box_read_from_str(ctx, str_) };
         let isl_rs_result = FixedBox { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result

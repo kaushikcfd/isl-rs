@@ -16,13 +16,13 @@ pub struct BasicSet {
 
 extern "C" {
 
-    fn isl_basic_set_dim(bset: uintptr_t, type_: DimType) -> i32;
-
     fn isl_basic_set_n_dim(bset: uintptr_t) -> i32;
 
     fn isl_basic_set_n_param(bset: uintptr_t) -> i32;
 
     fn isl_basic_set_total_dim(bset: uintptr_t) -> i32;
+
+    fn isl_basic_set_dim(bset: uintptr_t, type_: DimType) -> i32;
 
     fn isl_basic_set_get_ctx(bset: uintptr_t) -> uintptr_t;
 
@@ -194,14 +194,6 @@ extern "C" {
 }
 
 impl BasicSet {
-    /// Wraps `isl_basic_set_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
-        let bset = self;
-        let bset = bset.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_dim(bset, type_) };
-        isl_rs_result
-    }
-
     /// Wraps `isl_basic_set_n_dim`.
     pub fn n_dim(&self) -> i32 {
         let bset = self;
@@ -223,6 +215,14 @@ impl BasicSet {
         let bset = self;
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_total_dim(bset) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_set_dim`.
+    pub fn dim(&self, type_: DimType) -> i32 {
+        let bset = self;
+        let bset = bset.ptr;
+        let isl_rs_result = unsafe { isl_basic_set_dim(bset, type_) };
         isl_rs_result
     }
 

@@ -145,6 +145,8 @@ extern "C" {
 
     fn isl_pw_aff_scale_down_val(pa: uintptr_t, f: uintptr_t) -> uintptr_t;
 
+    fn isl_pw_aff_domain_reverse(pa: uintptr_t) -> uintptr_t;
+
     fn isl_pw_aff_insert_dims(pwaff: uintptr_t, type_: DimType, first: u32, n: u32) -> uintptr_t;
 
     fn isl_pw_aff_add_dims(pwaff: uintptr_t, type_: DimType, n: u32) -> uintptr_t;
@@ -1052,6 +1054,18 @@ impl PwAff {
         f.do_not_free_on_drop();
         let f = f.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_scale_down_val(pa, f) };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_aff_domain_reverse`.
+    pub fn domain_reverse(self) -> PwAff {
+        let pa = self;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
+        let pa = pa.ptr;
+        let isl_rs_result = unsafe { isl_pw_aff_domain_reverse(pa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
         isl_rs_result

@@ -125,6 +125,8 @@ extern "C" {
 
     fn isl_map_reverse(map: uintptr_t) -> uintptr_t;
 
+    fn isl_map_domain_reverse(map: uintptr_t) -> uintptr_t;
+
     fn isl_map_range_reverse(map: uintptr_t) -> uintptr_t;
 
     fn isl_map_union(map1: uintptr_t, map2: uintptr_t) -> uintptr_t;
@@ -228,6 +230,8 @@ extern "C" {
     fn isl_map_move_dims(map: uintptr_t, dst_type: DimType, dst_pos: u32, src_type: DimType,
                          src_pos: u32, n: u32)
                          -> uintptr_t;
+
+    fn isl_map_project_out_param_id(map: uintptr_t, id: uintptr_t) -> uintptr_t;
 
     fn isl_map_project_out(map: uintptr_t, type_: DimType, first: u32, n: u32) -> uintptr_t;
 
@@ -1026,6 +1030,18 @@ impl Map {
         isl_rs_result
     }
 
+    /// Wraps `isl_map_domain_reverse`.
+    pub fn domain_reverse(self) -> Map {
+        let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
+        let map = map.ptr;
+        let isl_rs_result = unsafe { isl_map_domain_reverse(map) };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_map_range_reverse`.
     pub fn range_reverse(self) -> Map {
         let map = self;
@@ -1705,6 +1721,21 @@ impl Map {
         let map = map.ptr;
         let isl_rs_result =
             unsafe { isl_map_move_dims(map, dst_type, dst_pos, src_type, src_pos, n) };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_map_project_out_param_id`.
+    pub fn project_out_param_id(self, id: Id) -> Map {
+        let map = self;
+        let mut map = map;
+        map.do_not_free_on_drop();
+        let map = map.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_map_project_out_param_id(map, id) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
