@@ -17,231 +17,250 @@ pub struct MultiPwAff {
 
 extern "C" {
 
-    fn isl_multi_pw_aff_zero(space: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_add(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_add_constant_multi_val(mpa: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
     fn isl_multi_pw_aff_add_constant_val(mpa: uintptr_t, v: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_intersect_domain(mpa: uintptr_t, domain: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_add_dims(multi: uintptr_t, type_: i32, n: u32) -> uintptr_t;
 
-    fn isl_multi_pw_aff_domain(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_at(multi: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_eq_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_dim_id(multi: uintptr_t, type_: i32, pos: u32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_involves_nan(multi: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_get_hash(mpa: uintptr_t) -> u32;
-
-    fn isl_multi_pw_aff_size(multi: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_reset_range_tuple_id(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_domain_reverse(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_list(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_pullback_multi_pw_aff(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_pullback_multi_aff(mpa: uintptr_t, ma: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_set_at(multi: uintptr_t, pos: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_scale_down_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_align_params(multi: uintptr_t, model: uintptr_t) -> uintptr_t;
 
     fn isl_multi_pw_aff_as_map(mpa: uintptr_t) -> uintptr_t;
 
+    fn isl_multi_pw_aff_as_multi_aff(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_as_set(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_bind(mpa: uintptr_t, tuple: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_bind_domain(multi: uintptr_t, tuple: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_bind_domain_wrapped_domain(multi: uintptr_t, tuple: uintptr_t)
+                                                   -> uintptr_t;
+
+    fn isl_multi_pw_aff_coalesce(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_copy(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_dim(multi: uintptr_t, type_: i32) -> i32;
+
+    fn isl_multi_pw_aff_domain(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_domain_reverse(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_drop_dims(multi: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_dump(mpa: uintptr_t) -> ();
+
+    fn isl_multi_pw_aff_eq_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_factor_range(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_find_dim_by_id(multi: uintptr_t, type_: i32, id: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_find_dim_by_name(multi: uintptr_t, type_: i32, name: *const c_char) -> i32;
+
+    fn isl_multi_pw_aff_flat_range_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_flatten_range(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_free(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_from_aff(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_from_multi_aff(ma: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_from_pw_aff(pa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_from_pw_aff_list(space: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_from_pw_multi_aff(pma: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_from_range(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_at(multi: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_ctx(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_dim_id(multi: uintptr_t, type_: i32, pos: u32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_domain_space(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_hash(mpa: uintptr_t) -> u32;
+
+    fn isl_multi_pw_aff_get_list(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_pw_aff(multi: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_range_tuple_id(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_space(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_get_tuple_name(multi: uintptr_t, type_: i32) -> *const c_char;
+
+    fn isl_multi_pw_aff_gist(mpa: uintptr_t, set: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_gist_params(mpa: uintptr_t, set: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_has_range_tuple_id(multi: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_has_tuple_id(multi: uintptr_t, type_: i32) -> i32;
+
+    fn isl_multi_pw_aff_identity(space: uintptr_t) -> uintptr_t;
+
     fn isl_multi_pw_aff_identity_multi_pw_aff(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_identity_on_domain_space(space: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_insert_dims(multi: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_insert_domain(multi: uintptr_t, domain: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_intersect_domain(mpa: uintptr_t, domain: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_intersect_params(mpa: uintptr_t, set: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_involves_dims(multi: uintptr_t, type_: i32, first: u32, n: u32) -> i32;
+
+    fn isl_multi_pw_aff_involves_nan(multi: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_involves_param_id(multi: uintptr_t, id: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_involves_param_id_list(multi: uintptr_t, list: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_is_cst(mpa: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_is_equal(mpa1: uintptr_t, mpa2: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_isa_multi_aff(mpa: uintptr_t) -> i32;
+
+    fn isl_multi_pw_aff_lex_ge_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_lex_gt_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_lex_le_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_lex_lt_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_max(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_max_multi_val(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_min(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_min_multi_val(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_mod_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
     fn isl_multi_pw_aff_move_dims(pma: uintptr_t, dst_type: i32, dst_pos: u32, src_type: i32,
                                   src_pos: u32, n: u32)
                                   -> uintptr_t;
 
-    fn isl_multi_pw_aff_min(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_neg(multi: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_factor_range(multi: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_plain_is_equal(multi1: uintptr_t, multi2: uintptr_t) -> i32;
 
-    fn isl_multi_pw_aff_bind(mpa: uintptr_t, tuple: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_bind_domain_wrapped_domain(multi: uintptr_t, tuple: uintptr_t)
-                                                   -> uintptr_t;
+    fn isl_multi_pw_aff_project_domain_on_params(multi: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_get_space(multi: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_pullback_multi_aff(mpa: uintptr_t, ma: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_range_splice(multi1: uintptr_t, pos: u32, multi2: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_pullback_multi_pw_aff(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_set_pw_aff(multi: uintptr_t, pos: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_insert_dims(multi: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_ctx(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_min_multi_val(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_from_pw_aff(pa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_flatten_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_scale_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_from_multi_aff(ma: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_pullback_pw_multi_aff(mpa: uintptr_t, pma: uintptr_t) -> uintptr_t;
 
     fn isl_multi_pw_aff_range_factor_domain(multi: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_gist_params(mpa: uintptr_t, set: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_range_factor_range(multi: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_bind_domain(multi: uintptr_t, tuple: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_range_is_wrapping(multi: uintptr_t) -> i32;
 
-    fn isl_multi_pw_aff_copy(multi: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_range_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_get_pw_aff(multi: uintptr_t, pos: i32) -> uintptr_t;
+    fn isl_multi_pw_aff_range_splice(multi1: uintptr_t, pos: u32, multi2: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_gist(mpa: uintptr_t, set: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
 
-    fn isl_multi_pw_aff_dim(multi: uintptr_t, type_: i32) -> i32;
+    fn isl_multi_pw_aff_reset_range_tuple_id(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_reset_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
+
+    fn isl_multi_pw_aff_reset_user(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_scale_down_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_scale_down_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_scale_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_scale_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_set_at(multi: uintptr_t, pos: i32, el: uintptr_t) -> uintptr_t;
 
     fn isl_multi_pw_aff_set_dim_id(multi: uintptr_t, type_: i32, pos: u32, id: uintptr_t)
                                    -> uintptr_t;
 
-    fn isl_multi_pw_aff_involves_param_id(multi: uintptr_t, id: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_identity(space: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_plain_is_equal(multi1: uintptr_t, multi2: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_as_multi_aff(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_scale_down_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_sub(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_unbind_params_insert_domain(multi: uintptr_t, domain: uintptr_t)
-                                                    -> uintptr_t;
-
-    fn isl_multi_pw_aff_reset_user(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_from_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_dump(mpa: uintptr_t) -> ();
-
-    fn isl_multi_pw_aff_as_set(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_is_equal(mpa1: uintptr_t, mpa2: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_max(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_range_factor_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_domain_space(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_tuple_name(multi: uintptr_t, type_: i32) -> *const c_char;
-
-    fn isl_multi_pw_aff_add(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_reset_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_isa_multi_aff(mpa: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_scale_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_set_tuple_id(multi: uintptr_t, type_: i32, id: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_free(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_find_dim_by_name(multi: uintptr_t, type_: i32, name: *const c_char) -> i32;
-
-    fn isl_multi_pw_aff_align_params(multi: uintptr_t, model: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_get_range_tuple_id(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_from_pw_multi_aff(pma: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_add_dims(multi: uintptr_t, type_: i32, n: u32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_insert_domain(multi: uintptr_t, domain: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_drop_dims(multi: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_multi_pw_aff_has_tuple_id(multi: uintptr_t, type_: i32) -> i32;
-
-    fn isl_multi_pw_aff_flat_range_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_project_domain_on_params(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_add_constant_multi_val(mpa: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
     fn isl_multi_pw_aff_set_dim_name(multi: uintptr_t, type_: i32, pos: u32, s: *const c_char)
                                      -> uintptr_t;
 
-    fn isl_multi_pw_aff_has_range_tuple_id(multi: uintptr_t) -> i32;
+    fn isl_multi_pw_aff_set_pw_aff(multi: uintptr_t, pos: i32, el: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_lex_lt_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_set_range_tuple_id(multi: uintptr_t, id: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_range_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_range_is_wrapping(multi: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_from_aff(aff: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_set_tuple_id(multi: uintptr_t, type_: i32, id: uintptr_t) -> uintptr_t;
 
     fn isl_multi_pw_aff_set_tuple_name(multi: uintptr_t, type_: i32, s: *const c_char)
                                        -> uintptr_t;
 
-    fn isl_multi_pw_aff_lex_ge_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_identity_on_domain_space(space: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_max_multi_val(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_lex_gt_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_neg(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_involves_param_id_list(multi: uintptr_t, list: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_coalesce(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_mod_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_union_add(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_pullback_pw_multi_aff(mpa: uintptr_t, pma: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_multi_pw_aff_find_dim_by_id(multi: uintptr_t, type_: i32, id: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_is_cst(mpa: uintptr_t) -> i32;
-
-    fn isl_multi_pw_aff_lex_le_map(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_from_pw_aff_list(space: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_set_range_tuple_id(multi: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_pw_aff_to_str(mpa: uintptr_t) -> *const c_char;
+    fn isl_multi_pw_aff_size(multi: uintptr_t) -> i32;
 
     fn isl_multi_pw_aff_splice(multi1: uintptr_t, in_pos: u32, out_pos: u32, multi2: uintptr_t)
                                -> uintptr_t;
 
-    fn isl_multi_pw_aff_involves_dims(multi: uintptr_t, type_: i32, first: u32, n: u32) -> i32;
+    fn isl_multi_pw_aff_sub(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_pw_aff_intersect_params(mpa: uintptr_t, set: uintptr_t) -> uintptr_t;
+    fn isl_multi_pw_aff_to_str(mpa: uintptr_t) -> *const c_char;
+
+    fn isl_multi_pw_aff_unbind_params_insert_domain(multi: uintptr_t, domain: uintptr_t)
+                                                    -> uintptr_t;
+
+    fn isl_multi_pw_aff_union_add(mpa1: uintptr_t, mpa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_pw_aff_zero(space: uintptr_t) -> uintptr_t;
 
 }
 
 impl MultiPwAff {
-    /// Wraps `isl_multi_pw_aff_zero`.
-    pub fn zero(space: Space) -> MultiPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_zero(space) };
+    /// Wraps `isl_multi_pw_aff_add`.
+    pub fn add(self, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_add(multi1, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_add_constant_multi_val`.
+    pub fn add_constant_multi_val(self, mv: MultiVal) -> MultiPwAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_add_constant_multi_val(mpa, mv) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -262,18 +281,143 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_intersect_domain`.
-    pub fn intersect_domain(self, domain: Set) -> MultiPwAff {
+    /// Wraps `isl_multi_pw_aff_add_dims`.
+    pub fn add_dims(self, type_: DimType, n: u32) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_add_dims(multi, type_, n) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_align_params`.
+    pub fn align_params(self, model: Space) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut model = model;
+        model.do_not_free_on_drop();
+        let model = model.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_align_params(multi, model) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_as_map`.
+    pub fn as_map(self) -> Map {
         let mpa = self;
         let mut mpa = mpa;
         mpa.do_not_free_on_drop();
         let mpa = mpa.ptr;
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_intersect_domain(mpa, domain) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_as_map(mpa) };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_as_multi_aff`.
+    pub fn as_multi_aff(self) -> MultiAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_as_multi_aff(mpa) };
+        let isl_rs_result = MultiAff { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_as_set`.
+    pub fn as_set(self) -> Set {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_as_set(mpa) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_bind`.
+    pub fn bind(self, tuple: MultiId) -> Set {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let mut tuple = tuple;
+        tuple.do_not_free_on_drop();
+        let tuple = tuple.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_bind(mpa, tuple) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_bind_domain`.
+    pub fn bind_domain(self, tuple: MultiId) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut tuple = tuple;
+        tuple.do_not_free_on_drop();
+        let tuple = tuple.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_bind_domain(multi, tuple) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_bind_domain_wrapped_domain`.
+    pub fn bind_domain_wrapped_domain(self, tuple: MultiId) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut tuple = tuple;
+        tuple.do_not_free_on_drop();
+        let tuple = tuple.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_bind_domain_wrapped_domain(multi, tuple) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_coalesce`.
+    pub fn coalesce(self) -> MultiPwAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_coalesce(mpa) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_copy`.
+    pub fn copy(&self) -> MultiPwAff {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_copy(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_dim`.
+    pub fn dim(&self, type_: DimType) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_dim(multi, type_) };
         isl_rs_result
     }
 
@@ -289,13 +433,36 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_get_at`.
-    pub fn get_at(&self, pos: i32) -> PwAff {
+    /// Wraps `isl_multi_pw_aff_domain_reverse`.
+    pub fn domain_reverse(self) -> MultiPwAff {
         let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
         let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_at(multi, pos) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_domain_reverse(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_drop_dims`.
+    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_drop_dims(multi, type_, first, n) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_dump`.
+    pub fn dump(&self) -> () {
+        let mpa = self;
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_dump(mpa) };
         isl_rs_result
     }
 
@@ -314,6 +481,168 @@ impl MultiPwAff {
         isl_rs_result
     }
 
+    /// Wraps `isl_multi_pw_aff_factor_range`.
+    pub fn factor_range(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_factor_range(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_find_dim_by_id`.
+    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_find_dim_by_id(multi, type_, id) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_find_dim_by_name`.
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let name = CString::new(name).unwrap();
+        let name = name.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_find_dim_by_name(multi, type_, name) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_flat_range_product`.
+    pub fn flat_range_product(self, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_flat_range_product(multi1, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_flatten_range`.
+    pub fn flatten_range(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_flatten_range(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_free`.
+    pub fn free(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_free(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_from_aff`.
+    pub fn from_aff(aff: Aff) -> MultiPwAff {
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_from_aff(aff) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_from_multi_aff`.
+    pub fn from_multi_aff(ma: MultiAff) -> MultiPwAff {
+        let mut ma = ma;
+        ma.do_not_free_on_drop();
+        let ma = ma.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_from_multi_aff(ma) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_from_pw_aff`.
+    pub fn from_pw_aff(pa: PwAff) -> MultiPwAff {
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
+        let pa = pa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_from_pw_aff(pa) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_from_pw_aff_list`.
+    pub fn from_pw_aff_list(space: Space, list: PwAffList) -> MultiPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_from_pw_aff_list(space, list) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_from_pw_multi_aff`.
+    pub fn from_pw_multi_aff(pma: PwMultiAff) -> MultiPwAff {
+        let mut pma = pma;
+        pma.do_not_free_on_drop();
+        let pma = pma.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_from_pw_multi_aff(pma) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_from_range`.
+    pub fn from_range(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_from_range(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_at`.
+    pub fn get_at(&self, pos: i32) -> PwAff {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_at(multi, pos) };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_ctx(multi) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
     /// Wraps `isl_multi_pw_aff_get_dim_id`.
     pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
         let multi = self;
@@ -322,6 +651,249 @@ impl MultiPwAff {
         let isl_rs_result = unsafe { isl_multi_pw_aff_get_dim_id(multi, type_, pos) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_domain_space`.
+    pub fn get_domain_space(&self) -> Space {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_domain_space(multi) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_hash`.
+    pub fn get_hash(&self) -> u32 {
+        let mpa = self;
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_hash(mpa) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_list`.
+    pub fn get_list(&self) -> PwAffList {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_list(multi) };
+        let isl_rs_result = PwAffList { ptr: isl_rs_result,
+                                        should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_pw_aff`.
+    pub fn get_pw_aff(&self, pos: i32) -> PwAff {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_pw_aff(multi, pos) };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_range_tuple_id`.
+    pub fn get_range_tuple_id(&self) -> Id {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_range_tuple_id(multi) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_space`.
+    pub fn get_space(&self) -> Space {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_space(multi) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_tuple_id`.
+    pub fn get_tuple_id(&self, type_: DimType) -> Id {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_tuple_id(multi, type_) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_get_tuple_name`.
+    pub fn get_tuple_name(&self, type_: DimType) -> &str {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_get_tuple_name(multi, type_) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_gist`.
+    pub fn gist(self, set: Set) -> MultiPwAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
+        let set = set.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_gist(mpa, set) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_gist_params`.
+    pub fn gist_params(self, set: Set) -> MultiPwAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
+        let set = set.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_gist_params(mpa, set) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_has_range_tuple_id`.
+    pub fn has_range_tuple_id(&self) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_has_range_tuple_id(multi) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_has_tuple_id`.
+    pub fn has_tuple_id(&self, type_: DimType) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_has_tuple_id(multi, type_) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_identity`.
+    pub fn identity(space: Space) -> MultiPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_identity(space) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_identity_multi_pw_aff`.
+    pub fn identity_multi_pw_aff(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_identity_multi_pw_aff(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_identity_on_domain_space`.
+    pub fn identity_on_domain_space(space: Space) -> MultiPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_identity_on_domain_space(space) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_insert_dims`.
+    pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_insert_dims(multi, type_, first, n) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_insert_domain`.
+    pub fn insert_domain(self, domain: Space) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_insert_domain(multi, domain) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_intersect_domain`.
+    pub fn intersect_domain(self, domain: Set) -> MultiPwAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_intersect_domain(mpa, domain) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_intersect_params`.
+    pub fn intersect_params(self, set: Set) -> MultiPwAff {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
+        let set = set.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_intersect_params(mpa, set) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_involves_dims`.
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_involves_dims(multi, type_, first, n) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
         isl_rs_result
     }
 
@@ -338,58 +910,76 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_get_hash`.
-    pub fn get_hash(&self) -> u32 {
+    /// Wraps `isl_multi_pw_aff_involves_param_id`.
+    pub fn involves_param_id(&self, id: &Id) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_involves_param_id(multi, id) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_involves_param_id_list`.
+    pub fn involves_param_id_list(&self, list: &IdList) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_involves_param_id_list(multi, list) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_is_cst`.
+    pub fn is_cst(&self) -> bool {
         let mpa = self;
         let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_hash(mpa) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_is_cst(mpa) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_size`.
-    pub fn size(&self) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_size(multi) };
+    /// Wraps `isl_multi_pw_aff_is_equal`.
+    pub fn is_equal(&self, mpa2: &MultiPwAff) -> bool {
+        let mpa1 = self;
+        let mpa1 = mpa1.ptr;
+        let mpa2 = mpa2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_is_equal(mpa1, mpa2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_reset_range_tuple_id`.
-    pub fn reset_range_tuple_id(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_reset_range_tuple_id(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
+    /// Wraps `isl_multi_pw_aff_isa_multi_aff`.
+    pub fn isa_multi_aff(&self) -> bool {
+        let mpa = self;
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_isa_multi_aff(mpa) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_domain_reverse`.
-    pub fn domain_reverse(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_domain_reverse(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_list`.
-    pub fn get_list(&self) -> PwAffList {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_list(multi) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_pullback_multi_pw_aff`.
-    pub fn pullback_multi_pw_aff(self, mpa2: MultiPwAff) -> MultiPwAff {
+    /// Wraps `isl_multi_pw_aff_lex_ge_map`.
+    pub fn lex_ge_map(self, mpa2: MultiPwAff) -> Map {
         let mpa1 = self;
         let mut mpa1 = mpa1;
         mpa1.do_not_free_on_drop();
@@ -397,76 +987,121 @@ impl MultiPwAff {
         let mut mpa2 = mpa2;
         mpa2.do_not_free_on_drop();
         let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_pullback_multi_pw_aff(mpa1, mpa2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_pullback_multi_aff`.
-    pub fn pullback_multi_aff(self, ma: MultiAff) -> MultiPwAff {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let mut ma = ma;
-        ma.do_not_free_on_drop();
-        let ma = ma.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_pullback_multi_aff(mpa, ma) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_set_at`.
-    pub fn set_at(self, pos: i32, el: PwAff) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_set_at(multi, pos, el) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_scale_down_val`.
-    pub fn scale_down_val(self, v: Val) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_down_val(multi, v) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_as_map`.
-    pub fn as_map(self) -> Map {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_as_map(mpa) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_ge_map(mpa1, mpa2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_identity_multi_pw_aff`.
-    pub fn identity_multi_pw_aff(self) -> MultiPwAff {
+    /// Wraps `isl_multi_pw_aff_lex_gt_map`.
+    pub fn lex_gt_map(self, mpa2: MultiPwAff) -> Map {
+        let mpa1 = self;
+        let mut mpa1 = mpa1;
+        mpa1.do_not_free_on_drop();
+        let mpa1 = mpa1.ptr;
+        let mut mpa2 = mpa2;
+        mpa2.do_not_free_on_drop();
+        let mpa2 = mpa2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_gt_map(mpa1, mpa2) };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_lex_le_map`.
+    pub fn lex_le_map(self, mpa2: MultiPwAff) -> Map {
+        let mpa1 = self;
+        let mut mpa1 = mpa1;
+        mpa1.do_not_free_on_drop();
+        let mpa1 = mpa1.ptr;
+        let mut mpa2 = mpa2;
+        mpa2.do_not_free_on_drop();
+        let mpa2 = mpa2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_le_map(mpa1, mpa2) };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_lex_lt_map`.
+    pub fn lex_lt_map(self, mpa2: MultiPwAff) -> Map {
+        let mpa1 = self;
+        let mut mpa1 = mpa1;
+        mpa1.do_not_free_on_drop();
+        let mpa1 = mpa1.ptr;
+        let mut mpa2 = mpa2;
+        mpa2.do_not_free_on_drop();
+        let mpa2 = mpa2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_lt_map(mpa1, mpa2) };
+        let isl_rs_result = Map { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_max`.
+    pub fn max(self, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_max(multi1, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_max_multi_val`.
+    pub fn max_multi_val(self) -> MultiVal {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_max_multi_val(mpa) };
+        let isl_rs_result = MultiVal { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_min`.
+    pub fn min(self, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_min(multi1, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_min_multi_val`.
+    pub fn min_multi_val(self) -> MultiVal {
+        let mpa = self;
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_min_multi_val(mpa) };
+        let isl_rs_result = MultiVal { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_mod_multi_val`.
+    pub fn mod_multi_val(self, mv: MultiVal) -> MultiPwAff {
         let multi = self;
         let mut multi = multi;
         multi.do_not_free_on_drop();
         let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_identity_multi_pw_aff(multi) };
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_mod_multi_val(multi, mv) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -489,309 +1124,13 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_min`.
-    pub fn min(self, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_min(multi1, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_factor_range`.
-    pub fn factor_range(self) -> MultiPwAff {
+    /// Wraps `isl_multi_pw_aff_neg`.
+    pub fn neg(self) -> MultiPwAff {
         let multi = self;
         let mut multi = multi;
         multi.do_not_free_on_drop();
         let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_factor_range(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_bind`.
-    pub fn bind(self, tuple: MultiId) -> Set {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let mut tuple = tuple;
-        tuple.do_not_free_on_drop();
-        let tuple = tuple.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_bind(mpa, tuple) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_bind_domain_wrapped_domain`.
-    pub fn bind_domain_wrapped_domain(self, tuple: MultiId) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut tuple = tuple;
-        tuple.do_not_free_on_drop();
-        let tuple = tuple.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_bind_domain_wrapped_domain(multi, tuple) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_space`.
-    pub fn get_space(&self) -> Space {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_space(multi) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_range_splice`.
-    pub fn range_splice(self, pos: u32, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_range_splice(multi1, pos, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_set_pw_aff`.
-    pub fn set_pw_aff(self, pos: i32, el: PwAff) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_set_pw_aff(multi, pos, el) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_insert_dims(multi, type_, first, n) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_ctx(multi) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_min_multi_val`.
-    pub fn min_multi_val(self) -> MultiVal {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_min_multi_val(mpa) };
-        let isl_rs_result = MultiVal { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_from_pw_aff`.
-    pub fn from_pw_aff(pa: PwAff) -> MultiPwAff {
-        let mut pa = pa;
-        pa.do_not_free_on_drop();
-        let pa = pa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_from_pw_aff(pa) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_flatten_range`.
-    pub fn flatten_range(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_flatten_range(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_scale_multi_val`.
-    pub fn scale_multi_val(self, mv: MultiVal) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_multi_val(multi, mv) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_from_multi_aff`.
-    pub fn from_multi_aff(ma: MultiAff) -> MultiPwAff {
-        let mut ma = ma;
-        ma.do_not_free_on_drop();
-        let ma = ma.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_from_multi_aff(ma) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_range_factor_domain`.
-    pub fn range_factor_domain(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_range_factor_domain(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_gist_params`.
-    pub fn gist_params(self, set: Set) -> MultiPwAff {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let mut set = set;
-        set.do_not_free_on_drop();
-        let set = set.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_gist_params(mpa, set) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_bind_domain`.
-    pub fn bind_domain(self, tuple: MultiId) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut tuple = tuple;
-        tuple.do_not_free_on_drop();
-        let tuple = tuple.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_bind_domain(multi, tuple) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_copy`.
-    pub fn copy(&self) -> MultiPwAff {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_copy(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_pw_aff`.
-    pub fn get_pw_aff(&self, pos: i32) -> PwAff {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_pw_aff(multi, pos) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_gist`.
-    pub fn gist(self, set: Set) -> MultiPwAff {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let mut set = set;
-        set.do_not_free_on_drop();
-        let set = set.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_gist(mpa, set) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_dim(multi, type_) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_set_dim_id`.
-    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_set_dim_id(multi, type_, pos, id) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_involves_param_id`.
-    pub fn involves_param_id(&self, id: &Id) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_involves_param_id(multi, id) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_identity`.
-    pub fn identity(space: Space) -> MultiPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_identity(space) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_neg(multi) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -803,479 +1142,6 @@ impl MultiPwAff {
         let multi1 = multi1.ptr;
         let multi2 = multi2.ptr;
         let isl_rs_result = unsafe { isl_multi_pw_aff_plain_is_equal(multi1, multi2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_as_multi_aff`.
-    pub fn as_multi_aff(self) -> MultiAff {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_as_multi_aff(mpa) };
-        let isl_rs_result = MultiAff { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_tuple_id`.
-    pub fn get_tuple_id(&self, type_: DimType) -> Id {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_tuple_id(multi, type_) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_scale_down_multi_val`.
-    pub fn scale_down_multi_val(self, mv: MultiVal) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_down_multi_val(multi, mv) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_sub`.
-    pub fn sub(self, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_sub(multi1, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_unbind_params_insert_domain`.
-    pub fn unbind_params_insert_domain(self, domain: MultiId) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_unbind_params_insert_domain(multi, domain) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_reset_user`.
-    pub fn reset_user(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_reset_user(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_from_range`.
-    pub fn from_range(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_from_range(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_dump`.
-    pub fn dump(&self) -> () {
-        let mpa = self;
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_dump(mpa) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_as_set`.
-    pub fn as_set(self) -> Set {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_as_set(mpa) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_is_equal`.
-    pub fn is_equal(&self, mpa2: &MultiPwAff) -> bool {
-        let mpa1 = self;
-        let mpa1 = mpa1.ptr;
-        let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_is_equal(mpa1, mpa2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_max`.
-    pub fn max(self, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_max(multi1, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_range_factor_range`.
-    pub fn range_factor_range(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_range_factor_range(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_domain_space`.
-    pub fn get_domain_space(&self) -> Space {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_domain_space(multi) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_tuple_name`.
-    pub fn get_tuple_name(&self, type_: DimType) -> &str {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_tuple_name(multi, type_) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_add`.
-    pub fn add(self, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_add(multi1, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_reset_tuple_id`.
-    pub fn reset_tuple_id(self, type_: DimType) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_reset_tuple_id(multi, type_) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_isa_multi_aff`.
-    pub fn isa_multi_aff(&self) -> bool {
-        let mpa = self;
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_isa_multi_aff(mpa) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_scale_val`.
-    pub fn scale_val(self, v: Val) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_val(multi, v) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_set_tuple_id`.
-    pub fn set_tuple_id(self, type_: DimType, id: Id) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_set_tuple_id(multi, type_, id) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_free`.
-    pub fn free(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_free(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let name = CString::new(name).unwrap();
-        let name = name.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_find_dim_by_name(multi, type_, name) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_align_params`.
-    pub fn align_params(self, model: Space) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut model = model;
-        model.do_not_free_on_drop();
-        let model = model.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_align_params(multi, model) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_get_range_tuple_id`.
-    pub fn get_range_tuple_id(&self) -> Id {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_get_range_tuple_id(multi) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_from_pw_multi_aff`.
-    pub fn from_pw_multi_aff(pma: PwMultiAff) -> MultiPwAff {
-        let mut pma = pma;
-        pma.do_not_free_on_drop();
-        let pma = pma.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_from_pw_multi_aff(pma) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_add_dims(multi, type_, n) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_insert_domain`.
-    pub fn insert_domain(self, domain: Space) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_insert_domain(multi, domain) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_drop_dims(multi, type_, first, n) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_has_tuple_id`.
-    pub fn has_tuple_id(&self, type_: DimType) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_has_tuple_id(multi, type_) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_flat_range_product`.
-    pub fn flat_range_product(self, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_flat_range_product(multi1, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_project_domain_on_params`.
-    pub fn project_domain_on_params(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_project_domain_on_params(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_add_constant_multi_val`.
-    pub fn add_constant_multi_val(self, mv: MultiVal) -> MultiPwAff {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_add_constant_multi_val(mpa, mv) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let s = CString::new(s).unwrap();
-        let s = s.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_set_dim_name(multi, type_, pos, s) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_has_range_tuple_id`.
-    pub fn has_range_tuple_id(&self) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_has_range_tuple_id(multi) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_lex_lt_map`.
-    pub fn lex_lt_map(self, mpa2: MultiPwAff) -> Map {
-        let mpa1 = self;
-        let mut mpa1 = mpa1;
-        mpa1.do_not_free_on_drop();
-        let mpa1 = mpa1.ptr;
-        let mut mpa2 = mpa2;
-        mpa2.do_not_free_on_drop();
-        let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_lt_map(mpa1, mpa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_range_product`.
-    pub fn range_product(self, multi2: MultiPwAff) -> MultiPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_range_product(multi1, multi2) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_range_is_wrapping`.
-    pub fn range_is_wrapping(&self) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_range_is_wrapping(multi) };
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
@@ -1299,72 +1165,35 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_from_aff`.
-    pub fn from_aff(aff: Aff) -> MultiPwAff {
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_from_aff(aff) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_set_tuple_name`.
-    pub fn set_tuple_name(self, type_: DimType, s: &str) -> MultiPwAff {
+    /// Wraps `isl_multi_pw_aff_project_domain_on_params`.
+    pub fn project_domain_on_params(self) -> MultiPwAff {
         let multi = self;
         let mut multi = multi;
         multi.do_not_free_on_drop();
         let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let s = CString::new(s).unwrap();
-        let s = s.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_set_tuple_name(multi, type_, s) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_project_domain_on_params(multi) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_lex_ge_map`.
-    pub fn lex_ge_map(self, mpa2: MultiPwAff) -> Map {
-        let mpa1 = self;
-        let mut mpa1 = mpa1;
-        mpa1.do_not_free_on_drop();
-        let mpa1 = mpa1.ptr;
-        let mut mpa2 = mpa2;
-        mpa2.do_not_free_on_drop();
-        let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_ge_map(mpa1, mpa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_identity_on_domain_space`.
-    pub fn identity_on_domain_space(space: Space) -> MultiPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_identity_on_domain_space(space) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_max_multi_val`.
-    pub fn max_multi_val(self) -> MultiVal {
+    /// Wraps `isl_multi_pw_aff_pullback_multi_aff`.
+    pub fn pullback_multi_aff(self, ma: MultiAff) -> MultiPwAff {
         let mpa = self;
         let mut mpa = mpa;
         mpa.do_not_free_on_drop();
         let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_max_multi_val(mpa) };
-        let isl_rs_result = MultiVal { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
+        let mut ma = ma;
+        ma.do_not_free_on_drop();
+        let ma = ma.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_pullback_multi_aff(mpa, ma) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_lex_gt_map`.
-    pub fn lex_gt_map(self, mpa2: MultiPwAff) -> Map {
+    /// Wraps `isl_multi_pw_aff_pullback_multi_pw_aff`.
+    pub fn pullback_multi_pw_aff(self, mpa2: MultiPwAff) -> MultiPwAff {
         let mpa1 = self;
         let mut mpa1 = mpa1;
         mpa1.do_not_free_on_drop();
@@ -1372,75 +1201,7 @@ impl MultiPwAff {
         let mut mpa2 = mpa2;
         mpa2.do_not_free_on_drop();
         let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_gt_map(mpa1, mpa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_neg`.
-    pub fn neg(self) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_neg(multi) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_involves_param_id_list`.
-    pub fn involves_param_id_list(&self, list: &IdList) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_involves_param_id_list(multi, list) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_coalesce`.
-    pub fn coalesce(self) -> MultiPwAff {
-        let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_coalesce(mpa) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_mod_multi_val`.
-    pub fn mod_multi_val(self, mv: MultiVal) -> MultiPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_mod_multi_val(multi, mv) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_union_add`.
-    pub fn union_add(self, mpa2: MultiPwAff) -> MultiPwAff {
-        let mpa1 = self;
-        let mut mpa1 = mpa1;
-        mpa1.do_not_free_on_drop();
-        let mpa1 = mpa1.ptr;
-        let mut mpa2 = mpa2;
-        mpa2.do_not_free_on_drop();
-        let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_union_add(mpa1, mpa2) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_pullback_multi_pw_aff(mpa1, mpa2) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -1461,6 +1222,73 @@ impl MultiPwAff {
         isl_rs_result
     }
 
+    /// Wraps `isl_multi_pw_aff_range_factor_domain`.
+    pub fn range_factor_domain(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_range_factor_domain(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_range_factor_range`.
+    pub fn range_factor_range(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_range_factor_range(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_range_is_wrapping`.
+    pub fn range_is_wrapping(&self) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_range_is_wrapping(multi) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_range_product`.
+    pub fn range_product(self, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_range_product(multi1, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_range_splice`.
+    pub fn range_splice(self, pos: u32, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_range_splice(multi1, pos, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_multi_pw_aff_read_from_str`.
     pub fn read_from_str(ctx: &Context, str_: &str) -> MultiPwAff {
         let ctx = ctx.ptr;
@@ -1472,53 +1300,159 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_find_dim_by_id`.
-    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> i32 {
+    /// Wraps `isl_multi_pw_aff_reset_range_tuple_id`.
+    pub fn reset_range_tuple_id(self) -> MultiPwAff {
         let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_reset_range_tuple_id(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_reset_tuple_id`.
+    pub fn reset_tuple_id(self, type_: DimType) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
         let multi = multi.ptr;
         let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_reset_tuple_id(multi, type_) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_reset_user`.
+    pub fn reset_user(self) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_reset_user(multi) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_scale_down_multi_val`.
+    pub fn scale_down_multi_val(self, mv: MultiVal) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_down_multi_val(multi, mv) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_scale_down_val`.
+    pub fn scale_down_val(self, v: Val) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_down_val(multi, v) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_scale_multi_val`.
+    pub fn scale_multi_val(self, mv: MultiVal) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_multi_val(multi, mv) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_scale_val`.
+    pub fn scale_val(self, v: Val) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_scale_val(multi, v) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_set_at`.
+    pub fn set_at(self, pos: i32, el: PwAff) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_set_at(multi, pos, el) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_set_dim_id`.
+    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let mut id = id;
+        id.do_not_free_on_drop();
         let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_find_dim_by_id(multi, type_, id) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_set_dim_id(multi, type_, pos, id) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_is_cst`.
-    pub fn is_cst(&self) -> bool {
-        let mpa = self;
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_is_cst(mpa) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
+    /// Wraps `isl_multi_pw_aff_set_dim_name`.
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let s = CString::new(s).unwrap();
+        let s = s.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_set_dim_name(multi, type_, pos, s) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_lex_le_map`.
-    pub fn lex_le_map(self, mpa2: MultiPwAff) -> Map {
-        let mpa1 = self;
-        let mut mpa1 = mpa1;
-        mpa1.do_not_free_on_drop();
-        let mpa1 = mpa1.ptr;
-        let mut mpa2 = mpa2;
-        mpa2.do_not_free_on_drop();
-        let mpa2 = mpa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_lex_le_map(mpa1, mpa2) };
-        let isl_rs_result = Map { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_pw_aff_from_pw_aff_list`.
-    pub fn from_pw_aff_list(space: Space, list: PwAffList) -> MultiPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_from_pw_aff_list(space, list) };
+    /// Wraps `isl_multi_pw_aff_set_pw_aff`.
+    pub fn set_pw_aff(self, pos: i32, el: PwAff) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_set_pw_aff(multi, pos, el) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -1539,13 +1473,42 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_to_str`.
-    pub fn to_str(&self) -> &str {
-        let mpa = self;
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_to_str(mpa) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
+    /// Wraps `isl_multi_pw_aff_set_tuple_id`.
+    pub fn set_tuple_id(self, type_: DimType, id: Id) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_set_tuple_id(multi, type_, id) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_set_tuple_name`.
+    pub fn set_tuple_name(self, type_: DimType, s: &str) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let s = CString::new(s).unwrap();
+        let s = s.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_pw_aff_set_tuple_name(multi, type_, s) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_size`.
+    pub fn size(&self) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_size(multi) };
         isl_rs_result
     }
 
@@ -1564,30 +1527,67 @@ impl MultiPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_pw_aff_involves_dims(multi, type_, first, n) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
+    /// Wraps `isl_multi_pw_aff_sub`.
+    pub fn sub(self, multi2: MultiPwAff) -> MultiPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_sub(multi1, multi2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_pw_aff_intersect_params`.
-    pub fn intersect_params(self, set: Set) -> MultiPwAff {
+    /// Wraps `isl_multi_pw_aff_to_str`.
+    pub fn to_str(&self) -> &str {
         let mpa = self;
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
         let mpa = mpa.ptr;
-        let mut set = set;
-        set.do_not_free_on_drop();
-        let set = set.ptr;
-        let isl_rs_result = unsafe { isl_multi_pw_aff_intersect_params(mpa, set) };
+        let isl_rs_result = unsafe { isl_multi_pw_aff_to_str(mpa) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_unbind_params_insert_domain`.
+    pub fn unbind_params_insert_domain(self, domain: MultiId) -> MultiPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_unbind_params_insert_domain(multi, domain) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_union_add`.
+    pub fn union_add(self, mpa2: MultiPwAff) -> MultiPwAff {
+        let mpa1 = self;
+        let mut mpa1 = mpa1;
+        mpa1.do_not_free_on_drop();
+        let mpa1 = mpa1.ptr;
+        let mut mpa2 = mpa2;
+        mpa2.do_not_free_on_drop();
+        let mpa2 = mpa2.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_union_add(mpa1, mpa2) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_pw_aff_zero`.
+    pub fn zero(space: Space) -> MultiPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_multi_pw_aff_zero(space) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result

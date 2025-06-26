@@ -14,45 +14,42 @@ pub struct UnionAccessInfo {
 
 extern "C" {
 
-    fn isl_union_access_info_set_kill(access: uintptr_t, kill: uintptr_t) -> uintptr_t;
+    fn isl_union_access_info_compute_flow(access: uintptr_t) -> uintptr_t;
 
     fn isl_union_access_info_copy(access: uintptr_t) -> uintptr_t;
 
-    fn isl_union_access_info_set_schedule(access: uintptr_t, schedule: uintptr_t) -> uintptr_t;
+    fn isl_union_access_info_free(access: uintptr_t) -> uintptr_t;
 
     fn isl_union_access_info_from_sink(sink: uintptr_t) -> uintptr_t;
 
     fn isl_union_access_info_get_ctx(access: uintptr_t) -> uintptr_t;
 
+    fn isl_union_access_info_set_kill(access: uintptr_t, kill: uintptr_t) -> uintptr_t;
+
     fn isl_union_access_info_set_may_source(access: uintptr_t, may_source: uintptr_t) -> uintptr_t;
-
-    fn isl_union_access_info_set_schedule_map(access: uintptr_t, schedule_map: uintptr_t)
-                                              -> uintptr_t;
-
-    fn isl_union_access_info_free(access: uintptr_t) -> uintptr_t;
-
-    fn isl_union_access_info_compute_flow(access: uintptr_t) -> uintptr_t;
-
-    fn isl_union_access_info_to_str(access: uintptr_t) -> *const c_char;
 
     fn isl_union_access_info_set_must_source(access: uintptr_t, must_source: uintptr_t)
                                              -> uintptr_t;
 
+    fn isl_union_access_info_set_schedule(access: uintptr_t, schedule: uintptr_t) -> uintptr_t;
+
+    fn isl_union_access_info_set_schedule_map(access: uintptr_t, schedule_map: uintptr_t)
+                                              -> uintptr_t;
+
+    fn isl_union_access_info_to_str(access: uintptr_t) -> *const c_char;
+
 }
 
 impl UnionAccessInfo {
-    /// Wraps `isl_union_access_info_set_kill`.
-    pub fn set_kill(self, kill: UnionMap) -> UnionAccessInfo {
+    /// Wraps `isl_union_access_info_compute_flow`.
+    pub fn compute_flow(self) -> UnionFlow {
         let access = self;
         let mut access = access;
         access.do_not_free_on_drop();
         let access = access.ptr;
-        let mut kill = kill;
-        kill.do_not_free_on_drop();
-        let kill = kill.ptr;
-        let isl_rs_result = unsafe { isl_union_access_info_set_kill(access, kill) };
-        let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_union_access_info_compute_flow(access) };
+        let isl_rs_result = UnionFlow { ptr: isl_rs_result,
+                                        should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -66,16 +63,13 @@ impl UnionAccessInfo {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_access_info_set_schedule`.
-    pub fn set_schedule(self, schedule: Schedule) -> UnionAccessInfo {
+    /// Wraps `isl_union_access_info_free`.
+    pub fn free(self) -> UnionAccessInfo {
         let access = self;
         let mut access = access;
         access.do_not_free_on_drop();
         let access = access.ptr;
-        let mut schedule = schedule;
-        schedule.do_not_free_on_drop();
-        let schedule = schedule.ptr;
-        let isl_rs_result = unsafe { isl_union_access_info_set_schedule(access, schedule) };
+        let isl_rs_result = unsafe { isl_union_access_info_free(access) };
         let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
                                               should_free_on_drop: true };
         isl_rs_result
@@ -102,6 +96,21 @@ impl UnionAccessInfo {
         isl_rs_result
     }
 
+    /// Wraps `isl_union_access_info_set_kill`.
+    pub fn set_kill(self, kill: UnionMap) -> UnionAccessInfo {
+        let access = self;
+        let mut access = access;
+        access.do_not_free_on_drop();
+        let access = access.ptr;
+        let mut kill = kill;
+        kill.do_not_free_on_drop();
+        let kill = kill.ptr;
+        let isl_rs_result = unsafe { isl_union_access_info_set_kill(access, kill) };
+        let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_union_access_info_set_may_source`.
     pub fn set_may_source(self, may_source: UnionMap) -> UnionAccessInfo {
         let access = self;
@@ -112,6 +121,36 @@ impl UnionAccessInfo {
         may_source.do_not_free_on_drop();
         let may_source = may_source.ptr;
         let isl_rs_result = unsafe { isl_union_access_info_set_may_source(access, may_source) };
+        let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_access_info_set_must_source`.
+    pub fn set_must_source(self, must_source: UnionMap) -> UnionAccessInfo {
+        let access = self;
+        let mut access = access;
+        access.do_not_free_on_drop();
+        let access = access.ptr;
+        let mut must_source = must_source;
+        must_source.do_not_free_on_drop();
+        let must_source = must_source.ptr;
+        let isl_rs_result = unsafe { isl_union_access_info_set_must_source(access, must_source) };
+        let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_access_info_set_schedule`.
+    pub fn set_schedule(self, schedule: Schedule) -> UnionAccessInfo {
+        let access = self;
+        let mut access = access;
+        access.do_not_free_on_drop();
+        let access = access.ptr;
+        let mut schedule = schedule;
+        schedule.do_not_free_on_drop();
+        let schedule = schedule.ptr;
+        let isl_rs_result = unsafe { isl_union_access_info_set_schedule(access, schedule) };
         let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
                                               should_free_on_drop: true };
         isl_rs_result
@@ -132,30 +171,6 @@ impl UnionAccessInfo {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_access_info_free`.
-    pub fn free(self) -> UnionAccessInfo {
-        let access = self;
-        let mut access = access;
-        access.do_not_free_on_drop();
-        let access = access.ptr;
-        let isl_rs_result = unsafe { isl_union_access_info_free(access) };
-        let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_access_info_compute_flow`.
-    pub fn compute_flow(self) -> UnionFlow {
-        let access = self;
-        let mut access = access;
-        access.do_not_free_on_drop();
-        let access = access.ptr;
-        let isl_rs_result = unsafe { isl_union_access_info_compute_flow(access) };
-        let isl_rs_result = UnionFlow { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_union_access_info_to_str`.
     pub fn to_str(&self) -> &str {
         let access = self;
@@ -163,21 +178,6 @@ impl UnionAccessInfo {
         let isl_rs_result = unsafe { isl_union_access_info_to_str(access) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_access_info_set_must_source`.
-    pub fn set_must_source(self, must_source: UnionMap) -> UnionAccessInfo {
-        let access = self;
-        let mut access = access;
-        access.do_not_free_on_drop();
-        let access = access.ptr;
-        let mut must_source = must_source;
-        must_source.do_not_free_on_drop();
-        let must_source = must_source.ptr;
-        let isl_rs_result = unsafe { isl_union_access_info_set_must_source(access, must_source) };
-        let isl_rs_result = UnionAccessInfo { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
         isl_rs_result
     }
 

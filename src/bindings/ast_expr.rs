@@ -14,162 +14,179 @@ pub struct ASTExpr {
 
 extern "C" {
 
-    fn isl_ast_expr_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_access(array: uintptr_t, indices: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_list_clear(list: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_add(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_address_of(expr: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_and(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_and_then(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_eq(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_lt(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_to_str(expr: uintptr_t) -> *const c_char;
-
-    fn isl_ast_expr_int_get_val(expr: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_le(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_substitute_ids(expr: uintptr_t, id2expr: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_get_ctx(expr: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_sub(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_address_of(expr: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_ast_expr_list_copy(list: uintptr_t) -> uintptr_t;
-
     fn isl_ast_expr_call(function: uintptr_t, arguments: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_get_op_type(expr: uintptr_t) -> i32;
-
-    fn isl_ast_expr_get_val(expr: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_ge(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_get_op_arg(expr: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_ast_expr_op_get_n_arg(expr: uintptr_t) -> i32;
-
-    fn isl_ast_expr_access(array: uintptr_t, indices: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_dump(list: uintptr_t) -> ();
-
-    fn isl_ast_expr_get_op_n_arg(expr: uintptr_t) -> i32;
-
-    fn isl_ast_expr_from_val(v: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_ast_expr_list_from_ast_expr(el: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_copy(expr: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_div(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_dump(expr: uintptr_t) -> ();
 
-    fn isl_ast_expr_pdiv_q(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_mul(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_to_C_str(expr: uintptr_t) -> *const c_char;
-
-    fn isl_ast_expr_from_id(id: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_op_get_arg(expr: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_ast_expr_op_type_print_macro(type_: i32, p: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_to_str(list: uintptr_t) -> *const c_char;
-
-    fn isl_ast_expr_gt(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_or_else(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_id_get_id(expr: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_ast_expr_op_get_type(expr: uintptr_t) -> i32;
-
-    fn isl_ast_expr_list_set_ast_expr(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_add(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_get_ctx(list: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_eq(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_free(expr: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_or(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_from_id(id: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_copy(expr: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_from_val(v: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_ge(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_get_ctx(expr: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_get_id(expr: uintptr_t) -> uintptr_t;
 
+    fn isl_ast_expr_get_op_arg(expr: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_ast_expr_get_op_n_arg(expr: uintptr_t) -> i32;
+
+    fn isl_ast_expr_get_op_type(expr: uintptr_t) -> i32;
+
+    fn isl_ast_expr_get_type(expr: uintptr_t) -> i32;
+
+    fn isl_ast_expr_get_val(expr: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_gt(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_id_get_id(expr: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_int_get_val(expr: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_is_equal(expr1: uintptr_t, expr2: uintptr_t) -> i32;
+
+    fn isl_ast_expr_le(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+
+    fn isl_ast_expr_list_clear(list: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_copy(list: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_ast_expr_list_dump(list: uintptr_t) -> ();
+
+    fn isl_ast_expr_list_free(list: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_from_ast_expr(el: uintptr_t) -> uintptr_t;
+
     fn isl_ast_expr_list_get_ast_expr(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_ast_expr_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_ast_expr_list_get_ctx(list: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_n_ast_expr(list: uintptr_t) -> i32;
+
+    fn isl_ast_expr_list_reverse(list: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_set_ast_expr(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_list_size(list: uintptr_t) -> i32;
+
+    fn isl_ast_expr_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
+
+    fn isl_ast_expr_list_to_str(list: uintptr_t) -> *const c_char;
+
+    fn isl_ast_expr_lt(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_mul(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_neg(expr: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_op_get_arg(expr: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_ast_expr_op_get_n_arg(expr: uintptr_t) -> i32;
+
+    fn isl_ast_expr_op_get_type(expr: uintptr_t) -> i32;
+
+    fn isl_ast_expr_op_type_print_macro(type_: i32, p: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_op_type_set_print_name(p: uintptr_t, type_: i32, name: *const c_char)
                                            -> uintptr_t;
 
-    fn isl_ast_expr_to_list(el: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_or(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_list_size(list: uintptr_t) -> i32;
+    fn isl_ast_expr_or_else(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_get_type(expr: uintptr_t) -> i32;
-
-    fn isl_ast_expr_set_op_arg(expr: uintptr_t, pos: i32, arg: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_print_macros(expr: uintptr_t, p: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_ast_expr_list_n_ast_expr(list: uintptr_t) -> i32;
-
-    fn isl_ast_expr_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
+    fn isl_ast_expr_pdiv_q(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
     fn isl_ast_expr_pdiv_r(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_is_equal(expr1: uintptr_t, expr2: uintptr_t) -> i32;
+    fn isl_ast_expr_print_macros(expr: uintptr_t, p: uintptr_t) -> uintptr_t;
 
-    fn isl_ast_expr_neg(expr: uintptr_t) -> uintptr_t;
+    fn isl_ast_expr_set_op_arg(expr: uintptr_t, pos: i32, arg: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_sub(expr1: uintptr_t, expr2: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_substitute_ids(expr: uintptr_t, id2expr: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_to_C_str(expr: uintptr_t) -> *const c_char;
+
+    fn isl_ast_expr_to_list(el: uintptr_t) -> uintptr_t;
+
+    fn isl_ast_expr_to_str(expr: uintptr_t) -> *const c_char;
 
 }
 
 impl ASTExpr {
-    /// Wraps `isl_ast_expr_list_insert`.
-    pub fn list_insert(list: ASTExprList, pos: u32, el: ASTExpr) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_insert(list, pos, el) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
+    /// Wraps `isl_ast_expr_access`.
+    pub fn access(self, indices: ASTExprList) -> ASTExpr {
+        let array = self;
+        let mut array = array;
+        array.do_not_free_on_drop();
+        let array = array.ptr;
+        let mut indices = indices;
+        indices.do_not_free_on_drop();
+        let indices = indices.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_access(array, indices) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_list_clear`.
-    pub fn list_clear(list: ASTExprList) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_clear(list) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
+    /// Wraps `isl_ast_expr_add`.
+    pub fn add(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_add(expr1, expr2) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_address_of`.
+    pub fn address_of(self) -> ASTExpr {
+        let expr = self;
+        let mut expr = expr;
+        expr.do_not_free_on_drop();
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_address_of(expr) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -203,141 +220,6 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_eq`.
-    pub fn eq(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_eq(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_lt`.
-    pub fn lt(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_lt(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_to_str`.
-    pub fn to_str(&self) -> &str {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_to_str(expr) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_int_get_val`.
-    pub fn int_get_val(&self) -> Val {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_int_get_val(expr) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_le`.
-    pub fn le(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_le(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_substitute_ids`.
-    pub fn substitute_ids(self, id2expr: IdToASTExpr) -> ASTExpr {
-        let expr = self;
-        let mut expr = expr;
-        expr.do_not_free_on_drop();
-        let expr = expr.ptr;
-        let mut id2expr = id2expr;
-        id2expr.do_not_free_on_drop();
-        let id2expr = id2expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_substitute_ids(expr, id2expr) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_ctx(expr) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_sub`.
-    pub fn sub(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_sub(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_address_of`.
-    pub fn address_of(self) -> ASTExpr {
-        let expr = self;
-        let mut expr = expr;
-        expr.do_not_free_on_drop();
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_address_of(expr) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_get_at`.
-    pub fn list_get_at(list: &ASTExprList, index: i32) -> ASTExpr {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_get_at(list, index) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_copy`.
-    pub fn list_copy(list: &ASTExprList) -> ASTExprList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_copy(list) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_ast_expr_call`.
     pub fn call(self, arguments: ASTExprList) -> ASTExpr {
         let function = self;
@@ -353,131 +235,13 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_get_op_type`.
-    pub fn get_op_type(&self) -> ASTExprOpType {
+    /// Wraps `isl_ast_expr_copy`.
+    pub fn copy(&self) -> ASTExpr {
         let expr = self;
         let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_op_type(expr) };
-        let isl_rs_result = ASTExprOpType::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_get_val`.
-    pub fn get_val(&self) -> Val {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_val(expr) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_ge`.
-    pub fn ge(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_ge(expr1, expr2) };
+        let isl_rs_result = unsafe { isl_ast_expr_copy(expr) };
         let isl_rs_result = ASTExpr { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_set_at`.
-    pub fn list_set_at(list: ASTExprList, index: i32, el: ASTExpr) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_set_at(list, index, el) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_get_op_arg`.
-    pub fn get_op_arg(&self, pos: i32) -> ASTExpr {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_op_arg(expr, pos) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_op_get_n_arg`.
-    pub fn op_get_n_arg(&self) -> i32 {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_op_get_n_arg(expr) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_access`.
-    pub fn access(self, indices: ASTExprList) -> ASTExpr {
-        let array = self;
-        let mut array = array;
-        array.do_not_free_on_drop();
-        let array = array.ptr;
-        let mut indices = indices;
-        indices.do_not_free_on_drop();
-        let indices = indices.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_access(array, indices) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_dump`.
-    pub fn list_dump(list: &ASTExprList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_get_op_n_arg`.
-    pub fn get_op_n_arg(&self) -> i32 {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_op_n_arg(expr) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_from_val`.
-    pub fn from_val(v: Val) -> ASTExpr {
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_from_val(v) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> ASTExprList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_alloc(ctx, n) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_from_ast_expr`.
-    pub fn list_from_ast_expr(self) -> ASTExprList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_from_ast_expr(el) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -504,8 +268,8 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_pdiv_q`.
-    pub fn pdiv_q(self, expr2: ASTExpr) -> ASTExpr {
+    /// Wraps `isl_ast_expr_eq`.
+    pub fn eq(self, expr2: ASTExpr) -> ASTExpr {
         let expr1 = self;
         let mut expr1 = expr1;
         expr1.do_not_free_on_drop();
@@ -513,7 +277,413 @@ impl ASTExpr {
         let mut expr2 = expr2;
         expr2.do_not_free_on_drop();
         let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_pdiv_q(expr1, expr2) };
+        let isl_rs_result = unsafe { isl_ast_expr_eq(expr1, expr2) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_free`.
+    pub fn free(self) -> ASTExpr {
+        let expr = self;
+        let mut expr = expr;
+        expr.do_not_free_on_drop();
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_free(expr) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_from_id`.
+    pub fn from_id(id: Id) -> ASTExpr {
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_from_id(id) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_from_val`.
+    pub fn from_val(v: Val) -> ASTExpr {
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_from_val(v) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_ge`.
+    pub fn ge(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_ge(expr1, expr2) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_ctx(expr) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_id`.
+    pub fn get_id(&self) -> Id {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_id(expr) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_op_arg`.
+    pub fn get_op_arg(&self, pos: i32) -> ASTExpr {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_op_arg(expr, pos) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_op_n_arg`.
+    pub fn get_op_n_arg(&self) -> i32 {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_op_n_arg(expr) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_op_type`.
+    pub fn get_op_type(&self) -> ASTExprOpType {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_op_type(expr) };
+        let isl_rs_result = ASTExprOpType::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_type`.
+    pub fn get_type(&self) -> ASTExprType {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_type(expr) };
+        let isl_rs_result = ASTExprType::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_get_val`.
+    pub fn get_val(&self) -> Val {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_get_val(expr) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_gt`.
+    pub fn gt(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_gt(expr1, expr2) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_id_get_id`.
+    pub fn id_get_id(&self) -> Id {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_id_get_id(expr) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_int_get_val`.
+    pub fn int_get_val(&self) -> Val {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_int_get_val(expr) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_is_equal`.
+    pub fn is_equal(&self, expr2: &ASTExpr) -> bool {
+        let expr1 = self;
+        let expr1 = expr1.ptr;
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_is_equal(expr1, expr2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_le`.
+    pub fn le(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_le(expr1, expr2) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_add`.
+    pub fn list_add(list: ASTExprList, el: ASTExpr) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_add(list, el) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_alloc`.
+    pub fn list_alloc(ctx: &Context, n: i32) -> ASTExprList {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_alloc(ctx, n) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_clear`.
+    pub fn list_clear(list: ASTExprList) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_clear(list) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_concat`.
+    pub fn list_concat(list1: ASTExprList, list2: ASTExprList) -> ASTExprList {
+        let mut list1 = list1;
+        list1.do_not_free_on_drop();
+        let list1 = list1.ptr;
+        let mut list2 = list2;
+        list2.do_not_free_on_drop();
+        let list2 = list2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_concat(list1, list2) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_copy`.
+    pub fn list_copy(list: &ASTExprList) -> ASTExprList {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_copy(list) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_drop`.
+    pub fn list_drop(list: ASTExprList, first: u32, n: u32) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_drop(list, first, n) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_dump`.
+    pub fn list_dump(list: &ASTExprList) -> () {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_dump(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_free`.
+    pub fn list_free(list: ASTExprList) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_free(list) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_from_ast_expr`.
+    pub fn list_from_ast_expr(self) -> ASTExprList {
+        let el = self;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_from_ast_expr(el) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_get_ast_expr`.
+    pub fn list_get_ast_expr(list: &ASTExprList, index: i32) -> ASTExpr {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_get_ast_expr(list, index) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_get_at`.
+    pub fn list_get_at(list: &ASTExprList, index: i32) -> ASTExpr {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_get_at(list, index) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_get_ctx`.
+    pub fn list_get_ctx(list: &ASTExprList) -> Context {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_get_ctx(list) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_insert`.
+    pub fn list_insert(list: ASTExprList, pos: u32, el: ASTExpr) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_insert(list, pos, el) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_n_ast_expr`.
+    pub fn list_n_ast_expr(list: &ASTExprList) -> i32 {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_n_ast_expr(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_reverse`.
+    pub fn list_reverse(list: ASTExprList) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_reverse(list) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_set_ast_expr`.
+    pub fn list_set_ast_expr(list: ASTExprList, index: i32, el: ASTExpr) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_set_ast_expr(list, index, el) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_set_at`.
+    pub fn list_set_at(list: ASTExprList, index: i32, el: ASTExpr) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_set_at(list, index, el) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_size`.
+    pub fn list_size(list: &ASTExprList) -> i32 {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_size(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_swap`.
+    pub fn list_swap(list: ASTExprList, pos1: u32, pos2: u32) -> ASTExprList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_swap(list, pos1, pos2) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_list_to_str`.
+    pub fn list_to_str(list: &ASTExprList) -> &str {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_list_to_str(list) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_lt`.
+    pub fn lt(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_lt(expr1, expr2) };
         let isl_rs_result = ASTExpr { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -534,22 +704,13 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_to_C_str`.
-    pub fn to_C_str(&self) -> &str {
+    /// Wraps `isl_ast_expr_neg`.
+    pub fn neg(self) -> ASTExpr {
         let expr = self;
+        let mut expr = expr;
+        expr.do_not_free_on_drop();
         let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_to_C_str(expr) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_from_id`.
-    pub fn from_id(id: Id) -> ASTExpr {
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_from_id(id) };
+        let isl_rs_result = unsafe { isl_ast_expr_neg(expr) };
         let isl_rs_result = ASTExpr { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -565,111 +726,11 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_op_type_print_macro`.
-    pub fn op_type_print_macro(type_: ASTExprOpType, p: Printer) -> Printer {
-        let type_ = type_.to_i32();
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_op_type_print_macro(type_, p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_to_str`.
-    pub fn list_to_str(list: &ASTExprList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_gt`.
-    pub fn gt(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_gt(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_free`.
-    pub fn list_free(list: ASTExprList) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_free(list) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_reverse`.
-    pub fn list_reverse(list: ASTExprList) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_reverse(list) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_or_else`.
-    pub fn or_else(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_or_else(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_id_get_id`.
-    pub fn id_get_id(&self) -> Id {
+    /// Wraps `isl_ast_expr_op_get_n_arg`.
+    pub fn op_get_n_arg(&self) -> i32 {
         let expr = self;
         let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_id_get_id(expr) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_add`.
-    pub fn list_add(list: ASTExprList, el: ASTExpr) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_add(list, el) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_swap`.
-    pub fn list_swap(list: ASTExprList, pos1: u32, pos2: u32) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_swap(list, pos1, pos2) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_ast_expr_op_get_n_arg(expr) };
         isl_rs_result
     }
 
@@ -682,52 +743,28 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_list_set_ast_expr`.
-    pub fn list_set_ast_expr(list: ASTExprList, index: i32, el: ASTExpr) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_set_ast_expr(list, index, el) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_add`.
-    pub fn add(self, expr2: ASTExpr) -> ASTExpr {
-        let expr1 = self;
-        let mut expr1 = expr1;
-        expr1.do_not_free_on_drop();
-        let expr1 = expr1.ptr;
-        let mut expr2 = expr2;
-        expr2.do_not_free_on_drop();
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_add(expr1, expr2) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+    /// Wraps `isl_ast_expr_op_type_print_macro`.
+    pub fn op_type_print_macro(type_: ASTExprOpType, p: Printer) -> Printer {
+        let type_ = type_.to_i32();
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_op_type_print_macro(type_, p) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_list_get_ctx`.
-    pub fn list_get_ctx(list: &ASTExprList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_free`.
-    pub fn free(self) -> ASTExpr {
-        let expr = self;
-        let mut expr = expr;
-        expr.do_not_free_on_drop();
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_free(expr) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+    /// Wraps `isl_ast_expr_op_type_set_print_name`.
+    pub fn op_type_set_print_name(p: Printer, type_: ASTExprOpType, name: &str) -> Printer {
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let type_ = type_.to_i32();
+        let name = CString::new(name).unwrap();
+        let name = name.as_ptr();
+        let isl_rs_result = unsafe { isl_ast_expr_op_type_set_print_name(p, type_, name) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
@@ -747,134 +784,33 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_copy`.
-    pub fn copy(&self) -> ASTExpr {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_copy(expr) };
+    /// Wraps `isl_ast_expr_or_else`.
+    pub fn or_else(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_or_else(expr1, expr2) };
         let isl_rs_result = ASTExpr { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_get_id`.
-    pub fn get_id(&self) -> Id {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_id(expr) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_get_ast_expr`.
-    pub fn list_get_ast_expr(list: &ASTExprList, index: i32) -> ASTExpr {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_get_ast_expr(list, index) };
+    /// Wraps `isl_ast_expr_pdiv_q`.
+    pub fn pdiv_q(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_pdiv_q(expr1, expr2) };
         let isl_rs_result = ASTExpr { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_op_type_set_print_name`.
-    pub fn op_type_set_print_name(p: Printer, type_: ASTExprOpType, name: &str) -> Printer {
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let type_ = type_.to_i32();
-        let name = CString::new(name).unwrap();
-        let name = name.as_ptr();
-        let isl_rs_result = unsafe { isl_ast_expr_op_type_set_print_name(p, type_, name) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_to_list`.
-    pub fn to_list(self) -> ASTExprList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_to_list(el) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_size`.
-    pub fn list_size(list: &ASTExprList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_get_type`.
-    pub fn get_type(&self) -> ASTExprType {
-        let expr = self;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_get_type(expr) };
-        let isl_rs_result = ASTExprType::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_set_op_arg`.
-    pub fn set_op_arg(self, pos: i32, arg: ASTExpr) -> ASTExpr {
-        let expr = self;
-        let mut expr = expr;
-        expr.do_not_free_on_drop();
-        let expr = expr.ptr;
-        let mut arg = arg;
-        arg.do_not_free_on_drop();
-        let arg = arg.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_set_op_arg(expr, pos, arg) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_print_macros`.
-    pub fn print_macros(&self, p: Printer) -> Printer {
-        let expr = self;
-        let expr = expr.ptr;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_print_macros(expr, p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_concat`.
-    pub fn list_concat(list1: ASTExprList, list2: ASTExprList) -> ASTExprList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_concat(list1, list2) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_n_ast_expr`.
-    pub fn list_n_ast_expr(list: &ASTExprList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_n_ast_expr(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ast_expr_list_drop`.
-    pub fn list_drop(list: ASTExprList, first: u32, n: u32) -> ASTExprList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_list_drop(list, first, n) };
-        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -893,29 +829,93 @@ impl ASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_is_equal`.
-    pub fn is_equal(&self, expr2: &ASTExpr) -> bool {
-        let expr1 = self;
-        let expr1 = expr1.ptr;
-        let expr2 = expr2.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_is_equal(expr1, expr2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
+    /// Wraps `isl_ast_expr_print_macros`.
+    pub fn print_macros(&self, p: Printer) -> Printer {
+        let expr = self;
+        let expr = expr.ptr;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_print_macros(expr, p) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_ast_expr_neg`.
-    pub fn neg(self) -> ASTExpr {
+    /// Wraps `isl_ast_expr_set_op_arg`.
+    pub fn set_op_arg(self, pos: i32, arg: ASTExpr) -> ASTExpr {
         let expr = self;
         let mut expr = expr;
         expr.do_not_free_on_drop();
         let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_ast_expr_neg(expr) };
+        let mut arg = arg;
+        arg.do_not_free_on_drop();
+        let arg = arg.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_set_op_arg(expr, pos, arg) };
         let isl_rs_result = ASTExpr { ptr: isl_rs_result,
                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_sub`.
+    pub fn sub(self, expr2: ASTExpr) -> ASTExpr {
+        let expr1 = self;
+        let mut expr1 = expr1;
+        expr1.do_not_free_on_drop();
+        let expr1 = expr1.ptr;
+        let mut expr2 = expr2;
+        expr2.do_not_free_on_drop();
+        let expr2 = expr2.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_sub(expr1, expr2) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_substitute_ids`.
+    pub fn substitute_ids(self, id2expr: IdToASTExpr) -> ASTExpr {
+        let expr = self;
+        let mut expr = expr;
+        expr.do_not_free_on_drop();
+        let expr = expr.ptr;
+        let mut id2expr = id2expr;
+        id2expr.do_not_free_on_drop();
+        let id2expr = id2expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_substitute_ids(expr, id2expr) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_to_C_str`.
+    pub fn to_C_str(&self) -> &str {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_to_C_str(expr) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_to_list`.
+    pub fn to_list(self) -> ASTExprList {
+        let el = self;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_to_list(el) };
+        let isl_rs_result = ASTExprList { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ast_expr_to_str`.
+    pub fn to_str(&self) -> &str {
+        let expr = self;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_ast_expr_to_str(expr) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 

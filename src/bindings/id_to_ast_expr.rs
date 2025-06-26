@@ -14,68 +14,49 @@ pub struct IdToASTExpr {
 
 extern "C" {
 
-    fn isl_id_to_ast_expr_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_id_to_ast_expr_is_equal(hmap1: uintptr_t, hmap2: uintptr_t) -> i32;
-
-    fn isl_id_to_ast_expr_get(hmap: uintptr_t, key: uintptr_t) -> uintptr_t;
-
-    fn isl_id_to_ast_expr_drop(hmap: uintptr_t, key: uintptr_t) -> uintptr_t;
-
-    fn isl_id_to_ast_expr_get_ctx(hmap: uintptr_t) -> uintptr_t;
+    fn isl_id_to_ast_expr_alloc(ctx: uintptr_t, min_size: i32) -> uintptr_t;
 
     fn isl_id_to_ast_expr_copy(hmap: uintptr_t) -> uintptr_t;
 
-    fn isl_id_to_ast_expr_set(hmap: uintptr_t, key: uintptr_t, val: uintptr_t) -> uintptr_t;
+    fn isl_id_to_ast_expr_drop(hmap: uintptr_t, key: uintptr_t) -> uintptr_t;
 
     fn isl_id_to_ast_expr_dump(hmap: uintptr_t) -> ();
 
-    fn isl_id_to_ast_expr_alloc(ctx: uintptr_t, min_size: i32) -> uintptr_t;
+    fn isl_id_to_ast_expr_free(hmap: uintptr_t) -> uintptr_t;
 
-    fn isl_id_to_ast_expr_to_str(hmap: uintptr_t) -> *const c_char;
+    fn isl_id_to_ast_expr_get(hmap: uintptr_t, key: uintptr_t) -> uintptr_t;
+
+    fn isl_id_to_ast_expr_get_ctx(hmap: uintptr_t) -> uintptr_t;
 
     fn isl_id_to_ast_expr_has(hmap: uintptr_t, key: uintptr_t) -> i32;
 
-    fn isl_id_to_ast_expr_free(hmap: uintptr_t) -> uintptr_t;
+    fn isl_id_to_ast_expr_is_equal(hmap1: uintptr_t, hmap2: uintptr_t) -> i32;
+
+    fn isl_id_to_ast_expr_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+
+    fn isl_id_to_ast_expr_set(hmap: uintptr_t, key: uintptr_t, val: uintptr_t) -> uintptr_t;
+
+    fn isl_id_to_ast_expr_to_str(hmap: uintptr_t) -> *const c_char;
 
 }
 
 impl IdToASTExpr {
-    /// Wraps `isl_id_to_ast_expr_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> IdToASTExpr {
+    /// Wraps `isl_id_to_ast_expr_alloc`.
+    pub fn alloc(ctx: &Context, min_size: i32) -> IdToASTExpr {
         let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_read_from_str(ctx, str_) };
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_alloc(ctx, min_size) };
         let isl_rs_result = IdToASTExpr { ptr: isl_rs_result,
                                           should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_id_to_ast_expr_is_equal`.
-    pub fn is_equal(&self, hmap2: &IdToASTExpr) -> bool {
-        let hmap1 = self;
-        let hmap1 = hmap1.ptr;
-        let hmap2 = hmap2.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_is_equal(hmap1, hmap2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_id_to_ast_expr_get`.
-    pub fn get(&self, key: Id) -> ASTExpr {
+    /// Wraps `isl_id_to_ast_expr_copy`.
+    pub fn copy(&self) -> IdToASTExpr {
         let hmap = self;
         let hmap = hmap.ptr;
-        let mut key = key;
-        key.do_not_free_on_drop();
-        let key = key.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_get(hmap, key) };
-        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_copy(hmap) };
+        let isl_rs_result = IdToASTExpr { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -94,6 +75,39 @@ impl IdToASTExpr {
         isl_rs_result
     }
 
+    /// Wraps `isl_id_to_ast_expr_dump`.
+    pub fn dump(&self) -> () {
+        let hmap = self;
+        let hmap = hmap.ptr;
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_dump(hmap) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_id_to_ast_expr_free`.
+    pub fn free(self) -> IdToASTExpr {
+        let hmap = self;
+        let mut hmap = hmap;
+        hmap.do_not_free_on_drop();
+        let hmap = hmap.ptr;
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_free(hmap) };
+        let isl_rs_result = IdToASTExpr { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_id_to_ast_expr_get`.
+    pub fn get(&self, key: Id) -> ASTExpr {
+        let hmap = self;
+        let hmap = hmap.ptr;
+        let mut key = key;
+        key.do_not_free_on_drop();
+        let key = key.ptr;
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_get(hmap, key) };
+        let isl_rs_result = ASTExpr { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_id_to_ast_expr_get_ctx`.
     pub fn get_ctx(&self) -> Context {
         let hmap = self;
@@ -104,11 +118,40 @@ impl IdToASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_id_to_ast_expr_copy`.
-    pub fn copy(&self) -> IdToASTExpr {
+    /// Wraps `isl_id_to_ast_expr_has`.
+    pub fn has(&self, key: &Id) -> bool {
         let hmap = self;
         let hmap = hmap.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_copy(hmap) };
+        let key = key.ptr;
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_has(hmap, key) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_id_to_ast_expr_is_equal`.
+    pub fn is_equal(&self, hmap2: &IdToASTExpr) -> bool {
+        let hmap1 = self;
+        let hmap1 = hmap1.ptr;
+        let hmap2 = hmap2.ptr;
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_is_equal(hmap1, hmap2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_id_to_ast_expr_read_from_str`.
+    pub fn read_from_str(ctx: &Context, str_: &str) -> IdToASTExpr {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_id_to_ast_expr_read_from_str(ctx, str_) };
         let isl_rs_result = IdToASTExpr { ptr: isl_rs_result,
                                           should_free_on_drop: true };
         isl_rs_result
@@ -132,23 +175,6 @@ impl IdToASTExpr {
         isl_rs_result
     }
 
-    /// Wraps `isl_id_to_ast_expr_dump`.
-    pub fn dump(&self) -> () {
-        let hmap = self;
-        let hmap = hmap.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_dump(hmap) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_id_to_ast_expr_alloc`.
-    pub fn alloc(ctx: &Context, min_size: i32) -> IdToASTExpr {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_alloc(ctx, min_size) };
-        let isl_rs_result = IdToASTExpr { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_id_to_ast_expr_to_str`.
     pub fn to_str(&self) -> &str {
         let hmap = self;
@@ -156,32 +182,6 @@ impl IdToASTExpr {
         let isl_rs_result = unsafe { isl_id_to_ast_expr_to_str(hmap) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_id_to_ast_expr_has`.
-    pub fn has(&self, key: &Id) -> bool {
-        let hmap = self;
-        let hmap = hmap.ptr;
-        let key = key.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_has(hmap, key) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_id_to_ast_expr_free`.
-    pub fn free(self) -> IdToASTExpr {
-        let hmap = self;
-        let mut hmap = hmap;
-        hmap.do_not_free_on_drop();
-        let hmap = hmap.ptr;
-        let isl_rs_result = unsafe { isl_id_to_ast_expr_free(hmap) };
-        let isl_rs_result = IdToASTExpr { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
         isl_rs_result
     }
 

@@ -12,39 +12,19 @@ pub struct StrideInfo {
 
 extern "C" {
 
-    fn isl_stride_info_get_offset(si: uintptr_t) -> uintptr_t;
-
-    fn isl_stride_info_get_stride(si: uintptr_t) -> uintptr_t;
-
     fn isl_stride_info_copy(si: uintptr_t) -> uintptr_t;
 
     fn isl_stride_info_free(si: uintptr_t) -> uintptr_t;
 
     fn isl_stride_info_get_ctx(si: uintptr_t) -> uintptr_t;
 
+    fn isl_stride_info_get_offset(si: uintptr_t) -> uintptr_t;
+
+    fn isl_stride_info_get_stride(si: uintptr_t) -> uintptr_t;
+
 }
 
 impl StrideInfo {
-    /// Wraps `isl_stride_info_get_offset`.
-    pub fn get_offset(&self) -> Aff {
-        let si = self;
-        let si = si.ptr;
-        let isl_rs_result = unsafe { isl_stride_info_get_offset(si) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_stride_info_get_stride`.
-    pub fn get_stride(&self) -> Val {
-        let si = self;
-        let si = si.ptr;
-        let isl_rs_result = unsafe { isl_stride_info_get_stride(si) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_stride_info_copy`.
     pub fn copy(&self) -> StrideInfo {
         let si = self;
@@ -74,6 +54,26 @@ impl StrideInfo {
         let isl_rs_result = unsafe { isl_stride_info_get_ctx(si) };
         let isl_rs_result = Context { ptr: isl_rs_result,
                                       should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_stride_info_get_offset`.
+    pub fn get_offset(&self) -> Aff {
+        let si = self;
+        let si = si.ptr;
+        let isl_rs_result = unsafe { isl_stride_info_get_offset(si) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_stride_info_get_stride`.
+    pub fn get_stride(&self) -> Val {
+        let si = self;
+        let si = si.ptr;
+        let isl_rs_result = unsafe { isl_stride_info_get_stride(si) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 

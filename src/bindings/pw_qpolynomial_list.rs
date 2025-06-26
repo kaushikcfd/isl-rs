@@ -14,50 +14,86 @@ pub struct PwQPolynomialList {
 
 extern "C" {
 
+    fn isl_pw_qpolynomial_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_clear(list: uintptr_t) -> uintptr_t;
+
     fn isl_pw_qpolynomial_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_copy(list: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_dump(list: uintptr_t) -> ();
+
+    fn isl_pw_qpolynomial_list_free(list: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_from_pw_qpolynomial(el: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_get_ctx(list: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_get_pw_qpolynomial(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_n_pw_qpolynomial(list: uintptr_t) -> i32;
+
+    fn isl_pw_qpolynomial_list_reverse(list: uintptr_t) -> uintptr_t;
+
+    fn isl_pw_qpolynomial_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
 
     fn isl_pw_qpolynomial_list_set_pw_qpolynomial(list: uintptr_t, index: i32, el: uintptr_t)
                                                   -> uintptr_t;
 
     fn isl_pw_qpolynomial_list_size(list: uintptr_t) -> i32;
 
-    fn isl_pw_qpolynomial_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_get_pw_qpolynomial(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_reverse(list: uintptr_t) -> uintptr_t;
-
     fn isl_pw_qpolynomial_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_n_pw_qpolynomial(list: uintptr_t) -> i32;
-
-    fn isl_pw_qpolynomial_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_dump(list: uintptr_t) -> ();
-
-    fn isl_pw_qpolynomial_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_qpolynomial_list_from_pw_qpolynomial(el: uintptr_t) -> uintptr_t;
 
     fn isl_pw_qpolynomial_list_to_str(list: uintptr_t) -> *const c_char;
 
 }
 
 impl PwQPolynomialList {
+    /// Wraps `isl_pw_qpolynomial_list_add`.
+    pub fn add(self, el: PwQPolynomial) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_add(list, el) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_alloc`.
+    pub fn alloc(ctx: &Context, n: i32) -> PwQPolynomialList {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_alloc(ctx, n) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_clear`.
+    pub fn clear(self) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_clear(list) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_pw_qpolynomial_list_concat`.
     pub fn concat(self, list2: PwQPolynomialList) -> PwQPolynomialList {
         let list1 = self;
@@ -68,6 +104,139 @@ impl PwQPolynomialList {
         list2.do_not_free_on_drop();
         let list2 = list2.ptr;
         let isl_rs_result = unsafe { isl_pw_qpolynomial_list_concat(list1, list2) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_copy`.
+    pub fn copy(&self) -> PwQPolynomialList {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_copy(list) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_drop`.
+    pub fn drop(self, first: u32, n: u32) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_drop(list, first, n) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_dump`.
+    pub fn dump(&self) -> () {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_dump(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_free`.
+    pub fn free(self) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_free(list) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_from_pw_qpolynomial`.
+    pub fn from_pw_qpolynomial(el: PwQPolynomial) -> PwQPolynomialList {
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_from_pw_qpolynomial(el) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_get_at`.
+    pub fn get_at(&self, index: i32) -> PwQPolynomial {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_get_at(list, index) };
+        let isl_rs_result = PwQPolynomial { ptr: isl_rs_result,
+                                            should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_get_ctx(list) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_get_pw_qpolynomial`.
+    pub fn get_pw_qpolynomial(&self, index: i32) -> PwQPolynomial {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_get_pw_qpolynomial(list, index) };
+        let isl_rs_result = PwQPolynomial { ptr: isl_rs_result,
+                                            should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_insert`.
+    pub fn insert(self, pos: u32, el: PwQPolynomial) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_insert(list, pos, el) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_n_pw_qpolynomial`.
+    pub fn n_pw_qpolynomial(&self) -> i32 {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_n_pw_qpolynomial(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_reverse`.
+    pub fn reverse(self) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_reverse(list) };
+        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
+                                                should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_pw_qpolynomial_list_set_at`.
+    pub fn set_at(self, index: i32, el: PwQPolynomial) -> PwQPolynomialList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_set_at(list, index, el) };
         let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
                                                 should_free_on_drop: true };
         isl_rs_result
@@ -96,40 +265,6 @@ impl PwQPolynomialList {
         isl_rs_result
     }
 
-    /// Wraps `isl_pw_qpolynomial_list_clear`.
-    pub fn clear(self) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_clear(list) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_get_pw_qpolynomial`.
-    pub fn get_pw_qpolynomial(&self, index: i32) -> PwQPolynomial {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_get_pw_qpolynomial(list, index) };
-        let isl_rs_result = PwQPolynomial { ptr: isl_rs_result,
-                                            should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_reverse`.
-    pub fn reverse(self) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_reverse(list) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_pw_qpolynomial_list_swap`.
     pub fn swap(self, pos1: u32, pos2: u32) -> PwQPolynomialList {
         let list = self;
@@ -137,141 +272,6 @@ impl PwQPolynomialList {
         list.do_not_free_on_drop();
         let list = list.ptr;
         let isl_rs_result = unsafe { isl_pw_qpolynomial_list_swap(list, pos1, pos2) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_set_at`.
-    pub fn set_at(self, index: i32, el: PwQPolynomial) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_set_at(list, index, el) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_drop`.
-    pub fn drop(self, first: u32, n: u32) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_drop(list, first, n) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_n_pw_qpolynomial`.
-    pub fn n_pw_qpolynomial(&self) -> i32 {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_n_pw_qpolynomial(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_alloc`.
-    pub fn alloc(ctx: &Context, n: i32) -> PwQPolynomialList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_alloc(ctx, n) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_free`.
-    pub fn free(self) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_free(list) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_dump`.
-    pub fn dump(&self) -> () {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_insert`.
-    pub fn insert(self, pos: u32, el: PwQPolynomial) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_insert(list, pos, el) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_get_at`.
-    pub fn get_at(&self, index: i32) -> PwQPolynomial {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_get_at(list, index) };
-        let isl_rs_result = PwQPolynomial { ptr: isl_rs_result,
-                                            should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_add`.
-    pub fn add(self, el: PwQPolynomial) -> PwQPolynomialList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_add(list, el) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_copy`.
-    pub fn copy(&self) -> PwQPolynomialList {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_copy(list) };
-        let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
-                                                should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_qpolynomial_list_from_pw_qpolynomial`.
-    pub fn from_pw_qpolynomial(el: PwQPolynomial) -> PwQPolynomialList {
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_qpolynomial_list_from_pw_qpolynomial(el) };
         let isl_rs_result = PwQPolynomialList { ptr: isl_rs_result,
                                                 should_free_on_drop: true };
         isl_rs_result

@@ -23,357 +23,261 @@ pub struct Printer {
 
 extern "C" {
 
-    fn isl_printer_print_union_set(p: uintptr_t, uset: uintptr_t) -> uintptr_t;
+    fn isl_printer_end_line(p: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_pw_qpolynomial_fold_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+    fn isl_printer_flush(p: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_union_pw_multi_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+    fn isl_printer_free(printer: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_multi_union_pw_aff(p: uintptr_t, mupa: uintptr_t) -> uintptr_t;
+    fn isl_printer_get_ctx(printer: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_ast_expr_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+    fn isl_printer_get_note(p: uintptr_t, id: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_pw_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+    fn isl_printer_get_output_format(p: uintptr_t) -> i32;
 
-    fn isl_printer_print_union_map_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+    fn isl_printer_get_str(printer: uintptr_t) -> *const c_char;
 
-    fn isl_printer_print_qpolynomial_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_val_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_double(p: uintptr_t, d: f64) -> uintptr_t;
-
-    fn isl_printer_yaml_start_mapping(p: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_set_indent_prefix(p: uintptr_t, prefix: *const c_char) -> uintptr_t;
-
-    fn isl_printer_print_union_pw_qpolynomial_fold(p: uintptr_t, upwf: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_schedule_node(p: uintptr_t, node: uintptr_t) -> uintptr_t;
+    fn isl_printer_get_yaml_style(p: uintptr_t) -> i32;
 
     fn isl_printer_has_note(p: uintptr_t, id: uintptr_t) -> i32;
 
     fn isl_printer_indent(p: uintptr_t, indent: i32) -> uintptr_t;
 
-    fn isl_printer_print_basic_map(printer: uintptr_t, bmap: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_flush(p: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_get_output_format(p: uintptr_t) -> i32;
-
-    fn isl_printer_print_union_pw_multi_aff(p: uintptr_t, upma: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_pw_multi_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_constraint_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_map(printer: uintptr_t, map: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_fixed_box(p: uintptr_t, box_: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_vec(printer: uintptr_t, vec: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_schedule(p: uintptr_t, schedule: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_space(p: uintptr_t, space: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_id_to_ast_expr(p: uintptr_t, hmap: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_local_space(p: uintptr_t, ls: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_union_pw_aff(p: uintptr_t, upa: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_to_str(ctx: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_set_prefix(p: uintptr_t, prefix: *const c_char) -> uintptr_t;
-
-    fn isl_printer_print_union_access_info(p: uintptr_t, access: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_set_isl_int_width(p: uintptr_t, width: i32) -> uintptr_t;
-
-    fn isl_printer_get_yaml_style(p: uintptr_t) -> i32;
-
-    fn isl_printer_set_yaml_style(p: uintptr_t, yaml_style: i32) -> uintptr_t;
-
-    fn isl_printer_print_basic_map_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_str(p: uintptr_t, s: *const c_char) -> uintptr_t;
-
-    fn isl_printer_print_union_pw_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_ast_node_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_set_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_ast_node(p: uintptr_t, node: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_pw_qpolynomial(p: uintptr_t, pwqp: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_union_set_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_int(p: uintptr_t, i: i32) -> uintptr_t;
-
-    fn isl_printer_print_id_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_multi_val(p: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_qpolynomial_fold(p: uintptr_t, fold: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_union_map(p: uintptr_t, umap: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_basic_set_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_ast_expr(p: uintptr_t, expr: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_free(printer: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_point(printer: uintptr_t, pnt: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_multi_aff(p: uintptr_t, maff: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_union_flow(p: uintptr_t, flow: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_yaml_next(p: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_set(printer: uintptr_t, map: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_id(p: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_basic_set(printer: uintptr_t, bset: uintptr_t) -> uintptr_t;
-
     fn isl_printer_print_aff(p: uintptr_t, aff: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_get_note(p: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_get_ctx(printer: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_pw_multi_aff(p: uintptr_t, pma: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_pw_qpolynomial_fold(p: uintptr_t, pwf: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_yaml_end_sequence(p: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_print_val(p: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_yaml_start_sequence(p: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_set_indent(p: uintptr_t, indent: i32) -> uintptr_t;
-
-    fn isl_printer_yaml_end_mapping(p: uintptr_t) -> uintptr_t;
-
-    fn isl_printer_set_suffix(p: uintptr_t, suffix: *const c_char) -> uintptr_t;
-
-    fn isl_printer_print_union_pw_qpolynomial(p: uintptr_t, upwqp: uintptr_t) -> uintptr_t;
 
     fn isl_printer_print_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_set_output_format(p: uintptr_t, output_format: i32) -> uintptr_t;
+    fn isl_printer_print_ast_expr(p: uintptr_t, expr: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_end_line(p: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_ast_expr_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_ast_node(p: uintptr_t, node: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_ast_node_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_basic_map(printer: uintptr_t, bmap: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_basic_map_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_basic_set(printer: uintptr_t, bset: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_basic_set_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
 
     fn isl_printer_print_constraint(p: uintptr_t, c: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_qpolynomial(p: uintptr_t, qp: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_constraint_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_multi_pw_aff(p: uintptr_t, mpa: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_double(p: uintptr_t, d: f64) -> uintptr_t;
 
-    fn isl_printer_set_note(p: uintptr_t, id: uintptr_t, note: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_fixed_box(p: uintptr_t, box_: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_get_str(printer: uintptr_t) -> *const c_char;
+    fn isl_printer_print_id(p: uintptr_t, id: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_start_line(p: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_id_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_multi_id(p: uintptr_t, mi: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_id_to_ast_expr(p: uintptr_t, hmap: uintptr_t) -> uintptr_t;
 
-    fn isl_printer_print_pw_aff(p: uintptr_t, pwaff: uintptr_t) -> uintptr_t;
+    fn isl_printer_print_int(p: uintptr_t, i: i32) -> uintptr_t;
+
+    fn isl_printer_print_local_space(p: uintptr_t, ls: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_map(printer: uintptr_t, map: uintptr_t) -> uintptr_t;
 
     fn isl_printer_print_map_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
 
+    fn isl_printer_print_multi_aff(p: uintptr_t, maff: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_multi_id(p: uintptr_t, mi: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_multi_pw_aff(p: uintptr_t, mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_multi_union_pw_aff(p: uintptr_t, mupa: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_multi_val(p: uintptr_t, mv: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_point(printer: uintptr_t, pnt: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_aff(p: uintptr_t, pwaff: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_multi_aff(p: uintptr_t, pma: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_multi_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_qpolynomial(p: uintptr_t, pwqp: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_qpolynomial_fold(p: uintptr_t, pwf: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_pw_qpolynomial_fold_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
     fn isl_printer_print_pw_qpolynomial_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
 
+    fn isl_printer_print_qpolynomial(p: uintptr_t, qp: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_qpolynomial_fold(p: uintptr_t, fold: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_qpolynomial_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_schedule(p: uintptr_t, schedule: uintptr_t) -> uintptr_t;
+
     fn isl_printer_print_schedule_constraints(p: uintptr_t, sc: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_schedule_node(p: uintptr_t, node: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_set(printer: uintptr_t, map: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_set_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_space(p: uintptr_t, space: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_str(p: uintptr_t, s: *const c_char) -> uintptr_t;
+
+    fn isl_printer_print_union_access_info(p: uintptr_t, access: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_flow(p: uintptr_t, flow: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_map(p: uintptr_t, umap: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_map_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_pw_aff(p: uintptr_t, upa: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_pw_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_pw_multi_aff(p: uintptr_t, upma: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_pw_multi_aff_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_pw_qpolynomial(p: uintptr_t, upwqp: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_pw_qpolynomial_fold(p: uintptr_t, upwf: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_set(p: uintptr_t, uset: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_union_set_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_val(p: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_val_list(p: uintptr_t, list: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_print_vec(printer: uintptr_t, vec: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_set_indent(p: uintptr_t, indent: i32) -> uintptr_t;
+
+    fn isl_printer_set_indent_prefix(p: uintptr_t, prefix: *const c_char) -> uintptr_t;
+
+    fn isl_printer_set_isl_int_width(p: uintptr_t, width: i32) -> uintptr_t;
+
+    fn isl_printer_set_note(p: uintptr_t, id: uintptr_t, note: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_set_output_format(p: uintptr_t, output_format: i32) -> uintptr_t;
+
+    fn isl_printer_set_prefix(p: uintptr_t, prefix: *const c_char) -> uintptr_t;
+
+    fn isl_printer_set_suffix(p: uintptr_t, suffix: *const c_char) -> uintptr_t;
+
+    fn isl_printer_set_yaml_style(p: uintptr_t, yaml_style: i32) -> uintptr_t;
+
+    fn isl_printer_start_line(p: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_to_str(ctx: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_yaml_end_mapping(p: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_yaml_end_sequence(p: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_yaml_next(p: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_yaml_start_mapping(p: uintptr_t) -> uintptr_t;
+
+    fn isl_printer_yaml_start_sequence(p: uintptr_t) -> uintptr_t;
 
 }
 
 impl Printer {
-    /// Wraps `isl_printer_print_union_set`.
-    pub fn print_union_set(self, uset: &UnionSet) -> Printer {
+    /// Wraps `isl_printer_end_line`.
+    pub fn end_line(self) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_set(p, uset) };
+        let isl_rs_result = unsafe { isl_printer_end_line(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_pw_qpolynomial_fold_list`.
-    pub fn print_pw_qpolynomial_fold_list(self, list: &PwQPolynomialFoldList) -> Printer {
+    /// Wraps `isl_printer_flush`.
+    pub fn flush(self) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_fold_list(p, list) };
+        let isl_rs_result = unsafe { isl_printer_flush(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_union_pw_multi_aff_list`.
-    pub fn print_union_pw_multi_aff_list(self, list: &UnionPwMultiAffList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_pw_multi_aff_list(p, list) };
+    /// Wraps `isl_printer_free`.
+    pub fn free(self) -> Printer {
+        let printer = self;
+        let mut printer = printer;
+        printer.do_not_free_on_drop();
+        let printer = printer.ptr;
+        let isl_rs_result = unsafe { isl_printer_free(printer) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_multi_union_pw_aff`.
-    pub fn print_multi_union_pw_aff(self, mupa: &MultiUnionPwAff) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_multi_union_pw_aff(p, mupa) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+    /// Wraps `isl_printer_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let printer = self;
+        let printer = printer.ptr;
+        let isl_rs_result = unsafe { isl_printer_get_ctx(printer) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_ast_expr_list`.
-    pub fn print_ast_expr_list(self, list: &ASTExprList) -> Printer {
+    /// Wraps `isl_printer_get_note`.
+    pub fn get_note(&self, id: Id) -> Id {
         let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_ast_expr_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_printer_get_note(p, id) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_pw_aff_list`.
-    pub fn print_pw_aff_list(self, list: &PwAffList) -> Printer {
+    /// Wraps `isl_printer_get_output_format`.
+    pub fn get_output_format(&self) -> i32 {
         let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_aff_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_printer_get_output_format(p) };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_union_map_list`.
-    pub fn print_union_map_list(self, list: &UnionMapList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_map_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+    /// Wraps `isl_printer_get_str`.
+    pub fn get_str(&self) -> &str {
+        let printer = self;
+        let printer = printer.ptr;
+        let isl_rs_result = unsafe { isl_printer_get_str(printer) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_qpolynomial_list`.
-    pub fn print_qpolynomial_list(self, list: &QPolynomialList) -> Printer {
+    /// Wraps `isl_printer_get_yaml_style`.
+    pub fn get_yaml_style(&self) -> i32 {
         let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_qpolynomial_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_val_list`.
-    pub fn print_val_list(self, list: &ValList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_val_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_double`.
-    pub fn print_double(self, d: f64) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_double(p, d) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_yaml_start_mapping`.
-    pub fn yaml_start_mapping(self) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_yaml_start_mapping(p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_set_indent_prefix`.
-    pub fn set_indent_prefix(self, prefix: &str) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let prefix = CString::new(prefix).unwrap();
-        let prefix = prefix.as_ptr();
-        let isl_rs_result = unsafe { isl_printer_set_indent_prefix(p, prefix) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_union_pw_qpolynomial_fold`.
-    pub fn print_union_pw_qpolynomial_fold(self, upwf: &UnionPwQPolynomialFold) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let upwf = upwf.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_pw_qpolynomial_fold(p, upwf) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_schedule_node`.
-    pub fn print_schedule_node(self, node: &ScheduleNode) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_schedule_node(p, node) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_printer_get_yaml_style(p) };
         isl_rs_result
     }
 
@@ -403,6 +307,84 @@ impl Printer {
         isl_rs_result
     }
 
+    /// Wraps `isl_printer_print_aff`.
+    pub fn print_aff(self, aff: &Aff) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_aff(p, aff) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_aff_list`.
+    pub fn print_aff_list(self, list: &AffList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_aff_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_ast_expr`.
+    pub fn print_ast_expr(self, expr: &ASTExpr) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let expr = expr.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_ast_expr(p, expr) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_ast_expr_list`.
+    pub fn print_ast_expr_list(self, list: &ASTExprList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_ast_expr_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_ast_node`.
+    pub fn print_ast_node(self, node: &ASTNode) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_ast_node(p, node) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_ast_node_list`.
+    pub fn print_ast_node_list(self, list: &ASTNodeList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_ast_node_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_printer_print_basic_map`.
     pub fn print_basic_map(self, bmap: &BasicMap) -> Printer {
         let printer = self;
@@ -416,47 +398,53 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_flush`.
-    pub fn flush(self) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_flush(p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_get_output_format`.
-    pub fn get_output_format(&self) -> i32 {
-        let p = self;
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_get_output_format(p) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_union_pw_multi_aff`.
-    pub fn print_union_pw_multi_aff(self, upma: &UnionPwMultiAff) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let upma = upma.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_pw_multi_aff(p, upma) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_pw_multi_aff_list`.
-    pub fn print_pw_multi_aff_list(self, list: &PwMultiAffList) -> Printer {
+    /// Wraps `isl_printer_print_basic_map_list`.
+    pub fn print_basic_map_list(self, list: &BasicMapList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_multi_aff_list(p, list) };
+        let isl_rs_result = unsafe { isl_printer_print_basic_map_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_basic_set`.
+    pub fn print_basic_set(self, bset: &BasicSet) -> Printer {
+        let printer = self;
+        let mut printer = printer;
+        printer.do_not_free_on_drop();
+        let printer = printer.ptr;
+        let bset = bset.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_basic_set(printer, bset) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_basic_set_list`.
+    pub fn print_basic_set_list(self, list: &BasicSetList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_basic_set_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_constraint`.
+    pub fn print_constraint(self, c: &Constraint) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let c = c.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_constraint(p, c) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -475,14 +463,13 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_map`.
-    pub fn print_map(self, map: &Map) -> Printer {
-        let printer = self;
-        let mut printer = printer;
-        printer.do_not_free_on_drop();
-        let printer = printer.ptr;
-        let map = map.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_map(printer, map) };
+    /// Wraps `isl_printer_print_double`.
+    pub fn print_double(self, d: f64) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_double(p, d) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -501,40 +488,27 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_vec`.
-    pub fn print_vec(self, vec: &Vec) -> Printer {
-        let printer = self;
-        let mut printer = printer;
-        printer.do_not_free_on_drop();
-        let printer = printer.ptr;
-        let vec = vec.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_vec(printer, vec) };
+    /// Wraps `isl_printer_print_id`.
+    pub fn print_id(self, id: &Id) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_id(p, id) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_schedule`.
-    pub fn print_schedule(self, schedule: &Schedule) -> Printer {
+    /// Wraps `isl_printer_print_id_list`.
+    pub fn print_id_list(self, list: &IdList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let schedule = schedule.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_schedule(p, schedule) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_space`.
-    pub fn print_space(self, space: &Space) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_space(p, space) };
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_id_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -553,6 +527,18 @@ impl Printer {
         isl_rs_result
     }
 
+    /// Wraps `isl_printer_print_int`.
+    pub fn print_int(self, i: i32) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_int(p, i) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_printer_print_local_space`.
     pub fn print_local_space(self, ls: &LocalSpace) -> Printer {
         let p = self;
@@ -566,95 +552,326 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_union_pw_aff`.
-    pub fn print_union_pw_aff(self, upa: &UnionPwAff) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_pw_aff(p, upa) };
+    /// Wraps `isl_printer_print_map`.
+    pub fn print_map(self, map: &Map) -> Printer {
+        let printer = self;
+        let mut printer = printer;
+        printer.do_not_free_on_drop();
+        let printer = printer.ptr;
+        let map = map.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_map(printer, map) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_to_str`.
-    pub fn to_str(ctx: &Context) -> Printer {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_printer_to_str(ctx) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_set_prefix`.
-    pub fn set_prefix(self, prefix: &str) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let prefix = CString::new(prefix).unwrap();
-        let prefix = prefix.as_ptr();
-        let isl_rs_result = unsafe { isl_printer_set_prefix(p, prefix) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_union_access_info`.
-    pub fn print_union_access_info(self, access: &UnionAccessInfo) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let access = access.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_access_info(p, access) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_set_isl_int_width`.
-    pub fn set_isl_int_width(self, width: i32) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_set_isl_int_width(p, width) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_get_yaml_style`.
-    pub fn get_yaml_style(&self) -> i32 {
-        let p = self;
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_get_yaml_style(p) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_set_yaml_style`.
-    pub fn set_yaml_style(self, yaml_style: i32) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_set_yaml_style(p, yaml_style) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_basic_map_list`.
-    pub fn print_basic_map_list(self, list: &BasicMapList) -> Printer {
+    /// Wraps `isl_printer_print_map_list`.
+    pub fn print_map_list(self, list: &MapList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_basic_map_list(p, list) };
+        let isl_rs_result = unsafe { isl_printer_print_map_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_multi_aff`.
+    pub fn print_multi_aff(self, maff: &MultiAff) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let maff = maff.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_multi_aff(p, maff) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_multi_id`.
+    pub fn print_multi_id(self, mi: &MultiId) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let mi = mi.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_multi_id(p, mi) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_multi_pw_aff`.
+    pub fn print_multi_pw_aff(self, mpa: &MultiPwAff) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_multi_pw_aff(p, mpa) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_multi_union_pw_aff`.
+    pub fn print_multi_union_pw_aff(self, mupa: &MultiUnionPwAff) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_multi_union_pw_aff(p, mupa) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_multi_val`.
+    pub fn print_multi_val(self, mv: &MultiVal) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_multi_val(p, mv) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_point`.
+    pub fn print_point(self, pnt: &Point) -> Printer {
+        let printer = self;
+        let mut printer = printer;
+        printer.do_not_free_on_drop();
+        let printer = printer.ptr;
+        let pnt = pnt.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_point(printer, pnt) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_aff`.
+    pub fn print_pw_aff(self, pwaff: &PwAff) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let pwaff = pwaff.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_aff(p, pwaff) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_aff_list`.
+    pub fn print_pw_aff_list(self, list: &PwAffList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_aff_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_multi_aff`.
+    pub fn print_pw_multi_aff(self, pma: &PwMultiAff) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let pma = pma.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_multi_aff(p, pma) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_multi_aff_list`.
+    pub fn print_pw_multi_aff_list(self, list: &PwMultiAffList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_multi_aff_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_qpolynomial`.
+    pub fn print_pw_qpolynomial(self, pwqp: &PwQPolynomial) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let pwqp = pwqp.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial(p, pwqp) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_qpolynomial_fold`.
+    pub fn print_pw_qpolynomial_fold(self, pwf: &PwQPolynomialFold) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let pwf = pwf.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_fold(p, pwf) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_qpolynomial_fold_list`.
+    pub fn print_pw_qpolynomial_fold_list(self, list: &PwQPolynomialFoldList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_fold_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_pw_qpolynomial_list`.
+    pub fn print_pw_qpolynomial_list(self, list: &PwQPolynomialList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_qpolynomial`.
+    pub fn print_qpolynomial(self, qp: &QPolynomial) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let qp = qp.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_qpolynomial(p, qp) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_qpolynomial_fold`.
+    pub fn print_qpolynomial_fold(self, fold: &QPolynomialFold) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let fold = fold.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_qpolynomial_fold(p, fold) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_qpolynomial_list`.
+    pub fn print_qpolynomial_list(self, list: &QPolynomialList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_qpolynomial_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_schedule`.
+    pub fn print_schedule(self, schedule: &Schedule) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let schedule = schedule.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_schedule(p, schedule) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_schedule_constraints`.
+    pub fn print_schedule_constraints(self, sc: &ScheduleConstraints) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let sc = sc.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_schedule_constraints(p, sc) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_schedule_node`.
+    pub fn print_schedule_node(self, node: &ScheduleNode) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_schedule_node(p, node) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_set`.
+    pub fn print_set(self, map: &Set) -> Printer {
+        let printer = self;
+        let mut printer = printer;
+        printer.do_not_free_on_drop();
+        let printer = printer.ptr;
+        let map = map.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_set(printer, map) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_set_list`.
+    pub fn print_set_list(self, list: &SetList) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_set_list(p, list) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_space`.
+    pub fn print_space(self, space: &Space) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_space(p, space) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -674,207 +891,14 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_union_pw_aff_list`.
-    pub fn print_union_pw_aff_list(self, list: &UnionPwAffList) -> Printer {
+    /// Wraps `isl_printer_print_union_access_info`.
+    pub fn print_union_access_info(self, access: &UnionAccessInfo) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_pw_aff_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_ast_node_list`.
-    pub fn print_ast_node_list(self, list: &ASTNodeList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_ast_node_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_set_list`.
-    pub fn print_set_list(self, list: &SetList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_set_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_ast_node`.
-    pub fn print_ast_node(self, node: &ASTNode) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_ast_node(p, node) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_pw_qpolynomial`.
-    pub fn print_pw_qpolynomial(self, pwqp: &PwQPolynomial) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let pwqp = pwqp.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial(p, pwqp) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_union_set_list`.
-    pub fn print_union_set_list(self, list: &UnionSetList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_set_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_int`.
-    pub fn print_int(self, i: i32) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_int(p, i) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_id_list`.
-    pub fn print_id_list(self, list: &IdList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_id_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_multi_val`.
-    pub fn print_multi_val(self, mv: &MultiVal) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_multi_val(p, mv) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_qpolynomial_fold`.
-    pub fn print_qpolynomial_fold(self, fold: &QPolynomialFold) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let fold = fold.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_qpolynomial_fold(p, fold) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_union_map`.
-    pub fn print_union_map(self, umap: &UnionMap) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let umap = umap.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_union_map(p, umap) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_basic_set_list`.
-    pub fn print_basic_set_list(self, list: &BasicSetList) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_basic_set_list(p, list) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_ast_expr`.
-    pub fn print_ast_expr(self, expr: &ASTExpr) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let expr = expr.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_ast_expr(p, expr) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_free`.
-    pub fn free(self) -> Printer {
-        let printer = self;
-        let mut printer = printer;
-        printer.do_not_free_on_drop();
-        let printer = printer.ptr;
-        let isl_rs_result = unsafe { isl_printer_free(printer) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_point`.
-    pub fn print_point(self, pnt: &Point) -> Printer {
-        let printer = self;
-        let mut printer = printer;
-        printer.do_not_free_on_drop();
-        let printer = printer.ptr;
-        let pnt = pnt.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_point(printer, pnt) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_multi_aff`.
-    pub fn print_multi_aff(self, maff: &MultiAff) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let maff = maff.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_multi_aff(p, maff) };
+        let access = access.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_access_info(p, access) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -893,189 +917,79 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_yaml_next`.
-    pub fn yaml_next(self) -> Printer {
+    /// Wraps `isl_printer_print_union_map`.
+    pub fn print_union_map(self, umap: &UnionMap) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_yaml_next(p) };
+        let umap = umap.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_map(p, umap) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_set`.
-    pub fn print_set(self, map: &Set) -> Printer {
-        let printer = self;
-        let mut printer = printer;
-        printer.do_not_free_on_drop();
-        let printer = printer.ptr;
-        let map = map.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_set(printer, map) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_id`.
-    pub fn print_id(self, id: &Id) -> Printer {
+    /// Wraps `isl_printer_print_union_map_list`.
+    pub fn print_union_map_list(self, list: &UnionMapList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_id(p, id) };
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_map_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_basic_set`.
-    pub fn print_basic_set(self, bset: &BasicSet) -> Printer {
-        let printer = self;
-        let mut printer = printer;
-        printer.do_not_free_on_drop();
-        let printer = printer.ptr;
-        let bset = bset.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_basic_set(printer, bset) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_aff`.
-    pub fn print_aff(self, aff: &Aff) -> Printer {
+    /// Wraps `isl_printer_print_union_pw_aff`.
+    pub fn print_union_pw_aff(self, upa: &UnionPwAff) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_aff(p, aff) };
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_pw_aff(p, upa) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_get_note`.
-    pub fn get_note(&self, id: Id) -> Id {
-        let p = self;
-        let p = p.ptr;
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_printer_get_note(p, id) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let printer = self;
-        let printer = printer.ptr;
-        let isl_rs_result = unsafe { isl_printer_get_ctx(printer) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_pw_multi_aff`.
-    pub fn print_pw_multi_aff(self, pma: &PwMultiAff) -> Printer {
+    /// Wraps `isl_printer_print_union_pw_aff_list`.
+    pub fn print_union_pw_aff_list(self, list: &UnionPwAffList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let pma = pma.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_multi_aff(p, pma) };
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_pw_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_pw_qpolynomial_fold`.
-    pub fn print_pw_qpolynomial_fold(self, pwf: &PwQPolynomialFold) -> Printer {
+    /// Wraps `isl_printer_print_union_pw_multi_aff`.
+    pub fn print_union_pw_multi_aff(self, upma: &UnionPwMultiAff) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let pwf = pwf.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_fold(p, pwf) };
+        let upma = upma.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_pw_multi_aff(p, upma) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_yaml_end_sequence`.
-    pub fn yaml_end_sequence(self) -> Printer {
+    /// Wraps `isl_printer_print_union_pw_multi_aff_list`.
+    pub fn print_union_pw_multi_aff_list(self, list: &UnionPwMultiAffList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_yaml_end_sequence(p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_print_val`.
-    pub fn print_val(self, v: &Val) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_val(p, v) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_yaml_start_sequence`.
-    pub fn yaml_start_sequence(self) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_yaml_start_sequence(p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_set_indent`.
-    pub fn set_indent(self, indent: i32) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_set_indent(p, indent) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_yaml_end_mapping`.
-    pub fn yaml_end_mapping(self) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_yaml_end_mapping(p) };
-        let isl_rs_result = Printer { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_printer_set_suffix`.
-    pub fn set_suffix(self, suffix: &str) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let suffix = CString::new(suffix).unwrap();
-        let suffix = suffix.as_ptr();
-        let isl_rs_result = unsafe { isl_printer_set_suffix(p, suffix) };
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_pw_multi_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -1094,77 +1008,117 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_aff_list`.
-    pub fn print_aff_list(self, list: &AffList) -> Printer {
+    /// Wraps `isl_printer_print_union_pw_qpolynomial_fold`.
+    pub fn print_union_pw_qpolynomial_fold(self, upwf: &UnionPwQPolynomialFold) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let upwf = upwf.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_pw_qpolynomial_fold(p, upwf) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_union_set`.
+    pub fn print_union_set(self, uset: &UnionSet) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let uset = uset.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_union_set(p, uset) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_print_union_set_list`.
+    pub fn print_union_set_list(self, list: &UnionSetList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_aff_list(p, list) };
+        let isl_rs_result = unsafe { isl_printer_print_union_set_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_set_output_format`.
-    pub fn set_output_format(self, output_format: i32) -> Printer {
+    /// Wraps `isl_printer_print_val`.
+    pub fn print_val(self, v: &Val) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_set_output_format(p, output_format) };
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_val(p, v) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_end_line`.
-    pub fn end_line(self) -> Printer {
+    /// Wraps `isl_printer_print_val_list`.
+    pub fn print_val_list(self, list: &ValList) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let isl_rs_result = unsafe { isl_printer_end_line(p) };
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_val_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_constraint`.
-    pub fn print_constraint(self, c: &Constraint) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let c = c.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_constraint(p, c) };
+    /// Wraps `isl_printer_print_vec`.
+    pub fn print_vec(self, vec: &Vec) -> Printer {
+        let printer = self;
+        let mut printer = printer;
+        printer.do_not_free_on_drop();
+        let printer = printer.ptr;
+        let vec = vec.ptr;
+        let isl_rs_result = unsafe { isl_printer_print_vec(printer, vec) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_qpolynomial`.
-    pub fn print_qpolynomial(self, qp: &QPolynomial) -> Printer {
+    /// Wraps `isl_printer_set_indent`.
+    pub fn set_indent(self, indent: i32) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let qp = qp.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_qpolynomial(p, qp) };
+        let isl_rs_result = unsafe { isl_printer_set_indent(p, indent) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_multi_pw_aff`.
-    pub fn print_multi_pw_aff(self, mpa: &MultiPwAff) -> Printer {
+    /// Wraps `isl_printer_set_indent_prefix`.
+    pub fn set_indent_prefix(self, prefix: &str) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_multi_pw_aff(p, mpa) };
+        let prefix = CString::new(prefix).unwrap();
+        let prefix = prefix.as_ptr();
+        let isl_rs_result = unsafe { isl_printer_set_indent_prefix(p, prefix) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_set_isl_int_width`.
+    pub fn set_isl_int_width(self, width: i32) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_printer_set_isl_int_width(p, width) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -1188,13 +1142,55 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_get_str`.
-    pub fn get_str(&self) -> &str {
-        let printer = self;
-        let printer = printer.ptr;
-        let isl_rs_result = unsafe { isl_printer_get_str(printer) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
+    /// Wraps `isl_printer_set_output_format`.
+    pub fn set_output_format(self, output_format: i32) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_printer_set_output_format(p, output_format) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_set_prefix`.
+    pub fn set_prefix(self, prefix: &str) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let prefix = CString::new(prefix).unwrap();
+        let prefix = prefix.as_ptr();
+        let isl_rs_result = unsafe { isl_printer_set_prefix(p, prefix) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_set_suffix`.
+    pub fn set_suffix(self, suffix: &str) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let suffix = CString::new(suffix).unwrap();
+        let suffix = suffix.as_ptr();
+        let isl_rs_result = unsafe { isl_printer_set_suffix(p, suffix) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_set_yaml_style`.
+    pub fn set_yaml_style(self, yaml_style: i32) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_printer_set_yaml_style(p, yaml_style) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1210,66 +1206,70 @@ impl Printer {
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_multi_id`.
-    pub fn print_multi_id(self, mi: &MultiId) -> Printer {
-        let p = self;
-        let mut p = p;
-        p.do_not_free_on_drop();
-        let p = p.ptr;
-        let mi = mi.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_multi_id(p, mi) };
+    /// Wraps `isl_printer_to_str`.
+    pub fn to_str(ctx: &Context) -> Printer {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_printer_to_str(ctx) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_pw_aff`.
-    pub fn print_pw_aff(self, pwaff: &PwAff) -> Printer {
+    /// Wraps `isl_printer_yaml_end_mapping`.
+    pub fn yaml_end_mapping(self) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let pwaff = pwaff.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_aff(p, pwaff) };
+        let isl_rs_result = unsafe { isl_printer_yaml_end_mapping(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_map_list`.
-    pub fn print_map_list(self, list: &MapList) -> Printer {
+    /// Wraps `isl_printer_yaml_end_sequence`.
+    pub fn yaml_end_sequence(self) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_map_list(p, list) };
+        let isl_rs_result = unsafe { isl_printer_yaml_end_sequence(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_pw_qpolynomial_list`.
-    pub fn print_pw_qpolynomial_list(self, list: &PwQPolynomialList) -> Printer {
+    /// Wraps `isl_printer_yaml_next`.
+    pub fn yaml_next(self) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_list(p, list) };
+        let isl_rs_result = unsafe { isl_printer_yaml_next(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_printer_print_schedule_constraints`.
-    pub fn print_schedule_constraints(self, sc: &ScheduleConstraints) -> Printer {
+    /// Wraps `isl_printer_yaml_start_mapping`.
+    pub fn yaml_start_mapping(self) -> Printer {
         let p = self;
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
-        let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_printer_print_schedule_constraints(p, sc) };
+        let isl_rs_result = unsafe { isl_printer_yaml_start_mapping(p) };
+        let isl_rs_result = Printer { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_printer_yaml_start_sequence`.
+    pub fn yaml_start_sequence(self) -> Printer {
+        let p = self;
+        let mut p = p;
+        p.do_not_free_on_drop();
+        let p = p.ptr;
+        let isl_rs_result = unsafe { isl_printer_yaml_start_sequence(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result

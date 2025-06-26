@@ -279,22 +279,22 @@ pub use schedule_constraints::ScheduleConstraints;
 
 mod enums;
 
-pub use enums::ScheduleNodeType;
-
 pub use enums::ArgType;
-
-pub use enums::Error;
 
 pub use enums::ASTExprOpType;
 
+pub use enums::ASTExprType;
+
 pub use enums::ASTLoopType;
+
+pub use enums::ASTNodeType;
 
 pub use enums::DimType;
 
+pub use enums::Error;
+
 pub use enums::Fold;
 
-pub use enums::ASTExprType;
-
-pub use enums::ASTNodeType;
+pub use enums::ScheduleNodeType;
 
 pub use enums::Stat;

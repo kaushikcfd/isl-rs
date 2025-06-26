@@ -2,63 +2,6 @@
 // LICENSE: MIT
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ScheduleNodeType {
-    Error,
-    Band,
-    Context,
-    Domain,
-    Expansion,
-    Extension,
-    Filter,
-    Leaf,
-    Guard,
-    Mark,
-    Sequence,
-    Set,
-}
-
-impl ScheduleNodeType {
-    /// Returns i32 values as defined in libisl.
-    pub fn to_i32(&self) -> i32 {
-        match self {
-            ScheduleNodeType::Error => -1,
-            ScheduleNodeType::Band => 0,
-            ScheduleNodeType::Context => 1,
-            ScheduleNodeType::Domain => 2,
-            ScheduleNodeType::Expansion => 3,
-            ScheduleNodeType::Extension => 4,
-            ScheduleNodeType::Filter => 5,
-            ScheduleNodeType::Leaf => 6,
-            ScheduleNodeType::Guard => 7,
-            ScheduleNodeType::Mark => 8,
-            ScheduleNodeType::Sequence => 9,
-            ScheduleNodeType::Set => 10,
-        }
-    }
-}
-
-impl ScheduleNodeType {
-    /// Constructor based on the i32 values as defined in libisl.
-    pub fn from_i32(val: i32) -> Self {
-        match val {
-            -1 => ScheduleNodeType::Error,
-            0 => ScheduleNodeType::Band,
-            1 => ScheduleNodeType::Context,
-            2 => ScheduleNodeType::Domain,
-            3 => ScheduleNodeType::Expansion,
-            4 => ScheduleNodeType::Extension,
-            5 => ScheduleNodeType::Filter,
-            6 => ScheduleNodeType::Leaf,
-            7 => ScheduleNodeType::Guard,
-            8 => ScheduleNodeType::Mark,
-            9 => ScheduleNodeType::Sequence,
-            10 => ScheduleNodeType::Set,
-            _ => panic!("Illegal value."),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ArgType {
     End,
     Alias,
@@ -119,51 +62,6 @@ impl ArgType {
             12 => ArgType::Str,
             13 => ArgType::StrList,
             14 => ArgType::Version,
-            _ => panic!("Illegal value."),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Error {
-    None,
-    Abort,
-    Alloc,
-    Unknown,
-    Internal,
-    Invalid,
-    Quota,
-    Unsupported,
-}
-
-impl Error {
-    /// Returns i32 values as defined in libisl.
-    pub fn to_i32(&self) -> i32 {
-        match self {
-            Error::None => 0,
-            Error::Abort => 1,
-            Error::Alloc => 2,
-            Error::Unknown => 3,
-            Error::Internal => 4,
-            Error::Invalid => 5,
-            Error::Quota => 6,
-            Error::Unsupported => 7,
-        }
-    }
-}
-
-impl Error {
-    /// Constructor based on the i32 values as defined in libisl.
-    pub fn from_i32(val: i32) -> Self {
-        match val {
-            0 => Error::None,
-            1 => Error::Abort,
-            2 => Error::Alloc,
-            3 => Error::Unknown,
-            4 => Error::Internal,
-            5 => Error::Invalid,
-            6 => Error::Quota,
-            7 => Error::Unsupported,
             _ => panic!("Illegal value."),
         }
     }
@@ -272,6 +170,39 @@ impl ASTExprOpType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ASTExprType {
+    Error,
+    Op,
+    Id,
+    Int,
+}
+
+impl ASTExprType {
+    /// Returns i32 values as defined in libisl.
+    pub fn to_i32(&self) -> i32 {
+        match self {
+            ASTExprType::Error => -1,
+            ASTExprType::Op => 0,
+            ASTExprType::Id => 1,
+            ASTExprType::Int => 2,
+        }
+    }
+}
+
+impl ASTExprType {
+    /// Constructor based on the i32 values as defined in libisl.
+    pub fn from_i32(val: i32) -> Self {
+        match val {
+            -1 => ASTExprType::Error,
+            0 => ASTExprType::Op,
+            1 => ASTExprType::Id,
+            2 => ASTExprType::Int,
+            _ => panic!("Illegal value."),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ASTLoopType {
     Error,
     Default,
@@ -302,6 +233,45 @@ impl ASTLoopType {
             1 => ASTLoopType::Atomic,
             2 => ASTLoopType::Unroll,
             3 => ASTLoopType::Separate,
+            _ => panic!("Illegal value."),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ASTNodeType {
+    Error,
+    For,
+    If,
+    Block,
+    Mark,
+    User,
+}
+
+impl ASTNodeType {
+    /// Returns i32 values as defined in libisl.
+    pub fn to_i32(&self) -> i32 {
+        match self {
+            ASTNodeType::Error => -1,
+            ASTNodeType::For => 0,
+            ASTNodeType::If => 1,
+            ASTNodeType::Block => 2,
+            ASTNodeType::Mark => 3,
+            ASTNodeType::User => 4,
+        }
+    }
+}
+
+impl ASTNodeType {
+    /// Constructor based on the i32 values as defined in libisl.
+    pub fn from_i32(val: i32) -> Self {
+        match val {
+            -1 => ASTNodeType::Error,
+            0 => ASTNodeType::For,
+            1 => ASTNodeType::If,
+            2 => ASTNodeType::Block,
+            3 => ASTNodeType::Mark,
+            4 => ASTNodeType::User,
             _ => panic!("Illegal value."),
         }
     }
@@ -350,6 +320,51 @@ impl DimType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Error {
+    None,
+    Abort,
+    Alloc,
+    Unknown,
+    Internal,
+    Invalid,
+    Quota,
+    Unsupported,
+}
+
+impl Error {
+    /// Returns i32 values as defined in libisl.
+    pub fn to_i32(&self) -> i32 {
+        match self {
+            Error::None => 0,
+            Error::Abort => 1,
+            Error::Alloc => 2,
+            Error::Unknown => 3,
+            Error::Internal => 4,
+            Error::Invalid => 5,
+            Error::Quota => 6,
+            Error::Unsupported => 7,
+        }
+    }
+}
+
+impl Error {
+    /// Constructor based on the i32 values as defined in libisl.
+    pub fn from_i32(val: i32) -> Self {
+        match val {
+            0 => Error::None,
+            1 => Error::Abort,
+            2 => Error::Alloc,
+            3 => Error::Unknown,
+            4 => Error::Internal,
+            5 => Error::Invalid,
+            6 => Error::Quota,
+            7 => Error::Unsupported,
+            _ => panic!("Illegal value."),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Fold {
     Error,
     Min,
@@ -383,72 +398,57 @@ impl Fold {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ASTExprType {
+pub enum ScheduleNodeType {
     Error,
-    Op,
-    Id,
-    Int,
-}
-
-impl ASTExprType {
-    /// Returns i32 values as defined in libisl.
-    pub fn to_i32(&self) -> i32 {
-        match self {
-            ASTExprType::Error => -1,
-            ASTExprType::Op => 0,
-            ASTExprType::Id => 1,
-            ASTExprType::Int => 2,
-        }
-    }
-}
-
-impl ASTExprType {
-    /// Constructor based on the i32 values as defined in libisl.
-    pub fn from_i32(val: i32) -> Self {
-        match val {
-            -1 => ASTExprType::Error,
-            0 => ASTExprType::Op,
-            1 => ASTExprType::Id,
-            2 => ASTExprType::Int,
-            _ => panic!("Illegal value."),
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ASTNodeType {
-    Error,
-    For,
-    If,
-    Block,
+    Band,
+    Context,
+    Domain,
+    Expansion,
+    Extension,
+    Filter,
+    Leaf,
+    Guard,
     Mark,
-    User,
+    Sequence,
+    Set,
 }
 
-impl ASTNodeType {
+impl ScheduleNodeType {
     /// Returns i32 values as defined in libisl.
     pub fn to_i32(&self) -> i32 {
         match self {
-            ASTNodeType::Error => -1,
-            ASTNodeType::For => 0,
-            ASTNodeType::If => 1,
-            ASTNodeType::Block => 2,
-            ASTNodeType::Mark => 3,
-            ASTNodeType::User => 4,
+            ScheduleNodeType::Error => -1,
+            ScheduleNodeType::Band => 0,
+            ScheduleNodeType::Context => 1,
+            ScheduleNodeType::Domain => 2,
+            ScheduleNodeType::Expansion => 3,
+            ScheduleNodeType::Extension => 4,
+            ScheduleNodeType::Filter => 5,
+            ScheduleNodeType::Leaf => 6,
+            ScheduleNodeType::Guard => 7,
+            ScheduleNodeType::Mark => 8,
+            ScheduleNodeType::Sequence => 9,
+            ScheduleNodeType::Set => 10,
         }
     }
 }
 
-impl ASTNodeType {
+impl ScheduleNodeType {
     /// Constructor based on the i32 values as defined in libisl.
     pub fn from_i32(val: i32) -> Self {
         match val {
-            -1 => ASTNodeType::Error,
-            0 => ASTNodeType::For,
-            1 => ASTNodeType::If,
-            2 => ASTNodeType::Block,
-            3 => ASTNodeType::Mark,
-            4 => ASTNodeType::User,
+            -1 => ScheduleNodeType::Error,
+            0 => ScheduleNodeType::Band,
+            1 => ScheduleNodeType::Context,
+            2 => ScheduleNodeType::Domain,
+            3 => ScheduleNodeType::Expansion,
+            4 => ScheduleNodeType::Extension,
+            5 => ScheduleNodeType::Filter,
+            6 => ScheduleNodeType::Leaf,
+            7 => ScheduleNodeType::Guard,
+            8 => ScheduleNodeType::Mark,
+            9 => ScheduleNodeType::Sequence,
+            10 => ScheduleNodeType::Set,
             _ => panic!("Illegal value."),
         }
     }

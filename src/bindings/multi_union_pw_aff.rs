@@ -17,682 +17,186 @@ pub struct MultiUnionPwAff {
 
 extern "C" {
 
-    fn isl_multi_union_pw_aff_zero_union_set(mupa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_dump(mupa: uintptr_t) -> ();
-
-    fn isl_multi_union_pw_aff_has_tuple_id(multi: uintptr_t, type_: i32) -> i32;
-
-    fn isl_multi_union_pw_aff_scale_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_range_is_wrapping(multi: uintptr_t) -> i32;
-
-    fn isl_multi_union_pw_aff_multi_aff_on_domain(domain: uintptr_t, ma: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_bind(mupa: uintptr_t, tuple: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_set_dim_name(multi: uintptr_t, type_: i32, pos: u32,
-                                           s: *const c_char)
-                                           -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_has_range_tuple_id(multi: uintptr_t) -> i32;
-
-    fn isl_multi_union_pw_aff_range_factor_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_factor_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_reset_user(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_extract_multi_pw_aff(mupa: uintptr_t, space: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_find_dim_by_id(multi: uintptr_t, type_: i32, id: uintptr_t) -> i32;
-
-    fn isl_multi_union_pw_aff_floor(mupa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_from_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_gist(mupa: uintptr_t, context: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_apply_aff(mupa: uintptr_t, aff: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_from_union_pw_aff_list(space: uintptr_t, list: uintptr_t)
-                                                     -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_max_multi_val(mupa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_to_str(mupa: uintptr_t) -> *const c_char;
-
-    fn isl_multi_union_pw_aff_get_list(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_from_multi_pw_aff(mpa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_get_space(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_dim(multi: uintptr_t, type_: i32) -> i32;
-
-    fn isl_multi_union_pw_aff_gist_params(mupa: uintptr_t, context: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_scale_down_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_copy(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_get_union_pw_aff(multi: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_set_tuple_name(multi: uintptr_t, type_: i32, s: *const c_char)
-                                             -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_intersect_range(mupa: uintptr_t, set: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_apply_pw_multi_aff(mupa: uintptr_t, pma: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_get_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_involves_nan(multi: uintptr_t) -> i32;
-
-    fn isl_multi_union_pw_aff_get_ctx(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_reset_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_zero(space: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_coalesce(mupa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_free(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_range_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_apply_pw_aff(mupa: uintptr_t, pa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_plain_is_equal(multi1: uintptr_t, multi2: uintptr_t) -> i32;
-
-    fn isl_multi_union_pw_aff_set_range_tuple_id(multi: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_intersect_domain(mupa: uintptr_t, uset: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_get_tuple_name(multi: uintptr_t, type_: i32) -> *const c_char;
-
-    fn isl_multi_union_pw_aff_sub(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_get_dim_id(multi: uintptr_t, type_: i32, pos: u32) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_scale_down_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_intersect_params(mupa: uintptr_t, params: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_set_union_pw_aff(multi: uintptr_t, pos: i32, el: uintptr_t)
-                                               -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_from_union_pw_aff(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_union_add(mupa1: uintptr_t, mupa2: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_mod_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_pullback_union_pw_multi_aff(mupa: uintptr_t, upma: uintptr_t)
-                                                          -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_set_tuple_id(multi: uintptr_t, type_: i32, id: uintptr_t)
-                                           -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_get_range_tuple_id(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_flat_range_product(multi1: uintptr_t, multi2: uintptr_t)
-                                                 -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_pw_multi_aff_on_domain(domain: uintptr_t, pma: uintptr_t)
-                                                     -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_set_dim_id(multi: uintptr_t, type_: i32, pos: u32, id: uintptr_t)
-                                         -> uintptr_t;
+    fn isl_multi_union_pw_aff_add(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_align_params(multi: uintptr_t, model: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_from_union_pw_multi_aff(upma: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_reset_range_tuple_id(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_min_multi_val(mupa: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_flatten_range(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_size(multi: uintptr_t) -> i32;
-
-    fn isl_multi_union_pw_aff_range_factor_domain(multi: uintptr_t) -> uintptr_t;
-
-    fn isl_multi_union_pw_aff_domain(mupa: uintptr_t) -> uintptr_t;
+    fn isl_multi_union_pw_aff_apply_aff(mupa: uintptr_t, aff: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_apply_multi_aff(mupa: uintptr_t, ma: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_find_dim_by_name(multi: uintptr_t, type_: i32, name: *const c_char)
-                                               -> i32;
+    fn isl_multi_union_pw_aff_apply_pw_aff(mupa: uintptr_t, pa: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_scale_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
+    fn isl_multi_union_pw_aff_apply_pw_multi_aff(mupa: uintptr_t, pma: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_bind(mupa: uintptr_t, tuple: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_coalesce(mupa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_copy(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_dim(multi: uintptr_t, type_: i32) -> i32;
+
+    fn isl_multi_union_pw_aff_domain(mupa: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_drop_dims(multi: uintptr_t, type_: i32, first: u32, n: u32)
                                         -> uintptr_t;
 
+    fn isl_multi_union_pw_aff_dump(mupa: uintptr_t) -> ();
+
+    fn isl_multi_union_pw_aff_extract_multi_pw_aff(mupa: uintptr_t, space: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_factor_range(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_find_dim_by_id(multi: uintptr_t, type_: i32, id: uintptr_t) -> i32;
+
+    fn isl_multi_union_pw_aff_find_dim_by_name(multi: uintptr_t, type_: i32, name: *const c_char)
+                                               -> i32;
+
+    fn isl_multi_union_pw_aff_flat_range_product(multi1: uintptr_t, multi2: uintptr_t)
+                                                 -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_flatten_range(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_floor(mupa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_free(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_from_multi_aff(ma: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_from_multi_pw_aff(mpa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_from_range(multi: uintptr_t) -> uintptr_t;
+
     fn isl_multi_union_pw_aff_from_union_map(umap: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_set_at(multi: uintptr_t, pos: i32, el: uintptr_t) -> uintptr_t;
+    fn isl_multi_union_pw_aff_from_union_pw_aff(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_from_union_pw_aff_list(space: uintptr_t, list: uintptr_t)
+                                                     -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_from_union_pw_multi_aff(upma: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_get_at(multi: uintptr_t, pos: i32) -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_add(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+    fn isl_multi_union_pw_aff_get_ctx(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_dim_id(multi: uintptr_t, type_: i32, pos: u32) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_domain_space(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_list(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_range_tuple_id(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_space(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_get_tuple_name(multi: uintptr_t, type_: i32) -> *const c_char;
+
+    fn isl_multi_union_pw_aff_get_union_pw_aff(multi: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_gist(mupa: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_gist_params(mupa: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_has_range_tuple_id(multi: uintptr_t) -> i32;
+
+    fn isl_multi_union_pw_aff_has_tuple_id(multi: uintptr_t, type_: i32) -> i32;
+
+    fn isl_multi_union_pw_aff_intersect_domain(mupa: uintptr_t, uset: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_intersect_params(mupa: uintptr_t, params: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_intersect_range(mupa: uintptr_t, set: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_involves_nan(multi: uintptr_t) -> i32;
+
+    fn isl_multi_union_pw_aff_max_multi_val(mupa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_min_multi_val(mupa: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_mod_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_multi_aff_on_domain(domain: uintptr_t, ma: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_multi_val_on_domain(domain: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_neg(multi: uintptr_t) -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_get_domain_space(multi: uintptr_t) -> uintptr_t;
+    fn isl_multi_union_pw_aff_plain_is_equal(multi1: uintptr_t, multi2: uintptr_t) -> i32;
+
+    fn isl_multi_union_pw_aff_pullback_union_pw_multi_aff(mupa: uintptr_t, upma: uintptr_t)
+                                                          -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_pw_multi_aff_on_domain(domain: uintptr_t, pma: uintptr_t)
+                                                     -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_range_factor_domain(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_range_factor_range(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_range_is_wrapping(multi: uintptr_t) -> i32;
+
+    fn isl_multi_union_pw_aff_range_product(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
 
     fn isl_multi_union_pw_aff_range_splice(multi1: uintptr_t, pos: u32, multi2: uintptr_t)
                                            -> uintptr_t;
 
-    fn isl_multi_union_pw_aff_from_multi_aff(ma: uintptr_t) -> uintptr_t;
+    fn isl_multi_union_pw_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_reset_range_tuple_id(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_reset_tuple_id(multi: uintptr_t, type_: i32) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_reset_user(multi: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_scale_down_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_scale_down_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_scale_multi_val(multi: uintptr_t, mv: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_scale_val(multi: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_at(multi: uintptr_t, pos: i32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_dim_id(multi: uintptr_t, type_: i32, pos: u32, id: uintptr_t)
+                                         -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_dim_name(multi: uintptr_t, type_: i32, pos: u32,
+                                           s: *const c_char)
+                                           -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_range_tuple_id(multi: uintptr_t, id: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_tuple_id(multi: uintptr_t, type_: i32, id: uintptr_t)
+                                           -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_tuple_name(multi: uintptr_t, type_: i32, s: *const c_char)
+                                             -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_set_union_pw_aff(multi: uintptr_t, pos: i32, el: uintptr_t)
+                                               -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_size(multi: uintptr_t) -> i32;
+
+    fn isl_multi_union_pw_aff_sub(multi1: uintptr_t, multi2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_to_str(mupa: uintptr_t) -> *const c_char;
+
+    fn isl_multi_union_pw_aff_union_add(mupa1: uintptr_t, mupa2: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_zero(space: uintptr_t) -> uintptr_t;
+
+    fn isl_multi_union_pw_aff_zero_union_set(mupa: uintptr_t) -> uintptr_t;
 
 }
 
 impl MultiUnionPwAff {
-    /// Wraps `isl_multi_union_pw_aff_zero_union_set`.
-    pub fn zero_union_set(self) -> UnionSet {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_zero_union_set(mupa) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_dump`.
-    pub fn dump(&self) -> () {
-        let mupa = self;
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_dump(mupa) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_has_tuple_id`.
-    pub fn has_tuple_id(&self, type_: DimType) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_has_tuple_id(multi, type_) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_scale_val`.
-    pub fn scale_val(self, v: Val) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_val(multi, v) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_range_is_wrapping`.
-    pub fn range_is_wrapping(&self) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_is_wrapping(multi) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_multi_aff_on_domain`.
-    pub fn multi_aff_on_domain(domain: UnionSet, ma: MultiAff) -> MultiUnionPwAff {
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let mut ma = ma;
-        ma.do_not_free_on_drop();
-        let ma = ma.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_multi_aff_on_domain(domain, ma) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_bind`.
-    pub fn bind(self, tuple: MultiId) -> UnionSet {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut tuple = tuple;
-        tuple.do_not_free_on_drop();
-        let tuple = tuple.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_bind(mupa, tuple) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let s = CString::new(s).unwrap();
-        let s = s.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_dim_name(multi, type_, pos, s) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> MultiUnionPwAff {
-        let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_read_from_str(ctx, str_) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_has_range_tuple_id`.
-    pub fn has_range_tuple_id(&self) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_has_range_tuple_id(multi) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_range_factor_range`.
-    pub fn range_factor_range(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_factor_range(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_factor_range`.
-    pub fn factor_range(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_factor_range(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_reset_user`.
-    pub fn reset_user(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_reset_user(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_extract_multi_pw_aff`.
-    pub fn extract_multi_pw_aff(&self, space: Space) -> MultiPwAff {
-        let mupa = self;
-        let mupa = mupa.ptr;
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_extract_multi_pw_aff(mupa, space) };
-        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_find_dim_by_id`.
-    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_find_dim_by_id(multi, type_, id) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_floor`.
-    pub fn floor(self) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_floor(mupa) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_from_range`.
-    pub fn from_range(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_range(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_gist`.
-    pub fn gist(self, context: UnionSet) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_gist(mupa, context) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_apply_aff`.
-    pub fn apply_aff(self, aff: Aff) -> UnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_apply_aff(mupa, aff) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_from_union_pw_aff_list`.
-    pub fn from_union_pw_aff_list(space: Space, list: UnionPwAffList) -> MultiUnionPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_union_pw_aff_list(space, list) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_max_multi_val`.
-    pub fn max_multi_val(self) -> MultiVal {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_max_multi_val(mupa) };
-        let isl_rs_result = MultiVal { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_to_str`.
-    pub fn to_str(&self) -> &str {
-        let mupa = self;
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_to_str(mupa) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_list`.
-    pub fn get_list(&self) -> UnionPwAffList {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_list(multi) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_from_multi_pw_aff`.
-    pub fn from_multi_pw_aff(mpa: MultiPwAff) -> MultiUnionPwAff {
-        let mut mpa = mpa;
-        mpa.do_not_free_on_drop();
-        let mpa = mpa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_multi_pw_aff(mpa) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_space`.
-    pub fn get_space(&self) -> Space {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_space(multi) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_dim(multi, type_) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_gist_params`.
-    pub fn gist_params(self, context: Set) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_gist_params(mupa, context) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_scale_down_multi_val`.
-    pub fn scale_down_multi_val(self, mv: MultiVal) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_down_multi_val(multi, mv) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_copy`.
-    pub fn copy(&self) -> MultiUnionPwAff {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_copy(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_union_pw_aff`.
-    pub fn get_union_pw_aff(&self, pos: i32) -> UnionPwAff {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_union_pw_aff(multi, pos) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_set_tuple_name`.
-    pub fn set_tuple_name(self, type_: DimType, s: &str) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let s = CString::new(s).unwrap();
-        let s = s.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_tuple_name(multi, type_, s) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_intersect_range`.
-    pub fn intersect_range(self, set: Set) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut set = set;
-        set.do_not_free_on_drop();
-        let set = set.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_intersect_range(mupa, set) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_apply_pw_multi_aff`.
-    pub fn apply_pw_multi_aff(self, pma: PwMultiAff) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut pma = pma;
-        pma.do_not_free_on_drop();
-        let pma = pma.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_apply_pw_multi_aff(mupa, pma) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_tuple_id`.
-    pub fn get_tuple_id(&self, type_: DimType) -> Id {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_tuple_id(multi, type_) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_involves_nan`.
-    pub fn involves_nan(&self) -> bool {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_involves_nan(multi) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_ctx(multi) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_reset_tuple_id`.
-    pub fn reset_tuple_id(self, type_: DimType) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_reset_tuple_id(multi, type_) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_zero`.
-    pub fn zero(space: Space) -> MultiUnionPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_zero(space) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_coalesce`.
-    pub fn coalesce(self) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_coalesce(mupa) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_free`.
-    pub fn free(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_free(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_range_product`.
-    pub fn range_product(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
+    /// Wraps `isl_multi_union_pw_aff_add`.
+    pub fn add(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
         let multi1 = self;
         let mut multi1 = multi1;
         multi1.do_not_free_on_drop();
@@ -700,276 +204,7 @@ impl MultiUnionPwAff {
         let mut multi2 = multi2;
         multi2.do_not_free_on_drop();
         let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_product(multi1, multi2) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_apply_pw_aff`.
-    pub fn apply_pw_aff(self, pa: PwAff) -> UnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut pa = pa;
-        pa.do_not_free_on_drop();
-        let pa = pa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_apply_pw_aff(mupa, pa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_plain_is_equal`.
-    pub fn plain_is_equal(&self, multi2: &MultiUnionPwAff) -> bool {
-        let multi1 = self;
-        let multi1 = multi1.ptr;
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_plain_is_equal(multi1, multi2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_set_range_tuple_id`.
-    pub fn set_range_tuple_id(self, id: Id) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_range_tuple_id(multi, id) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_intersect_domain`.
-    pub fn intersect_domain(self, uset: UnionSet) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut uset = uset;
-        uset.do_not_free_on_drop();
-        let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_intersect_domain(mupa, uset) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_tuple_name`.
-    pub fn get_tuple_name(&self, type_: DimType) -> &str {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_tuple_name(multi, type_) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_sub`.
-    pub fn sub(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_sub(multi1, multi2) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_dim_id`.
-    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_dim_id(multi, type_, pos) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_scale_down_val`.
-    pub fn scale_down_val(self, v: Val) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_down_val(multi, v) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_intersect_params`.
-    pub fn intersect_params(self, params: Set) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut params = params;
-        params.do_not_free_on_drop();
-        let params = params.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_intersect_params(mupa, params) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_set_union_pw_aff`.
-    pub fn set_union_pw_aff(self, pos: i32, el: UnionPwAff) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_union_pw_aff(multi, pos, el) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_from_union_pw_aff`.
-    pub fn from_union_pw_aff(upa: UnionPwAff) -> MultiUnionPwAff {
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_union_pw_aff(upa) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_union_add`.
-    pub fn union_add(self, mupa2: MultiUnionPwAff) -> MultiUnionPwAff {
-        let mupa1 = self;
-        let mut mupa1 = mupa1;
-        mupa1.do_not_free_on_drop();
-        let mupa1 = mupa1.ptr;
-        let mut mupa2 = mupa2;
-        mupa2.do_not_free_on_drop();
-        let mupa2 = mupa2.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_union_add(mupa1, mupa2) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_mod_multi_val`.
-    pub fn mod_multi_val(self, mv: MultiVal) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_mod_multi_val(multi, mv) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_pullback_union_pw_multi_aff`.
-    pub fn pullback_union_pw_multi_aff(self, upma: UnionPwMultiAff) -> MultiUnionPwAff {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let mut upma = upma;
-        upma.do_not_free_on_drop();
-        let upma = upma.ptr;
-        let isl_rs_result =
-            unsafe { isl_multi_union_pw_aff_pullback_union_pw_multi_aff(mupa, upma) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_set_tuple_id`.
-    pub fn set_tuple_id(self, type_: DimType, id: Id) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_tuple_id(multi, type_, id) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_get_range_tuple_id`.
-    pub fn get_range_tuple_id(&self) -> Id {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_range_tuple_id(multi) };
-        let isl_rs_result = Id { ptr: isl_rs_result,
-                                 should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_flat_range_product`.
-    pub fn flat_range_product(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_flat_range_product(multi1, multi2) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_pw_multi_aff_on_domain`.
-    pub fn pw_multi_aff_on_domain(domain: UnionSet, pma: PwMultiAff) -> MultiUnionPwAff {
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let mut pma = pma;
-        pma.do_not_free_on_drop();
-        let pma = pma.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_pw_multi_aff_on_domain(domain, pma) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_set_dim_id`.
-    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_dim_id(multi, type_, pos, id) };
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_add(multi1, multi2) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
         isl_rs_result
@@ -990,82 +225,18 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_from_union_pw_multi_aff`.
-    pub fn from_union_pw_multi_aff(upma: UnionPwMultiAff) -> MultiUnionPwAff {
-        let mut upma = upma;
-        upma.do_not_free_on_drop();
-        let upma = upma.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_union_pw_multi_aff(upma) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_reset_range_tuple_id`.
-    pub fn reset_range_tuple_id(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_reset_range_tuple_id(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_min_multi_val`.
-    pub fn min_multi_val(self) -> MultiVal {
+    /// Wraps `isl_multi_union_pw_aff_apply_aff`.
+    pub fn apply_aff(self, aff: Aff) -> UnionPwAff {
         let mupa = self;
         let mut mupa = mupa;
         mupa.do_not_free_on_drop();
         let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_min_multi_val(mupa) };
-        let isl_rs_result = MultiVal { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_flatten_range`.
-    pub fn flatten_range(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_flatten_range(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_size`.
-    pub fn size(&self) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_size(multi) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_range_factor_domain`.
-    pub fn range_factor_domain(self) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_factor_domain(multi) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_multi_union_pw_aff_domain`.
-    pub fn domain(self) -> UnionSet {
-        let mupa = self;
-        let mut mupa = mupa;
-        mupa.do_not_free_on_drop();
-        let mupa = mupa.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_domain(mupa) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_apply_aff(mupa, aff) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1084,29 +255,91 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
-        let multi = self;
-        let multi = multi.ptr;
-        let type_ = type_.to_i32();
-        let name = CString::new(name).unwrap();
-        let name = name.as_ptr();
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_find_dim_by_name(multi, type_, name) };
+    /// Wraps `isl_multi_union_pw_aff_apply_pw_aff`.
+    pub fn apply_pw_aff(self, pa: PwAff) -> UnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
+        let pa = pa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_apply_pw_aff(mupa, pa) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_scale_multi_val`.
-    pub fn scale_multi_val(self, mv: MultiVal) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_multi_val(multi, mv) };
+    /// Wraps `isl_multi_union_pw_aff_apply_pw_multi_aff`.
+    pub fn apply_pw_multi_aff(self, pma: PwMultiAff) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut pma = pma;
+        pma.do_not_free_on_drop();
+        let pma = pma.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_apply_pw_multi_aff(mupa, pma) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_bind`.
+    pub fn bind(self, tuple: MultiId) -> UnionSet {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut tuple = tuple;
+        tuple.do_not_free_on_drop();
+        let tuple = tuple.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_bind(mupa, tuple) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_coalesce`.
+    pub fn coalesce(self) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_coalesce(mupa) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_copy`.
+    pub fn copy(&self) -> MultiUnionPwAff {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_copy(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_dim`.
+    pub fn dim(&self, type_: DimType) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_dim(multi, type_) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_domain`.
+    pub fn domain(self) -> UnionSet {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_domain(mupa) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1123,6 +356,145 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
+    /// Wraps `isl_multi_union_pw_aff_dump`.
+    pub fn dump(&self) -> () {
+        let mupa = self;
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_dump(mupa) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_extract_multi_pw_aff`.
+    pub fn extract_multi_pw_aff(&self, space: Space) -> MultiPwAff {
+        let mupa = self;
+        let mupa = mupa.ptr;
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_extract_multi_pw_aff(mupa, space) };
+        let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_factor_range`.
+    pub fn factor_range(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_factor_range(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_find_dim_by_id`.
+    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_find_dim_by_id(multi, type_, id) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_find_dim_by_name`.
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let name = CString::new(name).unwrap();
+        let name = name.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_find_dim_by_name(multi, type_, name) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_flat_range_product`.
+    pub fn flat_range_product(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_flat_range_product(multi1, multi2) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_flatten_range`.
+    pub fn flatten_range(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_flatten_range(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_floor`.
+    pub fn floor(self) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_floor(mupa) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_free`.
+    pub fn free(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_free(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_from_multi_aff`.
+    pub fn from_multi_aff(ma: MultiAff) -> MultiUnionPwAff {
+        let mut ma = ma;
+        ma.do_not_free_on_drop();
+        let ma = ma.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_multi_aff(ma) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_from_multi_pw_aff`.
+    pub fn from_multi_pw_aff(mpa: MultiPwAff) -> MultiUnionPwAff {
+        let mut mpa = mpa;
+        mpa.do_not_free_on_drop();
+        let mpa = mpa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_multi_pw_aff(mpa) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_from_range`.
+    pub fn from_range(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_range(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_multi_union_pw_aff_from_union_map`.
     pub fn from_union_map(umap: UnionMap) -> MultiUnionPwAff {
         let mut umap = umap;
@@ -1134,16 +506,37 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_set_at`.
-    pub fn set_at(self, pos: i32, el: UnionPwAff) -> MultiUnionPwAff {
-        let multi = self;
-        let mut multi = multi;
-        multi.do_not_free_on_drop();
-        let multi = multi.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_at(multi, pos, el) };
+    /// Wraps `isl_multi_union_pw_aff_from_union_pw_aff`.
+    pub fn from_union_pw_aff(upa: UnionPwAff) -> MultiUnionPwAff {
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_union_pw_aff(upa) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_from_union_pw_aff_list`.
+    pub fn from_union_pw_aff_list(space: Space, list: UnionPwAffList) -> MultiUnionPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_union_pw_aff_list(space, list) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_from_union_pw_multi_aff`.
+    pub fn from_union_pw_multi_aff(upma: UnionPwMultiAff) -> MultiUnionPwAff {
+        let mut upma = upma;
+        upma.do_not_free_on_drop();
+        let upma = upma.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_union_pw_multi_aff(upma) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
         isl_rs_result
@@ -1159,16 +552,262 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_add`.
-    pub fn add(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
-        let multi1 = self;
-        let mut multi1 = multi1;
-        multi1.do_not_free_on_drop();
-        let multi1 = multi1.ptr;
-        let mut multi2 = multi2;
-        multi2.do_not_free_on_drop();
-        let multi2 = multi2.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_add(multi1, multi2) };
+    /// Wraps `isl_multi_union_pw_aff_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_ctx(multi) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_dim_id`.
+    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_dim_id(multi, type_, pos) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_domain_space`.
+    pub fn get_domain_space(&self) -> Space {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_domain_space(multi) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_list`.
+    pub fn get_list(&self) -> UnionPwAffList {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_list(multi) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_range_tuple_id`.
+    pub fn get_range_tuple_id(&self) -> Id {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_range_tuple_id(multi) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_space`.
+    pub fn get_space(&self) -> Space {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_space(multi) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_tuple_id`.
+    pub fn get_tuple_id(&self, type_: DimType) -> Id {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_tuple_id(multi, type_) };
+        let isl_rs_result = Id { ptr: isl_rs_result,
+                                 should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_tuple_name`.
+    pub fn get_tuple_name(&self, type_: DimType) -> &str {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_tuple_name(multi, type_) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_get_union_pw_aff`.
+    pub fn get_union_pw_aff(&self, pos: i32) -> UnionPwAff {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_union_pw_aff(multi, pos) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_gist`.
+    pub fn gist(self, context: UnionSet) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_gist(mupa, context) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_gist_params`.
+    pub fn gist_params(self, context: Set) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_gist_params(mupa, context) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_has_range_tuple_id`.
+    pub fn has_range_tuple_id(&self) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_has_range_tuple_id(multi) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_has_tuple_id`.
+    pub fn has_tuple_id(&self, type_: DimType) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_has_tuple_id(multi, type_) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_intersect_domain`.
+    pub fn intersect_domain(self, uset: UnionSet) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut uset = uset;
+        uset.do_not_free_on_drop();
+        let uset = uset.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_intersect_domain(mupa, uset) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_intersect_params`.
+    pub fn intersect_params(self, params: Set) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut params = params;
+        params.do_not_free_on_drop();
+        let params = params.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_intersect_params(mupa, params) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_intersect_range`.
+    pub fn intersect_range(self, set: Set) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
+        let set = set.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_intersect_range(mupa, set) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_involves_nan`.
+    pub fn involves_nan(&self) -> bool {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_involves_nan(multi) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_max_multi_val`.
+    pub fn max_multi_val(self) -> MultiVal {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_max_multi_val(mupa) };
+        let isl_rs_result = MultiVal { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_min_multi_val`.
+    pub fn min_multi_val(self) -> MultiVal {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_min_multi_val(mupa) };
+        let isl_rs_result = MultiVal { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_mod_multi_val`.
+    pub fn mod_multi_val(self, mv: MultiVal) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_mod_multi_val(multi, mv) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_multi_aff_on_domain`.
+    pub fn multi_aff_on_domain(domain: UnionSet, ma: MultiAff) -> MultiUnionPwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let mut ma = ma;
+        ma.do_not_free_on_drop();
+        let ma = ma.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_multi_aff_on_domain(domain, ma) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
         isl_rs_result
@@ -1200,13 +839,99 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_get_domain_space`.
-    pub fn get_domain_space(&self) -> Space {
+    /// Wraps `isl_multi_union_pw_aff_plain_is_equal`.
+    pub fn plain_is_equal(&self, multi2: &MultiUnionPwAff) -> bool {
+        let multi1 = self;
+        let multi1 = multi1.ptr;
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_plain_is_equal(multi1, multi2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_pullback_union_pw_multi_aff`.
+    pub fn pullback_union_pw_multi_aff(self, upma: UnionPwMultiAff) -> MultiUnionPwAff {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let mut upma = upma;
+        upma.do_not_free_on_drop();
+        let upma = upma.ptr;
+        let isl_rs_result =
+            unsafe { isl_multi_union_pw_aff_pullback_union_pw_multi_aff(mupa, upma) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_pw_multi_aff_on_domain`.
+    pub fn pw_multi_aff_on_domain(domain: UnionSet, pma: PwMultiAff) -> MultiUnionPwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let mut pma = pma;
+        pma.do_not_free_on_drop();
+        let pma = pma.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_pw_multi_aff_on_domain(domain, pma) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_range_factor_domain`.
+    pub fn range_factor_domain(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_factor_domain(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_range_factor_range`.
+    pub fn range_factor_range(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_factor_range(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_range_is_wrapping`.
+    pub fn range_is_wrapping(&self) -> bool {
         let multi = self;
         let multi = multi.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_get_domain_space(multi) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_is_wrapping(multi) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_range_product`.
+    pub fn range_product(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_range_product(multi1, multi2) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1225,14 +950,289 @@ impl MultiUnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_multi_union_pw_aff_from_multi_aff`.
-    pub fn from_multi_aff(ma: MultiAff) -> MultiUnionPwAff {
-        let mut ma = ma;
-        ma.do_not_free_on_drop();
-        let ma = ma.ptr;
-        let isl_rs_result = unsafe { isl_multi_union_pw_aff_from_multi_aff(ma) };
+    /// Wraps `isl_multi_union_pw_aff_read_from_str`.
+    pub fn read_from_str(ctx: &Context, str_: &str) -> MultiUnionPwAff {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_read_from_str(ctx, str_) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_reset_range_tuple_id`.
+    pub fn reset_range_tuple_id(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_reset_range_tuple_id(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_reset_tuple_id`.
+    pub fn reset_tuple_id(self, type_: DimType) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_reset_tuple_id(multi, type_) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_reset_user`.
+    pub fn reset_user(self) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_reset_user(multi) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_scale_down_multi_val`.
+    pub fn scale_down_multi_val(self, mv: MultiVal) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_down_multi_val(multi, mv) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_scale_down_val`.
+    pub fn scale_down_val(self, v: Val) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_down_val(multi, v) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_scale_multi_val`.
+    pub fn scale_multi_val(self, mv: MultiVal) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_multi_val(multi, mv) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_scale_val`.
+    pub fn scale_val(self, v: Val) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_scale_val(multi, v) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_at`.
+    pub fn set_at(self, pos: i32, el: UnionPwAff) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_at(multi, pos, el) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_dim_id`.
+    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_dim_id(multi, type_, pos, id) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_dim_name`.
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let s = CString::new(s).unwrap();
+        let s = s.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_dim_name(multi, type_, pos, s) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_range_tuple_id`.
+    pub fn set_range_tuple_id(self, id: Id) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_range_tuple_id(multi, id) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_tuple_id`.
+    pub fn set_tuple_id(self, type_: DimType, id: Id) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_tuple_id(multi, type_, id) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_tuple_name`.
+    pub fn set_tuple_name(self, type_: DimType, s: &str) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let type_ = type_.to_i32();
+        let s = CString::new(s).unwrap();
+        let s = s.as_ptr();
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_tuple_name(multi, type_, s) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_set_union_pw_aff`.
+    pub fn set_union_pw_aff(self, pos: i32, el: UnionPwAff) -> MultiUnionPwAff {
+        let multi = self;
+        let mut multi = multi;
+        multi.do_not_free_on_drop();
+        let multi = multi.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_set_union_pw_aff(multi, pos, el) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_size`.
+    pub fn size(&self) -> i32 {
+        let multi = self;
+        let multi = multi.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_size(multi) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_sub`.
+    pub fn sub(self, multi2: MultiUnionPwAff) -> MultiUnionPwAff {
+        let multi1 = self;
+        let mut multi1 = multi1;
+        multi1.do_not_free_on_drop();
+        let multi1 = multi1.ptr;
+        let mut multi2 = multi2;
+        multi2.do_not_free_on_drop();
+        let multi2 = multi2.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_sub(multi1, multi2) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_to_str`.
+    pub fn to_str(&self) -> &str {
+        let mupa = self;
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_to_str(mupa) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_union_add`.
+    pub fn union_add(self, mupa2: MultiUnionPwAff) -> MultiUnionPwAff {
+        let mupa1 = self;
+        let mut mupa1 = mupa1;
+        mupa1.do_not_free_on_drop();
+        let mupa1 = mupa1.ptr;
+        let mut mupa2 = mupa2;
+        mupa2.do_not_free_on_drop();
+        let mupa2 = mupa2.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_union_add(mupa1, mupa2) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_zero`.
+    pub fn zero(space: Space) -> MultiUnionPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_zero(space) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_multi_union_pw_aff_zero_union_set`.
+    pub fn zero_union_set(self) -> UnionSet {
+        let mupa = self;
+        let mut mupa = mupa;
+        mupa.do_not_free_on_drop();
+        let mupa = mupa.ptr;
+        let isl_rs_result = unsafe { isl_multi_union_pw_aff_zero_union_set(mupa) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 

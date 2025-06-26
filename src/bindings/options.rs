@@ -14,121 +14,132 @@ pub struct Options {
 
 extern "C" {
 
-    fn isl_options_get_schedule_separate_components(ctx: uintptr_t) -> i32;
+    fn isl_options_free(opt: uintptr_t) -> ();
 
-    fn isl_options_set_schedule_split_scaled(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_get_ast_always_print_block(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_ast_iterator_type(ctx: uintptr_t) -> *const c_char;
 
     fn isl_options_get_ast_print_macro_once(ctx: uintptr_t) -> i32;
 
-    fn isl_options_get_schedule_algorithm(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_schedule_treat_coalescing(ctx: uintptr_t) -> i32;
-
-    fn isl_options_set_schedule_max_coefficient(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_set_schedule_separate_components(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_schedule_serialize_sccs(ctx: uintptr_t) -> i32;
-
-    fn isl_options_free(opt: uintptr_t) -> ();
-
-    fn isl_options_set_ast_iterator_type(ctx: uintptr_t, val: *const c_char) -> i32;
-
-    fn isl_options_set_schedule_treat_coalescing(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_set_pip_symmetry(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_set_tile_shift_point_loops(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_tile_shift_point_loops(ctx: uintptr_t) -> i32;
+    fn isl_options_get_ast_print_outermost_block(ctx: uintptr_t) -> i32;
 
     fn isl_options_get_bound(ctx: uintptr_t) -> i32;
 
-    fn isl_options_set_schedule_serialize_sccs(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_set_schedule_maximize_band_depth(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_get_coalesce_bounded_wrapping(ctx: uintptr_t) -> i32;
 
     fn isl_options_get_coalesce_preserve_locals(ctx: uintptr_t) -> i32;
 
+    fn isl_options_get_gbr_only_first(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_on_error(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_pip_symmetry(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_algorithm(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_carry_self_first(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_max_coefficient(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_max_constant_term(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_maximize_band_depth(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_maximize_coincidence(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_outer_coincidence(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_separate_components(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_serialize_sccs(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_split_scaled(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_treat_coalescing(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_schedule_whole_component(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_tile_scale_tile_loops(ctx: uintptr_t) -> i32;
+
+    fn isl_options_get_tile_shift_point_loops(ctx: uintptr_t) -> i32;
+
+    fn isl_options_new_with_defaults() -> uintptr_t;
+
+    fn isl_options_set_ast_always_print_block(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_ast_iterator_type(ctx: uintptr_t, val: *const c_char) -> i32;
+
     fn isl_options_set_ast_print_macro_once(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_ast_print_outermost_block(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_bound(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_coalesce_bounded_wrapping(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_coalesce_preserve_locals(ctx: uintptr_t, val: i32) -> i32;
 
     fn isl_options_set_gbr_only_first(ctx: uintptr_t, val: i32) -> i32;
 
     fn isl_options_set_on_error(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_set_schedule_outer_coincidence(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_schedule_max_coefficient(ctx: uintptr_t) -> i32;
-
-    fn isl_options_set_ast_always_print_block(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_set_pip_symmetry(ctx: uintptr_t, val: i32) -> i32;
 
     fn isl_options_set_schedule_algorithm(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_get_ast_iterator_type(ctx: uintptr_t) -> *const c_char;
+    fn isl_options_set_schedule_carry_self_first(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_new_with_defaults() -> uintptr_t;
-
-    fn isl_options_get_ast_always_print_block(ctx: uintptr_t) -> i32;
-
-    fn isl_options_set_schedule_maximize_coincidence(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_on_error(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_schedule_max_constant_term(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_coalesce_bounded_wrapping(ctx: uintptr_t) -> i32;
-
-    fn isl_options_set_schedule_whole_component(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_pip_symmetry(ctx: uintptr_t) -> i32;
-
-    fn isl_options_set_tile_scale_tile_loops(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_tile_scale_tile_loops(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_schedule_carry_self_first(ctx: uintptr_t) -> i32;
-
-    fn isl_options_set_coalesce_bounded_wrapping(ctx: uintptr_t, val: i32) -> i32;
-
-    fn isl_options_get_schedule_split_scaled(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_gbr_only_first(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_schedule_whole_component(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_schedule_outer_coincidence(ctx: uintptr_t) -> i32;
-
-    fn isl_options_get_schedule_maximize_coincidence(ctx: uintptr_t) -> i32;
+    fn isl_options_set_schedule_max_coefficient(ctx: uintptr_t, val: i32) -> i32;
 
     fn isl_options_set_schedule_max_constant_term(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_get_ast_print_outermost_block(ctx: uintptr_t) -> i32;
+    fn isl_options_set_schedule_maximize_band_depth(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_set_coalesce_preserve_locals(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_set_schedule_maximize_coincidence(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_get_schedule_maximize_band_depth(ctx: uintptr_t) -> i32;
+    fn isl_options_set_schedule_outer_coincidence(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_set_ast_print_outermost_block(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_set_schedule_separate_components(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_set_schedule_carry_self_first(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_set_schedule_serialize_sccs(ctx: uintptr_t, val: i32) -> i32;
 
-    fn isl_options_set_bound(ctx: uintptr_t, val: i32) -> i32;
+    fn isl_options_set_schedule_split_scaled(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_schedule_treat_coalescing(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_schedule_whole_component(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_tile_scale_tile_loops(ctx: uintptr_t, val: i32) -> i32;
+
+    fn isl_options_set_tile_shift_point_loops(ctx: uintptr_t, val: i32) -> i32;
 
 }
 
 impl Options {
-    /// Wraps `isl_options_get_schedule_separate_components`.
-    pub fn get_schedule_separate_components(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_separate_components(ctx) };
+    /// Wraps `isl_options_free`.
+    pub fn free(self) -> () {
+        let opt = self;
+        let mut opt = opt;
+        opt.do_not_free_on_drop();
+        let opt = opt.ptr;
+        let isl_rs_result = unsafe { isl_options_free(opt) };
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_schedule_split_scaled`.
-    pub fn set_schedule_split_scaled(ctx: &Context, val: i32) -> Stat {
+    /// Wraps `isl_options_get_ast_always_print_block`.
+    pub fn get_ast_always_print_block(ctx: &Context) -> i32 {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_split_scaled(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        let isl_rs_result = unsafe { isl_options_get_ast_always_print_block(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_ast_iterator_type`.
+    pub fn get_ast_iterator_type(ctx: &Context) -> &str {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_ast_iterator_type(ctx) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 
@@ -139,6 +150,55 @@ impl Options {
         isl_rs_result
     }
 
+    /// Wraps `isl_options_get_ast_print_outermost_block`.
+    pub fn get_ast_print_outermost_block(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_ast_print_outermost_block(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_bound`.
+    pub fn get_bound(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_bound(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_coalesce_bounded_wrapping`.
+    pub fn get_coalesce_bounded_wrapping(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_coalesce_bounded_wrapping(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_coalesce_preserve_locals`.
+    pub fn get_coalesce_preserve_locals(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_coalesce_preserve_locals(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_gbr_only_first`.
+    pub fn get_gbr_only_first(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_gbr_only_first(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_on_error`.
+    pub fn get_on_error(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_on_error(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_pip_symmetry`.
+    pub fn get_pip_symmetry(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_pip_symmetry(ctx) };
+        isl_rs_result
+    }
+
     /// Wraps `isl_options_get_schedule_algorithm`.
     pub fn get_schedule_algorithm(ctx: &Context) -> i32 {
         let ctx = ctx.ptr;
@@ -146,26 +206,52 @@ impl Options {
         isl_rs_result
     }
 
-    /// Wraps `isl_options_get_schedule_treat_coalescing`.
-    pub fn get_schedule_treat_coalescing(ctx: &Context) -> i32 {
+    /// Wraps `isl_options_get_schedule_carry_self_first`.
+    pub fn get_schedule_carry_self_first(ctx: &Context) -> i32 {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_treat_coalescing(ctx) };
+        let isl_rs_result = unsafe { isl_options_get_schedule_carry_self_first(ctx) };
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_schedule_max_coefficient`.
-    pub fn set_schedule_max_coefficient(ctx: &Context, val: i32) -> Stat {
+    /// Wraps `isl_options_get_schedule_max_coefficient`.
+    pub fn get_schedule_max_coefficient(ctx: &Context) -> i32 {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_max_coefficient(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        let isl_rs_result = unsafe { isl_options_get_schedule_max_coefficient(ctx) };
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_schedule_separate_components`.
-    pub fn set_schedule_separate_components(ctx: &Context, val: i32) -> Stat {
+    /// Wraps `isl_options_get_schedule_max_constant_term`.
+    pub fn get_schedule_max_constant_term(ctx: &Context) -> i32 {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_separate_components(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        let isl_rs_result = unsafe { isl_options_get_schedule_max_constant_term(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_schedule_maximize_band_depth`.
+    pub fn get_schedule_maximize_band_depth(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_maximize_band_depth(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_schedule_maximize_coincidence`.
+    pub fn get_schedule_maximize_coincidence(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_maximize_coincidence(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_schedule_outer_coincidence`.
+    pub fn get_schedule_outer_coincidence(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_outer_coincidence(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_schedule_separate_components`.
+    pub fn get_schedule_separate_components(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_separate_components(ctx) };
         isl_rs_result
     }
 
@@ -176,13 +262,54 @@ impl Options {
         isl_rs_result
     }
 
-    /// Wraps `isl_options_free`.
-    pub fn free(self) -> () {
-        let opt = self;
-        let mut opt = opt;
-        opt.do_not_free_on_drop();
-        let opt = opt.ptr;
-        let isl_rs_result = unsafe { isl_options_free(opt) };
+    /// Wraps `isl_options_get_schedule_split_scaled`.
+    pub fn get_schedule_split_scaled(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_split_scaled(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_schedule_treat_coalescing`.
+    pub fn get_schedule_treat_coalescing(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_treat_coalescing(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_schedule_whole_component`.
+    pub fn get_schedule_whole_component(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_schedule_whole_component(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_tile_scale_tile_loops`.
+    pub fn get_tile_scale_tile_loops(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_tile_scale_tile_loops(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_get_tile_shift_point_loops`.
+    pub fn get_tile_shift_point_loops(ctx: &Context) -> i32 {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_get_tile_shift_point_loops(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_new_with_defaults`.
+    pub fn new_with_defaults() -> Options {
+        let isl_rs_result = unsafe { isl_options_new_with_defaults() };
+        let isl_rs_result = Options { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_ast_always_print_block`.
+    pub fn set_ast_always_print_block(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_ast_always_print_block(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
 
@@ -196,71 +323,42 @@ impl Options {
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_schedule_treat_coalescing`.
-    pub fn set_schedule_treat_coalescing(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_treat_coalescing(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_pip_symmetry`.
-    pub fn set_pip_symmetry(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_pip_symmetry(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_tile_shift_point_loops`.
-    pub fn set_tile_shift_point_loops(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_tile_shift_point_loops(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_tile_shift_point_loops`.
-    pub fn get_tile_shift_point_loops(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_tile_shift_point_loops(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_bound`.
-    pub fn get_bound(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_bound(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_schedule_serialize_sccs`.
-    pub fn set_schedule_serialize_sccs(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_serialize_sccs(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_schedule_maximize_band_depth`.
-    pub fn set_schedule_maximize_band_depth(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_maximize_band_depth(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_coalesce_preserve_locals`.
-    pub fn get_coalesce_preserve_locals(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_coalesce_preserve_locals(ctx) };
-        isl_rs_result
-    }
-
     /// Wraps `isl_options_set_ast_print_macro_once`.
     pub fn set_ast_print_macro_once(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_options_set_ast_print_macro_once(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_ast_print_outermost_block`.
+    pub fn set_ast_print_outermost_block(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_ast_print_outermost_block(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_bound`.
+    pub fn set_bound(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_bound(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_coalesce_bounded_wrapping`.
+    pub fn set_coalesce_bounded_wrapping(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_coalesce_bounded_wrapping(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_coalesce_preserve_locals`.
+    pub fn set_coalesce_preserve_locals(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_coalesce_preserve_locals(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
@@ -281,25 +379,10 @@ impl Options {
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_schedule_outer_coincidence`.
-    pub fn set_schedule_outer_coincidence(ctx: &Context, val: i32) -> Stat {
+    /// Wraps `isl_options_set_pip_symmetry`.
+    pub fn set_pip_symmetry(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_outer_coincidence(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_max_coefficient`.
-    pub fn get_schedule_max_coefficient(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_max_coefficient(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_ast_always_print_block`.
-    pub fn set_ast_always_print_block(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_ast_always_print_block(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_pip_symmetry(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
@@ -312,136 +395,19 @@ impl Options {
         isl_rs_result
     }
 
-    /// Wraps `isl_options_get_ast_iterator_type`.
-    pub fn get_ast_iterator_type(ctx: &Context) -> &str {
+    /// Wraps `isl_options_set_schedule_carry_self_first`.
+    pub fn set_schedule_carry_self_first(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_ast_iterator_type(ctx) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_new_with_defaults`.
-    pub fn new_with_defaults() -> Options {
-        let isl_rs_result = unsafe { isl_options_new_with_defaults() };
-        let isl_rs_result = Options { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_ast_always_print_block`.
-    pub fn get_ast_always_print_block(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_ast_always_print_block(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_schedule_maximize_coincidence`.
-    pub fn set_schedule_maximize_coincidence(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_maximize_coincidence(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_schedule_carry_self_first(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
 
-    /// Wraps `isl_options_get_on_error`.
-    pub fn get_on_error(ctx: &Context) -> i32 {
+    /// Wraps `isl_options_set_schedule_max_coefficient`.
+    pub fn set_schedule_max_coefficient(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_on_error(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_max_constant_term`.
-    pub fn get_schedule_max_constant_term(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_max_constant_term(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_coalesce_bounded_wrapping`.
-    pub fn get_coalesce_bounded_wrapping(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_coalesce_bounded_wrapping(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_schedule_whole_component`.
-    pub fn set_schedule_whole_component(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_whole_component(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_schedule_max_coefficient(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_pip_symmetry`.
-    pub fn get_pip_symmetry(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_pip_symmetry(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_tile_scale_tile_loops`.
-    pub fn set_tile_scale_tile_loops(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_tile_scale_tile_loops(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_tile_scale_tile_loops`.
-    pub fn get_tile_scale_tile_loops(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_tile_scale_tile_loops(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_carry_self_first`.
-    pub fn get_schedule_carry_self_first(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_carry_self_first(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_coalesce_bounded_wrapping`.
-    pub fn set_coalesce_bounded_wrapping(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_coalesce_bounded_wrapping(ctx, val) };
-        let isl_rs_result = Stat::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_split_scaled`.
-    pub fn get_schedule_split_scaled(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_split_scaled(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_gbr_only_first`.
-    pub fn get_gbr_only_first(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_gbr_only_first(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_whole_component`.
-    pub fn get_schedule_whole_component(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_whole_component(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_outer_coincidence`.
-    pub fn get_schedule_outer_coincidence(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_outer_coincidence(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_get_schedule_maximize_coincidence`.
-    pub fn get_schedule_maximize_coincidence(ctx: &Context) -> i32 {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_maximize_coincidence(ctx) };
         isl_rs_result
     }
 
@@ -453,48 +419,82 @@ impl Options {
         isl_rs_result
     }
 
-    /// Wraps `isl_options_get_ast_print_outermost_block`.
-    pub fn get_ast_print_outermost_block(ctx: &Context) -> i32 {
+    /// Wraps `isl_options_set_schedule_maximize_band_depth`.
+    pub fn set_schedule_maximize_band_depth(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_ast_print_outermost_block(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_coalesce_preserve_locals`.
-    pub fn set_coalesce_preserve_locals(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_coalesce_preserve_locals(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_schedule_maximize_band_depth(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
 
-    /// Wraps `isl_options_get_schedule_maximize_band_depth`.
-    pub fn get_schedule_maximize_band_depth(ctx: &Context) -> i32 {
+    /// Wraps `isl_options_set_schedule_maximize_coincidence`.
+    pub fn set_schedule_maximize_coincidence(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_get_schedule_maximize_band_depth(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_options_set_ast_print_outermost_block`.
-    pub fn set_ast_print_outermost_block(ctx: &Context, val: i32) -> Stat {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_ast_print_outermost_block(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_schedule_maximize_coincidence(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_schedule_carry_self_first`.
-    pub fn set_schedule_carry_self_first(ctx: &Context, val: i32) -> Stat {
+    /// Wraps `isl_options_set_schedule_outer_coincidence`.
+    pub fn set_schedule_outer_coincidence(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_schedule_carry_self_first(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_schedule_outer_coincidence(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }
 
-    /// Wraps `isl_options_set_bound`.
-    pub fn set_bound(ctx: &Context, val: i32) -> Stat {
+    /// Wraps `isl_options_set_schedule_separate_components`.
+    pub fn set_schedule_separate_components(ctx: &Context, val: i32) -> Stat {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_options_set_bound(ctx, val) };
+        let isl_rs_result = unsafe { isl_options_set_schedule_separate_components(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_schedule_serialize_sccs`.
+    pub fn set_schedule_serialize_sccs(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_schedule_serialize_sccs(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_schedule_split_scaled`.
+    pub fn set_schedule_split_scaled(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_schedule_split_scaled(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_schedule_treat_coalescing`.
+    pub fn set_schedule_treat_coalescing(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_schedule_treat_coalescing(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_schedule_whole_component`.
+    pub fn set_schedule_whole_component(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_schedule_whole_component(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_tile_scale_tile_loops`.
+    pub fn set_tile_scale_tile_loops(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_tile_scale_tile_loops(ctx, val) };
+        let isl_rs_result = Stat::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_options_set_tile_shift_point_loops`.
+    pub fn set_tile_shift_point_loops(ctx: &Context, val: i32) -> Stat {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_options_set_tile_shift_point_loops(ctx, val) };
         let isl_rs_result = Stat::from_i32(isl_rs_result);
         isl_rs_result
     }

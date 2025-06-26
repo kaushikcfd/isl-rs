@@ -12,15 +12,27 @@ pub struct Flow {
 
 extern "C" {
 
+    fn isl_flow_free(deps: uintptr_t) -> uintptr_t;
+
     fn isl_flow_get_ctx(deps: uintptr_t) -> uintptr_t;
 
     fn isl_flow_get_no_source(deps: uintptr_t, must: i32) -> uintptr_t;
 
-    fn isl_flow_free(deps: uintptr_t) -> uintptr_t;
-
 }
 
 impl Flow {
+    /// Wraps `isl_flow_free`.
+    pub fn free(self) -> Flow {
+        let deps = self;
+        let mut deps = deps;
+        deps.do_not_free_on_drop();
+        let deps = deps.ptr;
+        let isl_rs_result = unsafe { isl_flow_free(deps) };
+        let isl_rs_result = Flow { ptr: isl_rs_result,
+                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_flow_get_ctx`.
     pub fn get_ctx(&self) -> Context {
         let deps = self;
@@ -38,18 +50,6 @@ impl Flow {
         let isl_rs_result = unsafe { isl_flow_get_no_source(deps, must) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_flow_free`.
-    pub fn free(self) -> Flow {
-        let deps = self;
-        let mut deps = deps;
-        deps.do_not_free_on_drop();
-        let deps = deps.ptr;
-        let isl_rs_result = unsafe { isl_flow_free(deps) };
-        let isl_rs_result = Flow { ptr: isl_rs_result,
-                                   should_free_on_drop: true };
         isl_rs_result
     }
 

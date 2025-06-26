@@ -12,15 +12,27 @@ pub struct AccessInfo {
 
 extern "C" {
 
+    fn isl_access_info_compute_flow(acc: uintptr_t) -> uintptr_t;
+
     fn isl_access_info_free(acc: uintptr_t) -> uintptr_t;
 
     fn isl_access_info_get_ctx(acc: uintptr_t) -> uintptr_t;
 
-    fn isl_access_info_compute_flow(acc: uintptr_t) -> uintptr_t;
-
 }
 
 impl AccessInfo {
+    /// Wraps `isl_access_info_compute_flow`.
+    pub fn compute_flow(self) -> Flow {
+        let acc = self;
+        let mut acc = acc;
+        acc.do_not_free_on_drop();
+        let acc = acc.ptr;
+        let isl_rs_result = unsafe { isl_access_info_compute_flow(acc) };
+        let isl_rs_result = Flow { ptr: isl_rs_result,
+                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_access_info_free`.
     pub fn free(self) -> AccessInfo {
         let acc = self;
@@ -40,18 +52,6 @@ impl AccessInfo {
         let isl_rs_result = unsafe { isl_access_info_get_ctx(acc) };
         let isl_rs_result = Context { ptr: isl_rs_result,
                                       should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_access_info_compute_flow`.
-    pub fn compute_flow(self) -> Flow {
-        let acc = self;
-        let mut acc = acc;
-        acc.do_not_free_on_drop();
-        let acc = acc.ptr;
-        let isl_rs_result = unsafe { isl_access_info_compute_flow(acc) };
-        let isl_rs_result = Flow { ptr: isl_rs_result,
-                                   should_free_on_drop: true };
         isl_rs_result
     }
 

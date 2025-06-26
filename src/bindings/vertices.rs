@@ -12,23 +12,15 @@ pub struct Vertices {
 
 extern "C" {
 
-    fn isl_vertices_get_n_vertices(vertices: uintptr_t) -> i32;
-
     fn isl_vertices_free(vertices: uintptr_t) -> uintptr_t;
 
     fn isl_vertices_get_ctx(vertices: uintptr_t) -> uintptr_t;
 
+    fn isl_vertices_get_n_vertices(vertices: uintptr_t) -> i32;
+
 }
 
 impl Vertices {
-    /// Wraps `isl_vertices_get_n_vertices`.
-    pub fn get_n_vertices(&self) -> i32 {
-        let vertices = self;
-        let vertices = vertices.ptr;
-        let isl_rs_result = unsafe { isl_vertices_get_n_vertices(vertices) };
-        isl_rs_result
-    }
-
     /// Wraps `isl_vertices_free`.
     pub fn free(self) -> Vertices {
         let vertices = self;
@@ -48,6 +40,14 @@ impl Vertices {
         let isl_rs_result = unsafe { isl_vertices_get_ctx(vertices) };
         let isl_rs_result = Context { ptr: isl_rs_result,
                                       should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_vertices_get_n_vertices`.
+    pub fn get_n_vertices(&self) -> i32 {
+        let vertices = self;
+        let vertices = vertices.ptr;
+        let isl_rs_result = unsafe { isl_vertices_get_n_vertices(vertices) };
         isl_rs_result
     }
 

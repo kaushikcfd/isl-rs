@@ -14,54 +14,119 @@ pub struct ConstraintList {
 
 extern "C" {
 
-    fn isl_constraint_list_size(list: uintptr_t) -> i32;
-
-    fn isl_constraint_list_dump(list: uintptr_t) -> ();
-
-    fn isl_constraint_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_n_constraint(list: uintptr_t) -> i32;
-
     fn isl_constraint_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_from_constraint(el: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_set_constraint(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_constraint_list_get_constraint(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_constraint_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
 
     fn isl_constraint_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
 
-    fn isl_constraint_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+    fn isl_constraint_list_clear(list: uintptr_t) -> uintptr_t;
 
-    fn isl_constraint_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
+    fn isl_constraint_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
 
     fn isl_constraint_list_copy(list: uintptr_t) -> uintptr_t;
 
     fn isl_constraint_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
 
+    fn isl_constraint_list_dump(list: uintptr_t) -> ();
+
     fn isl_constraint_list_free(list: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_from_constraint(el: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_constraint_list_get_constraint(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_constraint_list_get_ctx(list: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_n_constraint(list: uintptr_t) -> i32;
+
+    fn isl_constraint_list_reverse(list: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_set_constraint(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_constraint_list_size(list: uintptr_t) -> i32;
+
+    fn isl_constraint_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
 
     fn isl_constraint_list_to_str(list: uintptr_t) -> *const c_char;
 
 }
 
 impl ConstraintList {
-    /// Wraps `isl_constraint_list_size`.
-    pub fn size(&self) -> i32 {
+    /// Wraps `isl_constraint_list_add`.
+    pub fn add(self, el: Constraint) -> ConstraintList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_add(list, el) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_alloc`.
+    pub fn alloc(ctx: &Context, n: i32) -> ConstraintList {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_alloc(ctx, n) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_clear`.
+    pub fn clear(self) -> ConstraintList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_clear(list) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_concat`.
+    pub fn concat(self, list2: ConstraintList) -> ConstraintList {
+        let list1 = self;
+        let mut list1 = list1;
+        list1.do_not_free_on_drop();
+        let list1 = list1.ptr;
+        let mut list2 = list2;
+        list2.do_not_free_on_drop();
+        let list2 = list2.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_concat(list1, list2) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_copy`.
+    pub fn copy(&self) -> ConstraintList {
         let list = self;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_size(list) };
+        let isl_rs_result = unsafe { isl_constraint_list_copy(list) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_drop`.
+    pub fn drop(self, first: u32, n: u32) -> ConstraintList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_drop(list, first, n) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -70,6 +135,59 @@ impl ConstraintList {
         let list = self;
         let list = list.ptr;
         let isl_rs_result = unsafe { isl_constraint_list_dump(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_free`.
+    pub fn free(self) -> ConstraintList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_free(list) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_from_constraint`.
+    pub fn from_constraint(el: Constraint) -> ConstraintList {
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_from_constraint(el) };
+        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_get_at`.
+    pub fn get_at(&self, index: i32) -> Constraint {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_get_at(list, index) };
+        let isl_rs_result = Constraint { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_get_constraint`.
+    pub fn get_constraint(&self, index: i32) -> Constraint {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_get_constraint(list, index) };
+        let isl_rs_result = Constraint { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_constraint_list_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_constraint_list_get_ctx(list) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
         isl_rs_result
     }
 
@@ -96,27 +214,13 @@ impl ConstraintList {
         isl_rs_result
     }
 
-    /// Wraps `isl_constraint_list_add`.
-    pub fn add(self, el: Constraint) -> ConstraintList {
+    /// Wraps `isl_constraint_list_reverse`.
+    pub fn reverse(self) -> ConstraintList {
         let list = self;
         let mut list = list;
         list.do_not_free_on_drop();
         let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_add(list, el) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_from_constraint`.
-    pub fn from_constraint(el: Constraint) -> ConstraintList {
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_from_constraint(el) };
+        let isl_rs_result = unsafe { isl_constraint_list_reverse(list) };
         let isl_rs_result = ConstraintList { ptr: isl_rs_result,
                                              should_free_on_drop: true };
         isl_rs_result
@@ -152,47 +256,11 @@ impl ConstraintList {
         isl_rs_result
     }
 
-    /// Wraps `isl_constraint_list_reverse`.
-    pub fn reverse(self) -> ConstraintList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_reverse(list) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
+    /// Wraps `isl_constraint_list_size`.
+    pub fn size(&self) -> i32 {
         let list = self;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_clear`.
-    pub fn clear(self) -> ConstraintList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_clear(list) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_get_constraint`.
-    pub fn get_constraint(&self, index: i32) -> Constraint {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_get_constraint(list, index) };
-        let isl_rs_result = Constraint { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_constraint_list_size(list) };
         isl_rs_result
     }
 
@@ -203,74 +271,6 @@ impl ConstraintList {
         list.do_not_free_on_drop();
         let list = list.ptr;
         let isl_rs_result = unsafe { isl_constraint_list_swap(list, pos1, pos2) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_alloc`.
-    pub fn alloc(ctx: &Context, n: i32) -> ConstraintList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_alloc(ctx, n) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_concat`.
-    pub fn concat(self, list2: ConstraintList) -> ConstraintList {
-        let list1 = self;
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_concat(list1, list2) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_get_at`.
-    pub fn get_at(&self, index: i32) -> Constraint {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_get_at(list, index) };
-        let isl_rs_result = Constraint { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_copy`.
-    pub fn copy(&self) -> ConstraintList {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_copy(list) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_drop`.
-    pub fn drop(self, first: u32, n: u32) -> ConstraintList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_drop(list, first, n) };
-        let isl_rs_result = ConstraintList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_constraint_list_free`.
-    pub fn free(self) -> ConstraintList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_constraint_list_free(list) };
         let isl_rs_result = ConstraintList { ptr: isl_rs_result,
                                              should_free_on_drop: true };
         isl_rs_result

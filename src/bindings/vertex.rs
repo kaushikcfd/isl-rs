@@ -12,19 +12,31 @@ pub struct Vertex {
 
 extern "C" {
 
+    fn isl_vertex_free(vertex: uintptr_t) -> uintptr_t;
+
     fn isl_vertex_get_ctx(vertex: uintptr_t) -> uintptr_t;
+
+    fn isl_vertex_get_domain(vertex: uintptr_t) -> uintptr_t;
 
     fn isl_vertex_get_expr(vertex: uintptr_t) -> uintptr_t;
 
-    fn isl_vertex_free(vertex: uintptr_t) -> uintptr_t;
-
     fn isl_vertex_get_id(vertex: uintptr_t) -> i32;
-
-    fn isl_vertex_get_domain(vertex: uintptr_t) -> uintptr_t;
 
 }
 
 impl Vertex {
+    /// Wraps `isl_vertex_free`.
+    pub fn free(self) -> Vertex {
+        let vertex = self;
+        let mut vertex = vertex;
+        vertex.do_not_free_on_drop();
+        let vertex = vertex.ptr;
+        let isl_rs_result = unsafe { isl_vertex_free(vertex) };
+        let isl_rs_result = Vertex { ptr: isl_rs_result,
+                                     should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_vertex_get_ctx`.
     pub fn get_ctx(&self) -> Context {
         let vertex = self;
@@ -32,6 +44,16 @@ impl Vertex {
         let isl_rs_result = unsafe { isl_vertex_get_ctx(vertex) };
         let isl_rs_result = Context { ptr: isl_rs_result,
                                       should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_vertex_get_domain`.
+    pub fn get_domain(&self) -> BasicSet {
+        let vertex = self;
+        let vertex = vertex.ptr;
+        let isl_rs_result = unsafe { isl_vertex_get_domain(vertex) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -45,33 +67,11 @@ impl Vertex {
         isl_rs_result
     }
 
-    /// Wraps `isl_vertex_free`.
-    pub fn free(self) -> Vertex {
-        let vertex = self;
-        let mut vertex = vertex;
-        vertex.do_not_free_on_drop();
-        let vertex = vertex.ptr;
-        let isl_rs_result = unsafe { isl_vertex_free(vertex) };
-        let isl_rs_result = Vertex { ptr: isl_rs_result,
-                                     should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_vertex_get_id`.
     pub fn get_id(&self) -> i32 {
         let vertex = self;
         let vertex = vertex.ptr;
         let isl_rs_result = unsafe { isl_vertex_get_id(vertex) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_vertex_get_domain`.
-    pub fn get_domain(&self) -> BasicSet {
-        let vertex = self;
-        let vertex = vertex.ptr;
-        let isl_rs_result = unsafe { isl_vertex_get_domain(vertex) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
         isl_rs_result
     }
 

@@ -14,59 +14,43 @@ pub struct Context {
 
 extern "C" {
 
-    fn isl_ctx_reset_operations(ctx: uintptr_t) -> ();
-
-    fn isl_ctx_free(ctx: uintptr_t) -> ();
-
     fn isl_ctx_abort(ctx: uintptr_t) -> ();
 
-    fn isl_ctx_reset_error(ctx: uintptr_t) -> ();
-
-    fn isl_ctx_last_error_msg(ctx: uintptr_t) -> *const c_char;
-
-    fn isl_ctx_ref(ctx: uintptr_t) -> ();
-
-    fn isl_ctx_last_error_file(ctx: uintptr_t) -> *const c_char;
-
-    fn isl_ctx_set_max_operations(ctx: uintptr_t, max_operations: u64) -> ();
-
     fn isl_ctx_aborted(ctx: uintptr_t) -> i32;
-
-    fn isl_ctx_options(ctx: uintptr_t) -> uintptr_t;
 
     fn isl_ctx_alloc() -> uintptr_t;
 
     fn isl_ctx_deref(ctx: uintptr_t) -> ();
 
-    fn isl_ctx_resume(ctx: uintptr_t) -> ();
+    fn isl_ctx_free(ctx: uintptr_t) -> ();
+
+    fn isl_ctx_get_max_operations(ctx: uintptr_t) -> u64;
 
     fn isl_ctx_last_error(ctx: uintptr_t) -> i32;
 
+    fn isl_ctx_last_error_file(ctx: uintptr_t) -> *const c_char;
+
     fn isl_ctx_last_error_line(ctx: uintptr_t) -> i32;
+
+    fn isl_ctx_last_error_msg(ctx: uintptr_t) -> *const c_char;
+
+    fn isl_ctx_options(ctx: uintptr_t) -> uintptr_t;
+
+    fn isl_ctx_ref(ctx: uintptr_t) -> ();
+
+    fn isl_ctx_reset_error(ctx: uintptr_t) -> ();
+
+    fn isl_ctx_reset_operations(ctx: uintptr_t) -> ();
+
+    fn isl_ctx_resume(ctx: uintptr_t) -> ();
 
     fn isl_ctx_set_error(ctx: uintptr_t, error: i32) -> ();
 
-    fn isl_ctx_get_max_operations(ctx: uintptr_t) -> u64;
+    fn isl_ctx_set_max_operations(ctx: uintptr_t, max_operations: u64) -> ();
 
 }
 
 impl Context {
-    /// Wraps `isl_ctx_reset_operations`.
-    pub fn reset_operations(&self) -> () {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_reset_operations(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ctx_free`.
-    pub fn free(&self) -> () {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_free(ctx) };
-        isl_rs_result
-    }
-
     /// Wraps `isl_ctx_abort`.
     pub fn abort(&self) -> () {
         let ctx = self;
@@ -75,65 +59,11 @@ impl Context {
         isl_rs_result
     }
 
-    /// Wraps `isl_ctx_reset_error`.
-    pub fn reset_error(&self) -> () {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_reset_error(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ctx_last_error_msg`.
-    pub fn last_error_msg(&self) -> &str {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_last_error_msg(ctx) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ctx_ref`.
-    pub fn incref(&self) -> () {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_ref(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ctx_last_error_file`.
-    pub fn last_error_file(&self) -> &str {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_last_error_file(ctx) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ctx_set_max_operations`.
-    pub fn set_max_operations(&self, max_operations: u64) -> () {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_set_max_operations(ctx, max_operations) };
-        isl_rs_result
-    }
-
     /// Wraps `isl_ctx_aborted`.
     pub fn aborted(&self) -> i32 {
         let ctx = self;
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_ctx_aborted(ctx) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_ctx_options`.
-    pub fn options(&self) -> Options {
-        let ctx = self;
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_options(ctx) };
-        let isl_rs_result = Options { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -153,11 +83,19 @@ impl Context {
         isl_rs_result
     }
 
-    /// Wraps `isl_ctx_resume`.
-    pub fn resume(&self) -> () {
+    /// Wraps `isl_ctx_free`.
+    pub fn free(&self) -> () {
         let ctx = self;
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_resume(ctx) };
+        let isl_rs_result = unsafe { isl_ctx_free(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_get_max_operations`.
+    pub fn get_max_operations(&self) -> u64 {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_get_max_operations(ctx) };
         isl_rs_result
     }
 
@@ -170,11 +108,73 @@ impl Context {
         isl_rs_result
     }
 
+    /// Wraps `isl_ctx_last_error_file`.
+    pub fn last_error_file(&self) -> &str {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_last_error_file(ctx) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
     /// Wraps `isl_ctx_last_error_line`.
     pub fn last_error_line(&self) -> i32 {
         let ctx = self;
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_ctx_last_error_line(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_last_error_msg`.
+    pub fn last_error_msg(&self) -> &str {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_last_error_msg(ctx) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_options`.
+    pub fn options(&self) -> Options {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_options(ctx) };
+        let isl_rs_result = Options { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_ref`.
+    pub fn incref(&self) -> () {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_ref(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_reset_error`.
+    pub fn reset_error(&self) -> () {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_reset_error(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_reset_operations`.
+    pub fn reset_operations(&self) -> () {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_reset_operations(ctx) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_ctx_resume`.
+    pub fn resume(&self) -> () {
+        let ctx = self;
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_ctx_resume(ctx) };
         isl_rs_result
     }
 
@@ -187,11 +187,11 @@ impl Context {
         isl_rs_result
     }
 
-    /// Wraps `isl_ctx_get_max_operations`.
-    pub fn get_max_operations(&self) -> u64 {
+    /// Wraps `isl_ctx_set_max_operations`.
+    pub fn set_max_operations(&self, max_operations: u64) -> () {
         let ctx = self;
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_ctx_get_max_operations(ctx) };
+        let isl_rs_result = unsafe { isl_ctx_set_max_operations(ctx, max_operations) };
         isl_rs_result
     }
 

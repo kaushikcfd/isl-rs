@@ -14,123 +14,66 @@ pub struct ScheduleConstraints {
 
 extern "C" {
 
-    fn isl_schedule_constraints_get_conditional_validity(sc: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_constraints_get_proximity(sc: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_constraints_get_context(sc: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_constraints_set_conditional_validity(sc: uintptr_t, condition: uintptr_t,
-                                                         validity: uintptr_t)
-                                                         -> uintptr_t;
-
-    fn isl_schedule_constraints_free(sc: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_constraints_to_str(sc: uintptr_t) -> *const c_char;
+    fn isl_schedule_constraints_apply(sc: uintptr_t, umap: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_constraints_compute_schedule(sc: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_constraints_get_ctx(sc: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_constraints_set_coincidence(sc: uintptr_t, coincidence: uintptr_t)
-                                                -> uintptr_t;
+    fn isl_schedule_constraints_copy(sc: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_constraints_dump(sc: uintptr_t) -> ();
 
+    fn isl_schedule_constraints_free(sc: uintptr_t) -> uintptr_t;
+
     fn isl_schedule_constraints_get_coincidence(sc: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_constraints_set_validity(sc: uintptr_t, validity: uintptr_t) -> uintptr_t;
+    fn isl_schedule_constraints_get_conditional_validity(sc: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_constraints_set_context(sc: uintptr_t, context: uintptr_t) -> uintptr_t;
+    fn isl_schedule_constraints_get_conditional_validity_condition(sc: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_constraints_get_context(sc: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_constraints_get_ctx(sc: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_constraints_get_domain(sc: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_constraints_set_proximity(sc: uintptr_t, proximity: uintptr_t) -> uintptr_t;
+    fn isl_schedule_constraints_get_proximity(sc: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_constraints_get_validity(sc: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_constraints_on_domain(domain: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_constraints_apply(sc: uintptr_t, umap: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_constraints_get_conditional_validity_condition(sc: uintptr_t) -> uintptr_t;
-
     fn isl_schedule_constraints_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
 
-    fn isl_schedule_constraints_copy(sc: uintptr_t) -> uintptr_t;
+    fn isl_schedule_constraints_set_coincidence(sc: uintptr_t, coincidence: uintptr_t)
+                                                -> uintptr_t;
+
+    fn isl_schedule_constraints_set_conditional_validity(sc: uintptr_t, condition: uintptr_t,
+                                                         validity: uintptr_t)
+                                                         -> uintptr_t;
+
+    fn isl_schedule_constraints_set_context(sc: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_constraints_set_proximity(sc: uintptr_t, proximity: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_constraints_set_validity(sc: uintptr_t, validity: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_constraints_to_str(sc: uintptr_t) -> *const c_char;
 
 }
 
 impl ScheduleConstraints {
-    /// Wraps `isl_schedule_constraints_get_conditional_validity`.
-    pub fn get_conditional_validity(&self) -> UnionMap {
-        let sc = self;
-        let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_get_conditional_validity(sc) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_get_proximity`.
-    pub fn get_proximity(&self) -> UnionMap {
-        let sc = self;
-        let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_get_proximity(sc) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_get_context`.
-    pub fn get_context(&self) -> Set {
-        let sc = self;
-        let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_get_context(sc) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_set_conditional_validity`.
-    pub fn set_conditional_validity(self, condition: UnionMap, validity: UnionMap)
-                                    -> ScheduleConstraints {
+    /// Wraps `isl_schedule_constraints_apply`.
+    pub fn apply(self, umap: UnionMap) -> ScheduleConstraints {
         let sc = self;
         let mut sc = sc;
         sc.do_not_free_on_drop();
         let sc = sc.ptr;
-        let mut condition = condition;
-        condition.do_not_free_on_drop();
-        let condition = condition.ptr;
-        let mut validity = validity;
-        validity.do_not_free_on_drop();
-        let validity = validity.ptr;
-        let isl_rs_result =
-            unsafe { isl_schedule_constraints_set_conditional_validity(sc, condition, validity) };
+        let mut umap = umap;
+        umap.do_not_free_on_drop();
+        let umap = umap.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_apply(sc, umap) };
         let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
                                                   should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_free`.
-    pub fn free(self) -> ScheduleConstraints {
-        let sc = self;
-        let mut sc = sc;
-        sc.do_not_free_on_drop();
-        let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_free(sc) };
-        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_to_str`.
-    pub fn to_str(&self) -> &str {
-        let sc = self;
-        let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_to_str(sc) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 
@@ -146,26 +89,11 @@ impl ScheduleConstraints {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_constraints_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
+    /// Wraps `isl_schedule_constraints_copy`.
+    pub fn copy(&self) -> ScheduleConstraints {
         let sc = self;
         let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_get_ctx(sc) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_set_coincidence`.
-    pub fn set_coincidence(self, coincidence: UnionMap) -> ScheduleConstraints {
-        let sc = self;
-        let mut sc = sc;
-        sc.do_not_free_on_drop();
-        let sc = sc.ptr;
-        let mut coincidence = coincidence;
-        coincidence.do_not_free_on_drop();
-        let coincidence = coincidence.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_set_coincidence(sc, coincidence) };
+        let isl_rs_result = unsafe { isl_schedule_constraints_copy(sc) };
         let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
                                                   should_free_on_drop: true };
         isl_rs_result
@@ -179,6 +107,18 @@ impl ScheduleConstraints {
         isl_rs_result
     }
 
+    /// Wraps `isl_schedule_constraints_free`.
+    pub fn free(self) -> ScheduleConstraints {
+        let sc = self;
+        let mut sc = sc;
+        sc.do_not_free_on_drop();
+        let sc = sc.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_free(sc) };
+        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
+                                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_schedule_constraints_get_coincidence`.
     pub fn get_coincidence(&self) -> UnionMap {
         let sc = self;
@@ -189,33 +129,44 @@ impl ScheduleConstraints {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_constraints_set_validity`.
-    pub fn set_validity(self, validity: UnionMap) -> ScheduleConstraints {
+    /// Wraps `isl_schedule_constraints_get_conditional_validity`.
+    pub fn get_conditional_validity(&self) -> UnionMap {
         let sc = self;
-        let mut sc = sc;
-        sc.do_not_free_on_drop();
         let sc = sc.ptr;
-        let mut validity = validity;
-        validity.do_not_free_on_drop();
-        let validity = validity.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_set_validity(sc, validity) };
-        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_schedule_constraints_get_conditional_validity(sc) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_constraints_set_context`.
-    pub fn set_context(self, context: Set) -> ScheduleConstraints {
+    /// Wraps `isl_schedule_constraints_get_conditional_validity_condition`.
+    pub fn get_conditional_validity_condition(&self) -> UnionMap {
         let sc = self;
-        let mut sc = sc;
-        sc.do_not_free_on_drop();
         let sc = sc.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_set_context(sc, context) };
-        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
+        let isl_rs_result =
+            unsafe { isl_schedule_constraints_get_conditional_validity_condition(sc) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_get_context`.
+    pub fn get_context(&self) -> Set {
+        let sc = self;
+        let sc = sc.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_get_context(sc) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let sc = self;
+        let sc = sc.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_get_ctx(sc) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
         isl_rs_result
     }
 
@@ -229,18 +180,13 @@ impl ScheduleConstraints {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_constraints_set_proximity`.
-    pub fn set_proximity(self, proximity: UnionMap) -> ScheduleConstraints {
+    /// Wraps `isl_schedule_constraints_get_proximity`.
+    pub fn get_proximity(&self) -> UnionMap {
         let sc = self;
-        let mut sc = sc;
-        sc.do_not_free_on_drop();
         let sc = sc.ptr;
-        let mut proximity = proximity;
-        proximity.do_not_free_on_drop();
-        let proximity = proximity.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_set_proximity(sc, proximity) };
-        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_schedule_constraints_get_proximity(sc) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -265,32 +211,6 @@ impl ScheduleConstraints {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_constraints_apply`.
-    pub fn apply(self, umap: UnionMap) -> ScheduleConstraints {
-        let sc = self;
-        let mut sc = sc;
-        sc.do_not_free_on_drop();
-        let sc = sc.ptr;
-        let mut umap = umap;
-        umap.do_not_free_on_drop();
-        let umap = umap.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_apply(sc, umap) };
-        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_constraints_get_conditional_validity_condition`.
-    pub fn get_conditional_validity_condition(&self) -> UnionMap {
-        let sc = self;
-        let sc = sc.ptr;
-        let isl_rs_result =
-            unsafe { isl_schedule_constraints_get_conditional_validity_condition(sc) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_schedule_constraints_read_from_str`.
     pub fn read_from_str(ctx: &Context, str_: &str) -> ScheduleConstraints {
         let ctx = ctx.ptr;
@@ -302,13 +222,93 @@ impl ScheduleConstraints {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_constraints_copy`.
-    pub fn copy(&self) -> ScheduleConstraints {
+    /// Wraps `isl_schedule_constraints_set_coincidence`.
+    pub fn set_coincidence(self, coincidence: UnionMap) -> ScheduleConstraints {
         let sc = self;
+        let mut sc = sc;
+        sc.do_not_free_on_drop();
         let sc = sc.ptr;
-        let isl_rs_result = unsafe { isl_schedule_constraints_copy(sc) };
+        let mut coincidence = coincidence;
+        coincidence.do_not_free_on_drop();
+        let coincidence = coincidence.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_set_coincidence(sc, coincidence) };
         let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
                                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_set_conditional_validity`.
+    pub fn set_conditional_validity(self, condition: UnionMap, validity: UnionMap)
+                                    -> ScheduleConstraints {
+        let sc = self;
+        let mut sc = sc;
+        sc.do_not_free_on_drop();
+        let sc = sc.ptr;
+        let mut condition = condition;
+        condition.do_not_free_on_drop();
+        let condition = condition.ptr;
+        let mut validity = validity;
+        validity.do_not_free_on_drop();
+        let validity = validity.ptr;
+        let isl_rs_result =
+            unsafe { isl_schedule_constraints_set_conditional_validity(sc, condition, validity) };
+        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
+                                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_set_context`.
+    pub fn set_context(self, context: Set) -> ScheduleConstraints {
+        let sc = self;
+        let mut sc = sc;
+        sc.do_not_free_on_drop();
+        let sc = sc.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_set_context(sc, context) };
+        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
+                                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_set_proximity`.
+    pub fn set_proximity(self, proximity: UnionMap) -> ScheduleConstraints {
+        let sc = self;
+        let mut sc = sc;
+        sc.do_not_free_on_drop();
+        let sc = sc.ptr;
+        let mut proximity = proximity;
+        proximity.do_not_free_on_drop();
+        let proximity = proximity.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_set_proximity(sc, proximity) };
+        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
+                                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_set_validity`.
+    pub fn set_validity(self, validity: UnionMap) -> ScheduleConstraints {
+        let sc = self;
+        let mut sc = sc;
+        sc.do_not_free_on_drop();
+        let sc = sc.ptr;
+        let mut validity = validity;
+        validity.do_not_free_on_drop();
+        let validity = validity.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_set_validity(sc, validity) };
+        let isl_rs_result = ScheduleConstraints { ptr: isl_rs_result,
+                                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_constraints_to_str`.
+    pub fn to_str(&self) -> &str {
+        let sc = self;
+        let sc = sc.ptr;
+        let isl_rs_result = unsafe { isl_schedule_constraints_to_str(sc) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 

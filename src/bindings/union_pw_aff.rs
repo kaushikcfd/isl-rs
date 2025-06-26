@@ -17,273 +17,169 @@ pub struct UnionPwAff {
 
 extern "C" {
 
-    fn isl_union_pw_aff_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_from_union_pw_aff(el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_mod_val(upa: uintptr_t, f: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_extract_pw_aff(upa: uintptr_t, space: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_n_pw_aff(upa: uintptr_t) -> i32;
-
-    fn isl_union_pw_aff_subtract_domain_space(upa: uintptr_t, space: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_union_pw_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_union_pw_aff_zero_union_set(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_union_add(upa1: uintptr_t, upa2: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_free(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_union_pw_aff_copy(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_empty_ctx(ctx: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_empty(space: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_plain_is_equal(upa1: uintptr_t, upa2: uintptr_t) -> i32;
-
-    fn isl_union_pw_aff_involves_nan(upa: uintptr_t) -> i32;
-
-    fn isl_union_pw_aff_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_n_union_pw_aff(list: uintptr_t) -> i32;
-
-    fn isl_union_pw_aff_scale_val(upa: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_reset_user(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_dump(list: uintptr_t) -> ();
-
-    fn isl_union_pw_aff_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_pullback_union_pw_multi_aff(upa: uintptr_t, upma: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_domain(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_set_dim_name(upa: uintptr_t, type_: i32, pos: u32, s: *const c_char)
-                                     -> uintptr_t;
-
-    fn isl_union_pw_aff_list_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_get_union_pw_aff(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_size(list: uintptr_t) -> i32;
-
-    fn isl_union_pw_aff_list_set_union_pw_aff(list: uintptr_t, index: i32, el: uintptr_t)
-                                              -> uintptr_t;
-
-    fn isl_union_pw_aff_list_to_str(list: uintptr_t) -> *const c_char;
-
-    fn isl_union_pw_aff_intersect_domain_space(upa: uintptr_t, space: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_drop_unused_params(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_floor(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_to_list(el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_from_aff(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_aff_on_domain(domain: uintptr_t, aff: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_pw_aff_on_domain(domain: uintptr_t, pa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_intersect_domain(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_subtract_domain(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_empty_space(space: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_bind_id(upa: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_get_ctx(upa: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_align_params(upa: uintptr_t, model: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_intersect_domain_wrapped_range(upa: uintptr_t, uset: uintptr_t)
-                                                       -> uintptr_t;
-
-    fn isl_union_pw_aff_scale_down_val(upa: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_aff_to_str(upa: uintptr_t) -> *const c_char;
+    fn isl_union_pw_aff_add(upa1: uintptr_t, upa2: uintptr_t) -> uintptr_t;
 
     fn isl_union_pw_aff_add_pw_aff(upa: uintptr_t, pa: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+    fn isl_union_pw_aff_aff_on_domain(domain: uintptr_t, aff: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_max_val(upa: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_align_params(upa: uintptr_t, model: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_bind_id(upa: uintptr_t, id: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_coalesce(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_copy(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_dim(upa: uintptr_t, type_: i32) -> i32;
+
+    fn isl_union_pw_aff_domain(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_drop_dims(upa: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_union_pw_aff_drop_unused_params(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_dump(upa: uintptr_t) -> ();
+
+    fn isl_union_pw_aff_empty(space: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_empty_ctx(ctx: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_empty_space(space: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_extract_pw_aff(upa: uintptr_t, space: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_find_dim_by_name(upa: uintptr_t, type_: i32, name: *const c_char) -> i32;
+
+    fn isl_union_pw_aff_floor(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_free(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_from_aff(aff: uintptr_t) -> uintptr_t;
 
     fn isl_union_pw_aff_from_pw_aff(pa: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_neg(upa: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_get_ctx(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_get_pw_aff_list(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_get_space(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_gist(upa: uintptr_t, context: uintptr_t) -> uintptr_t;
 
     fn isl_union_pw_aff_gist_params(upa: uintptr_t, context: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_sub(upa1: uintptr_t, upa2: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_intersect_domain(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_intersect_params(upa: uintptr_t, set: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_intersect_domain_space(upa: uintptr_t, space: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_intersect_domain_union_set(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
 
     fn isl_union_pw_aff_intersect_domain_wrapped_domain(upa: uintptr_t, uset: uintptr_t)
                                                         -> uintptr_t;
 
-    fn isl_union_pw_aff_drop_dims(upa: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
+    fn isl_union_pw_aff_intersect_domain_wrapped_range(upa: uintptr_t, uset: uintptr_t)
+                                                       -> uintptr_t;
 
-    fn isl_union_pw_aff_coalesce(upa: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_intersect_params(upa: uintptr_t, set: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_list_reverse(list: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_involves_nan(upa: uintptr_t) -> i32;
 
-    fn isl_union_pw_aff_min_val(upa: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_clear(list: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_copy(list: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_dump(list: uintptr_t) -> ();
 
     fn isl_union_pw_aff_list_free(list: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_val_on_domain(domain: uintptr_t, v: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_from_union_pw_aff(el: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_subtract_domain_union_set(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
 
-    fn isl_union_pw_aff_dim(upa: uintptr_t, type_: i32) -> i32;
+    fn isl_union_pw_aff_list_get_ctx(list: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_param_on_domain_id(domain: uintptr_t, id: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_get_union_pw_aff(list: uintptr_t, index: i32) -> uintptr_t;
 
-    fn isl_union_pw_aff_intersect_domain_union_set(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_find_dim_by_name(upa: uintptr_t, type_: i32, name: *const c_char) -> i32;
+    fn isl_union_pw_aff_list_n_union_pw_aff(list: uintptr_t) -> i32;
 
-    fn isl_union_pw_aff_add(upa1: uintptr_t, upa2: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+
+    fn isl_union_pw_aff_list_reverse(list: uintptr_t) -> uintptr_t;
 
     fn isl_union_pw_aff_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
 
-    fn isl_union_pw_aff_gist(upa: uintptr_t, context: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_set_union_pw_aff(list: uintptr_t, index: i32, el: uintptr_t)
+                                              -> uintptr_t;
 
-    fn isl_union_pw_aff_get_space(upa: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_size(list: uintptr_t) -> i32;
 
-    fn isl_union_pw_aff_get_pw_aff_list(upa: uintptr_t) -> uintptr_t;
+    fn isl_union_pw_aff_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
 
-    fn isl_union_pw_aff_dump(upa: uintptr_t) -> ();
+    fn isl_union_pw_aff_list_to_str(list: uintptr_t) -> *const c_char;
+
+    fn isl_union_pw_aff_max_val(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_min_val(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_mod_val(upa: uintptr_t, f: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_n_pw_aff(upa: uintptr_t) -> i32;
+
+    fn isl_union_pw_aff_neg(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_param_on_domain_id(domain: uintptr_t, id: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_plain_is_equal(upa1: uintptr_t, upa2: uintptr_t) -> i32;
+
+    fn isl_union_pw_aff_pullback_union_pw_multi_aff(upa: uintptr_t, upma: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_pw_aff_on_domain(domain: uintptr_t, pa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+
+    fn isl_union_pw_aff_reset_user(upa: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_scale_down_val(upa: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_scale_val(upa: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_set_dim_name(upa: uintptr_t, type_: i32, pos: u32, s: *const c_char)
+                                     -> uintptr_t;
+
+    fn isl_union_pw_aff_sub(upa1: uintptr_t, upa2: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_subtract_domain(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_subtract_domain_space(upa: uintptr_t, space: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_subtract_domain_union_set(upa: uintptr_t, uset: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_to_list(el: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_to_str(upa: uintptr_t) -> *const c_char;
+
+    fn isl_union_pw_aff_union_add(upa1: uintptr_t, upa2: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_val_on_domain(domain: uintptr_t, v: uintptr_t) -> uintptr_t;
+
+    fn isl_union_pw_aff_zero_union_set(upa: uintptr_t) -> uintptr_t;
 
 }
 
 impl UnionPwAff {
-    /// Wraps `isl_union_pw_aff_list_copy`.
-    pub fn list_copy(list: &UnionPwAffList) -> UnionPwAffList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_copy(list) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_from_union_pw_aff`.
-    pub fn list_from_union_pw_aff(self) -> UnionPwAffList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_from_union_pw_aff(el) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_mod_val`.
-    pub fn mod_val(self, f: Val) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut f = f;
-        f.do_not_free_on_drop();
-        let f = f.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_mod_val(upa, f) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_extract_pw_aff`.
-    pub fn extract_pw_aff(&self, space: Space) -> PwAff {
-        let upa = self;
-        let upa = upa.ptr;
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_extract_pw_aff(upa, space) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_n_pw_aff`.
-    pub fn n_pw_aff(&self) -> i32 {
-        let upa = self;
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_n_pw_aff(upa) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_subtract_domain_space`.
-    pub fn subtract_domain_space(self, space: Space) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_subtract_domain_space(upa, space) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_get_at`.
-    pub fn list_get_at(list: &UnionPwAffList, index: i32) -> UnionPwAff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_get_at(list, index) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> UnionPwAff {
-        let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_union_pw_aff_read_from_str(ctx, str_) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_zero_union_set`.
-    pub fn zero_union_set(self) -> UnionSet {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_zero_union_set(upa) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_union_add`.
-    pub fn union_add(self, upa2: UnionPwAff) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_add`.
+    pub fn add(self, upa2: UnionPwAff) -> UnionPwAff {
         let upa1 = self;
         let mut upa1 = upa1;
         upa1.do_not_free_on_drop();
@@ -291,331 +187,22 @@ impl UnionPwAff {
         let mut upa2 = upa2;
         upa2.do_not_free_on_drop();
         let upa2 = upa2.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_union_add(upa1, upa2) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_add(upa1, upa2) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_free`.
-    pub fn free(self) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_add_pw_aff`.
+    pub fn add_pw_aff(self, pa: PwAff) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_free(upa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_swap`.
-    pub fn list_swap(list: UnionPwAffList, pos1: u32, pos2: u32) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_swap(list, pos1, pos2) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_copy`.
-    pub fn copy(&self) -> UnionPwAff {
-        let upa = self;
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_copy(upa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_empty_ctx`.
-    pub fn empty_ctx(ctx: &Context) -> UnionPwAff {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_empty_ctx(ctx) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_empty`.
-    pub fn empty(space: Space) -> UnionPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_empty(space) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_plain_is_equal`.
-    pub fn plain_is_equal(&self, upa2: &UnionPwAff) -> bool {
-        let upa1 = self;
-        let upa1 = upa1.ptr;
-        let upa2 = upa2.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_plain_is_equal(upa1, upa2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_involves_nan`.
-    pub fn involves_nan(&self) -> bool {
-        let upa = self;
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_involves_nan(upa) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_drop`.
-    pub fn list_drop(list: UnionPwAffList, first: u32, n: u32) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_drop(list, first, n) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_n_union_pw_aff`.
-    pub fn list_n_union_pw_aff(list: &UnionPwAffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_n_union_pw_aff(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_scale_val`.
-    pub fn scale_val(self, v: Val) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_scale_val(upa, v) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_reset_user`.
-    pub fn reset_user(self) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_reset_user(upa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_dump`.
-    pub fn list_dump(list: &UnionPwAffList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_add`.
-    pub fn list_add(list: UnionPwAffList, el: UnionPwAff) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_add(list, el) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_pullback_union_pw_multi_aff`.
-    pub fn pullback_union_pw_multi_aff(self, upma: UnionPwMultiAff) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut upma = upma;
-        upma.do_not_free_on_drop();
-        let upma = upma.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_pullback_union_pw_multi_aff(upa, upma) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_domain`.
-    pub fn domain(self) -> UnionSet {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_domain(upa) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let type_ = type_.to_i32();
-        let s = CString::new(s).unwrap();
-        let s = s.as_ptr();
-        let isl_rs_result = unsafe { isl_union_pw_aff_set_dim_name(upa, type_, pos, s) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_read_from_str`.
-    pub fn list_read_from_str(ctx: &Context, str_: &str) -> UnionPwAffList {
-        let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_read_from_str(ctx, str_) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_get_union_pw_aff`.
-    pub fn list_get_union_pw_aff(list: &UnionPwAffList, index: i32) -> UnionPwAff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_get_union_pw_aff(list, index) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_size`.
-    pub fn list_size(list: &UnionPwAffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_set_union_pw_aff`.
-    pub fn list_set_union_pw_aff(list: UnionPwAffList, index: i32, el: UnionPwAff)
-                                 -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_set_union_pw_aff(list, index, el) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_to_str`.
-    pub fn list_to_str(list: &UnionPwAffList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_intersect_domain_space`.
-    pub fn intersect_domain_space(self, space: Space) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain_space(upa, space) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_drop_unused_params`.
-    pub fn drop_unused_params(self) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_drop_unused_params(upa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_get_ctx`.
-    pub fn list_get_ctx(list: &UnionPwAffList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_floor`.
-    pub fn floor(self) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_floor(upa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_to_list`.
-    pub fn to_list(self) -> UnionPwAffList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_to_list(el) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_concat`.
-    pub fn list_concat(list1: UnionPwAffList, list2: UnionPwAffList) -> UnionPwAffList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_concat(list1, list2) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_from_aff`.
-    pub fn from_aff(aff: Aff) -> UnionPwAff {
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_from_aff(aff) };
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
+        let pa = pa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_add_pw_aff(upa, pa) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -635,83 +222,18 @@ impl UnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_pw_aff_on_domain`.
-    pub fn pw_aff_on_domain(domain: UnionSet, pa: PwAff) -> UnionPwAff {
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let mut pa = pa;
-        pa.do_not_free_on_drop();
-        let pa = pa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_pw_aff_on_domain(domain, pa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_intersect_domain`.
-    pub fn intersect_domain(self, uset: UnionSet) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_align_params`.
+    pub fn align_params(self, model: Space) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let mut uset = uset;
-        uset.do_not_free_on_drop();
-        let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain(upa, uset) };
+        let mut model = model;
+        model.do_not_free_on_drop();
+        let model = model.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_align_params(upa, model) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_subtract_domain`.
-    pub fn subtract_domain(self, uset: UnionSet) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut uset = uset;
-        uset.do_not_free_on_drop();
-        let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_subtract_domain(upa, uset) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_clear`.
-    pub fn list_clear(list: UnionPwAffList) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_clear(list) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_empty_space`.
-    pub fn empty_space(space: Space) -> UnionPwAff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_empty_space(space) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_insert`.
-    pub fn list_insert(list: UnionPwAffList, pos: u32, el: UnionPwAff) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_insert(list, pos, el) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -730,104 +252,169 @@ impl UnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let upa = self;
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_get_ctx(upa) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_align_params`.
-    pub fn align_params(self, model: Space) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_coalesce`.
+    pub fn coalesce(self) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let mut model = model;
-        model.do_not_free_on_drop();
-        let model = model.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_align_params(upa, model) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_coalesce(upa) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_intersect_domain_wrapped_range`.
-    pub fn intersect_domain_wrapped_range(self, uset: UnionSet) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_copy`.
+    pub fn copy(&self) -> UnionPwAff {
         let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let mut uset = uset;
-        uset.do_not_free_on_drop();
-        let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain_wrapped_range(upa, uset) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_copy(upa) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_scale_down_val`.
-    pub fn scale_down_val(self, v: Val) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_dim`.
+    pub fn dim(&self, type_: DimType) -> i32 {
+        let upa = self;
+        let upa = upa.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_union_pw_aff_dim(upa, type_) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_domain`.
+    pub fn domain(self) -> UnionSet {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_scale_down_val(upa, v) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_domain(upa) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_drop_dims`.
+    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_union_pw_aff_drop_dims(upa, type_, first, n) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_to_str`.
-    pub fn to_str(&self) -> &str {
-        let upa = self;
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_to_str(upa) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_add_pw_aff`.
-    pub fn add_pw_aff(self, pa: PwAff) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_drop_unused_params`.
+    pub fn drop_unused_params(self) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let mut pa = pa;
-        pa.do_not_free_on_drop();
-        let pa = pa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_add_pw_aff(upa, pa) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_drop_unused_params(upa) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> UnionPwAffList {
+    /// Wraps `isl_union_pw_aff_dump`.
+    pub fn dump(&self) -> () {
+        let upa = self;
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_dump(upa) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_empty`.
+    pub fn empty(space: Space) -> UnionPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_empty(space) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_empty_ctx`.
+    pub fn empty_ctx(ctx: &Context) -> UnionPwAff {
         let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_alloc(ctx, n) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_union_pw_aff_empty_ctx(ctx) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_max_val`.
-    pub fn max_val(self) -> Val {
+    /// Wraps `isl_union_pw_aff_empty_space`.
+    pub fn empty_space(space: Space) -> UnionPwAff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_empty_space(space) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_extract_pw_aff`.
+    pub fn extract_pw_aff(&self, space: Space) -> PwAff {
+        let upa = self;
+        let upa = upa.ptr;
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_extract_pw_aff(upa, space) };
+        let isl_rs_result = PwAff { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_find_dim_by_name`.
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+        let upa = self;
+        let upa = upa.ptr;
+        let type_ = type_.to_i32();
+        let name = CString::new(name).unwrap();
+        let name = name.as_ptr();
+        let isl_rs_result = unsafe { isl_union_pw_aff_find_dim_by_name(upa, type_, name) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_floor`.
+    pub fn floor(self) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_max_val(upa) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_union_pw_aff_floor(upa) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_free`.
+    pub fn free(self) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_free(upa) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_from_aff`.
+    pub fn from_aff(aff: Aff) -> UnionPwAff {
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_from_aff(aff) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -842,13 +429,46 @@ impl UnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_neg`.
-    pub fn neg(self) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let upa = self;
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_get_ctx(upa) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_get_pw_aff_list`.
+    pub fn get_pw_aff_list(&self) -> PwAffList {
+        let upa = self;
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_get_pw_aff_list(upa) };
+        let isl_rs_result = PwAffList { ptr: isl_rs_result,
+                                        should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_get_space`.
+    pub fn get_space(&self) -> Space {
+        let upa = self;
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_get_space(upa) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_gist`.
+    pub fn gist(self, context: UnionSet) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_neg(upa) };
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_gist(upa, context) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -869,38 +489,8 @@ impl UnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_sub`.
-    pub fn sub(self, upa2: UnionPwAff) -> UnionPwAff {
-        let upa1 = self;
-        let mut upa1 = upa1;
-        upa1.do_not_free_on_drop();
-        let upa1 = upa1.ptr;
-        let mut upa2 = upa2;
-        upa2.do_not_free_on_drop();
-        let upa2 = upa2.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_sub(upa1, upa2) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_intersect_params`.
-    pub fn intersect_params(self, set: Set) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut set = set;
-        set.do_not_free_on_drop();
-        let set = set.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_params(upa, set) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_intersect_domain_wrapped_domain`.
-    pub fn intersect_domain_wrapped_domain(self, uset: UnionSet) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_intersect_domain`.
+    pub fn intersect_domain(self, uset: UnionSet) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
@@ -908,118 +498,22 @@ impl UnionPwAff {
         let mut uset = uset;
         uset.do_not_free_on_drop();
         let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain_wrapped_domain(upa, uset) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain(upa, uset) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_intersect_domain_space`.
+    pub fn intersect_domain_space(self, space: Space) -> UnionPwAff {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_union_pw_aff_drop_dims(upa, type_, first, n) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_coalesce`.
-    pub fn coalesce(self) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_coalesce(upa) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_reverse`.
-    pub fn list_reverse(list: UnionPwAffList) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_reverse(list) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_min_val`.
-    pub fn min_val(self) -> Val {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_min_val(upa) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_list_free`.
-    pub fn list_free(list: UnionPwAffList) -> UnionPwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_list_free(list) };
-        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
-                                             should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_val_on_domain`.
-    pub fn val_on_domain(domain: UnionSet, v: Val) -> UnionPwAff {
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_val_on_domain(domain, v) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_subtract_domain_union_set`.
-    pub fn subtract_domain_union_set(self, uset: UnionSet) -> UnionPwAff {
-        let upa = self;
-        let mut upa = upa;
-        upa.do_not_free_on_drop();
-        let upa = upa.ptr;
-        let mut uset = uset;
-        uset.do_not_free_on_drop();
-        let uset = uset.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_subtract_domain_union_set(upa, uset) };
-        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
-        let upa = self;
-        let upa = upa.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_union_pw_aff_dim(upa, type_) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_aff_param_on_domain_id`.
-    pub fn param_on_domain_id(domain: UnionSet, id: Id) -> UnionPwAff {
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_param_on_domain_id(domain, id) };
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain_space(upa, space) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
@@ -1040,29 +534,229 @@ impl UnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    /// Wraps `isl_union_pw_aff_intersect_domain_wrapped_domain`.
+    pub fn intersect_domain_wrapped_domain(self, uset: UnionSet) -> UnionPwAff {
         let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let type_ = type_.to_i32();
-        let name = CString::new(name).unwrap();
-        let name = name.as_ptr();
-        let isl_rs_result = unsafe { isl_union_pw_aff_find_dim_by_name(upa, type_, name) };
+        let mut uset = uset;
+        uset.do_not_free_on_drop();
+        let uset = uset.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain_wrapped_domain(upa, uset) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_add`.
-    pub fn add(self, upa2: UnionPwAff) -> UnionPwAff {
-        let upa1 = self;
-        let mut upa1 = upa1;
-        upa1.do_not_free_on_drop();
-        let upa1 = upa1.ptr;
-        let mut upa2 = upa2;
-        upa2.do_not_free_on_drop();
-        let upa2 = upa2.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_add(upa1, upa2) };
+    /// Wraps `isl_union_pw_aff_intersect_domain_wrapped_range`.
+    pub fn intersect_domain_wrapped_range(self, uset: UnionSet) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut uset = uset;
+        uset.do_not_free_on_drop();
+        let uset = uset.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_domain_wrapped_range(upa, uset) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_intersect_params`.
+    pub fn intersect_params(self, set: Set) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut set = set;
+        set.do_not_free_on_drop();
+        let set = set.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_intersect_params(upa, set) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_involves_nan`.
+    pub fn involves_nan(&self) -> bool {
+        let upa = self;
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_involves_nan(upa) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_add`.
+    pub fn list_add(list: UnionPwAffList, el: UnionPwAff) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_add(list, el) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_alloc`.
+    pub fn list_alloc(ctx: &Context, n: i32) -> UnionPwAffList {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_alloc(ctx, n) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_clear`.
+    pub fn list_clear(list: UnionPwAffList) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_clear(list) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_concat`.
+    pub fn list_concat(list1: UnionPwAffList, list2: UnionPwAffList) -> UnionPwAffList {
+        let mut list1 = list1;
+        list1.do_not_free_on_drop();
+        let list1 = list1.ptr;
+        let mut list2 = list2;
+        list2.do_not_free_on_drop();
+        let list2 = list2.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_concat(list1, list2) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_copy`.
+    pub fn list_copy(list: &UnionPwAffList) -> UnionPwAffList {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_copy(list) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_drop`.
+    pub fn list_drop(list: UnionPwAffList, first: u32, n: u32) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_drop(list, first, n) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_dump`.
+    pub fn list_dump(list: &UnionPwAffList) -> () {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_dump(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_free`.
+    pub fn list_free(list: UnionPwAffList) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_free(list) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_from_union_pw_aff`.
+    pub fn list_from_union_pw_aff(self) -> UnionPwAffList {
+        let el = self;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_from_union_pw_aff(el) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_get_at`.
+    pub fn list_get_at(list: &UnionPwAffList, index: i32) -> UnionPwAff {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_get_at(list, index) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_get_ctx`.
+    pub fn list_get_ctx(list: &UnionPwAffList) -> Context {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_get_ctx(list) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_get_union_pw_aff`.
+    pub fn list_get_union_pw_aff(list: &UnionPwAffList, index: i32) -> UnionPwAff {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_get_union_pw_aff(list, index) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_insert`.
+    pub fn list_insert(list: UnionPwAffList, pos: u32, el: UnionPwAff) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_insert(list, pos, el) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_n_union_pw_aff`.
+    pub fn list_n_union_pw_aff(list: &UnionPwAffList) -> i32 {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_n_union_pw_aff(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_read_from_str`.
+    pub fn list_read_from_str(ctx: &Context, str_: &str) -> UnionPwAffList {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_read_from_str(ctx, str_) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_reverse`.
+    pub fn list_reverse(list: UnionPwAffList) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_reverse(list) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1080,46 +774,352 @@ impl UnionPwAff {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_gist`.
-    pub fn gist(self, context: UnionSet) -> UnionPwAff {
+    /// Wraps `isl_union_pw_aff_list_set_union_pw_aff`.
+    pub fn list_set_union_pw_aff(list: UnionPwAffList, index: i32, el: UnionPwAff)
+                                 -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_set_union_pw_aff(list, index, el) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_size`.
+    pub fn list_size(list: &UnionPwAffList) -> i32 {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_size(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_swap`.
+    pub fn list_swap(list: UnionPwAffList, pos1: u32, pos2: u32) -> UnionPwAffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_swap(list, pos1, pos2) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_list_to_str`.
+    pub fn list_to_str(list: &UnionPwAffList) -> &str {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_list_to_str(list) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_max_val`.
+    pub fn max_val(self) -> Val {
         let upa = self;
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_gist(upa, context) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_max_val(upa) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_min_val`.
+    pub fn min_val(self) -> Val {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_min_val(upa) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_mod_val`.
+    pub fn mod_val(self, f: Val) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut f = f;
+        f.do_not_free_on_drop();
+        let f = f.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_mod_val(upa, f) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_get_space`.
-    pub fn get_space(&self) -> Space {
+    /// Wraps `isl_union_pw_aff_n_pw_aff`.
+    pub fn n_pw_aff(&self) -> i32 {
         let upa = self;
         let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_get_space(upa) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_union_pw_aff_n_pw_aff(upa) };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_get_pw_aff_list`.
-    pub fn get_pw_aff_list(&self) -> PwAffList {
+    /// Wraps `isl_union_pw_aff_neg`.
+    pub fn neg(self) -> UnionPwAff {
         let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
         let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_get_pw_aff_list(upa) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_union_pw_aff_neg(upa) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_union_pw_aff_dump`.
-    pub fn dump(&self) -> () {
+    /// Wraps `isl_union_pw_aff_param_on_domain_id`.
+    pub fn param_on_domain_id(domain: UnionSet, id: Id) -> UnionPwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_param_on_domain_id(domain, id) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_plain_is_equal`.
+    pub fn plain_is_equal(&self, upa2: &UnionPwAff) -> bool {
+        let upa1 = self;
+        let upa1 = upa1.ptr;
+        let upa2 = upa2.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_plain_is_equal(upa1, upa2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_pullback_union_pw_multi_aff`.
+    pub fn pullback_union_pw_multi_aff(self, upma: UnionPwMultiAff) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut upma = upma;
+        upma.do_not_free_on_drop();
+        let upma = upma.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_pullback_union_pw_multi_aff(upa, upma) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_pw_aff_on_domain`.
+    pub fn pw_aff_on_domain(domain: UnionSet, pa: PwAff) -> UnionPwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let mut pa = pa;
+        pa.do_not_free_on_drop();
+        let pa = pa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_pw_aff_on_domain(domain, pa) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_read_from_str`.
+    pub fn read_from_str(ctx: &Context, str_: &str) -> UnionPwAff {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_union_pw_aff_read_from_str(ctx, str_) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_reset_user`.
+    pub fn reset_user(self) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_reset_user(upa) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_scale_down_val`.
+    pub fn scale_down_val(self, v: Val) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_scale_down_val(upa, v) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_scale_val`.
+    pub fn scale_val(self, v: Val) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_scale_val(upa, v) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_set_dim_name`.
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let type_ = type_.to_i32();
+        let s = CString::new(s).unwrap();
+        let s = s.as_ptr();
+        let isl_rs_result = unsafe { isl_union_pw_aff_set_dim_name(upa, type_, pos, s) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_sub`.
+    pub fn sub(self, upa2: UnionPwAff) -> UnionPwAff {
+        let upa1 = self;
+        let mut upa1 = upa1;
+        upa1.do_not_free_on_drop();
+        let upa1 = upa1.ptr;
+        let mut upa2 = upa2;
+        upa2.do_not_free_on_drop();
+        let upa2 = upa2.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_sub(upa1, upa2) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_subtract_domain`.
+    pub fn subtract_domain(self, uset: UnionSet) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut uset = uset;
+        uset.do_not_free_on_drop();
+        let uset = uset.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_subtract_domain(upa, uset) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_subtract_domain_space`.
+    pub fn subtract_domain_space(self, space: Space) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_subtract_domain_space(upa, space) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_subtract_domain_union_set`.
+    pub fn subtract_domain_union_set(self, uset: UnionSet) -> UnionPwAff {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let mut uset = uset;
+        uset.do_not_free_on_drop();
+        let uset = uset.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_subtract_domain_union_set(upa, uset) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_to_list`.
+    pub fn to_list(self) -> UnionPwAffList {
+        let el = self;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_to_list(el) };
+        let isl_rs_result = UnionPwAffList { ptr: isl_rs_result,
+                                             should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_to_str`.
+    pub fn to_str(&self) -> &str {
         let upa = self;
         let upa = upa.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_aff_dump(upa) };
+        let isl_rs_result = unsafe { isl_union_pw_aff_to_str(upa) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_union_add`.
+    pub fn union_add(self, upa2: UnionPwAff) -> UnionPwAff {
+        let upa1 = self;
+        let mut upa1 = upa1;
+        upa1.do_not_free_on_drop();
+        let upa1 = upa1.ptr;
+        let mut upa2 = upa2;
+        upa2.do_not_free_on_drop();
+        let upa2 = upa2.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_union_add(upa1, upa2) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_val_on_domain`.
+    pub fn val_on_domain(domain: UnionSet, v: Val) -> UnionPwAff {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_val_on_domain(domain, v) };
+        let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_pw_aff_zero_union_set`.
+    pub fn zero_union_set(self) -> UnionSet {
+        let upa = self;
+        let mut upa = upa;
+        upa.do_not_free_on_drop();
+        let upa = upa.ptr;
+        let isl_rs_result = unsafe { isl_union_pw_aff_zero_union_set(upa) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 

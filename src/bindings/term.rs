@@ -12,42 +12,23 @@ pub struct Term {
 
 extern "C" {
 
-    fn isl_term_get_coefficient_val(term: uintptr_t) -> uintptr_t;
+    fn isl_term_copy(term: uintptr_t) -> uintptr_t;
 
     fn isl_term_dim(term: uintptr_t, type_: i32) -> i32;
 
-    fn isl_term_copy(term: uintptr_t) -> uintptr_t;
+    fn isl_term_free(term: uintptr_t) -> uintptr_t;
+
+    fn isl_term_get_coefficient_val(term: uintptr_t) -> uintptr_t;
 
     fn isl_term_get_ctx(term: uintptr_t) -> uintptr_t;
 
-    fn isl_term_get_exp(term: uintptr_t, type_: i32, pos: u32) -> i32;
-
-    fn isl_term_free(term: uintptr_t) -> uintptr_t;
-
     fn isl_term_get_div(term: uintptr_t, pos: u32) -> uintptr_t;
+
+    fn isl_term_get_exp(term: uintptr_t, type_: i32, pos: u32) -> i32;
 
 }
 
 impl Term {
-    /// Wraps `isl_term_get_coefficient_val`.
-    pub fn get_coefficient_val(&self) -> Val {
-        let term = self;
-        let term = term.ptr;
-        let isl_rs_result = unsafe { isl_term_get_coefficient_val(term) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_term_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
-        let term = self;
-        let term = term.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_term_dim(term, type_) };
-        isl_rs_result
-    }
-
     /// Wraps `isl_term_copy`.
     pub fn copy(&self) -> Term {
         let term = self;
@@ -58,22 +39,12 @@ impl Term {
         isl_rs_result
     }
 
-    /// Wraps `isl_term_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let term = self;
-        let term = term.ptr;
-        let isl_rs_result = unsafe { isl_term_get_ctx(term) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_term_get_exp`.
-    pub fn get_exp(&self, type_: DimType, pos: u32) -> i32 {
+    /// Wraps `isl_term_dim`.
+    pub fn dim(&self, type_: DimType) -> i32 {
         let term = self;
         let term = term.ptr;
         let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_term_get_exp(term, type_, pos) };
+        let isl_rs_result = unsafe { isl_term_dim(term, type_) };
         isl_rs_result
     }
 
@@ -89,6 +60,26 @@ impl Term {
         isl_rs_result
     }
 
+    /// Wraps `isl_term_get_coefficient_val`.
+    pub fn get_coefficient_val(&self) -> Val {
+        let term = self;
+        let term = term.ptr;
+        let isl_rs_result = unsafe { isl_term_get_coefficient_val(term) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_term_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let term = self;
+        let term = term.ptr;
+        let isl_rs_result = unsafe { isl_term_get_ctx(term) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
     /// Wraps `isl_term_get_div`.
     pub fn get_div(&self, pos: u32) -> Aff {
         let term = self;
@@ -96,6 +87,15 @@ impl Term {
         let isl_rs_result = unsafe { isl_term_get_div(term, pos) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_term_get_exp`.
+    pub fn get_exp(&self, type_: DimType, pos: u32) -> i32 {
+        let term = self;
+        let term = term.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_term_get_exp(term, type_, pos) };
         isl_rs_result
     }
 

@@ -16,365 +16,227 @@ pub struct Aff {
 
 extern "C" {
 
-    fn isl_aff_list_n_aff(list: uintptr_t) -> i32;
-
-    fn isl_aff_plain_is_equal(aff1: uintptr_t, aff2: uintptr_t) -> i32;
-
-    fn isl_aff_project_domain_on_params(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_set_constant_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_aff_move_dims(aff: uintptr_t, dst_type: i32, dst_pos: u32, src_type: i32, src_pos: u32,
-                         n: u32)
-                         -> uintptr_t;
-
-    fn isl_aff_list_from_aff(el: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_get_hash(aff: uintptr_t) -> u32;
-
-    fn isl_aff_gist(aff: uintptr_t, context: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_is_cst(aff: uintptr_t) -> i32;
-
-    fn isl_aff_set_coefficient_val(aff: uintptr_t, type_: i32, pos: i32, v: uintptr_t)
-                                   -> uintptr_t;
-
-    fn isl_aff_pullback_aff(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_set_dim_id(aff: uintptr_t, type_: i32, pos: u32, id: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_le_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_aff_coefficient_sgn(aff: uintptr_t, type_: i32, pos: i32) -> i32;
-
-    fn isl_aff_find_dim_by_name(aff: uintptr_t, type_: i32, name: *const c_char) -> i32;
-
-    fn isl_aff_plain_is_zero(aff: uintptr_t) -> i32;
-
-    fn isl_aff_add_constant_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_val_on_domain(ls: uintptr_t, val: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_zero_on_domain_space(space: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_val_on_domain_space(space: uintptr_t, val: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_dim(aff: uintptr_t, type_: i32) -> i32;
-
-    fn isl_aff_eval(aff: uintptr_t, pnt: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_pullback_multi_aff(aff: uintptr_t, ma: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_bind_id(aff: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_get_ctx(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_drop_dims(aff: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_aff_list_set_aff(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_var_on_domain(ls: uintptr_t, type_: i32, pos: u32) -> uintptr_t;
-
-    fn isl_aff_list_to_str(list: uintptr_t) -> *const c_char;
-
-    fn isl_aff_from_range(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_aff_get_constant_val(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_gt_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_ceil(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_get_coefficient_val(aff: uintptr_t, type_: i32, pos: i32) -> uintptr_t;
-
-    fn isl_aff_gt_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_copy(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_get_dim_name(aff: uintptr_t, type_: i32, pos: u32) -> *const c_char;
-
-    fn isl_aff_to_list(el: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_domain_reverse(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_mod_val(aff: uintptr_t, mod_: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_lt_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_align_params(aff: uintptr_t, model: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_lt_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_aff_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_set_constant_si(aff: uintptr_t, v: i32) -> uintptr_t;
+    fn isl_aff_add(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
 
     fn isl_aff_add_coefficient_si(aff: uintptr_t, type_: i32, pos: i32, v: i32) -> uintptr_t;
-
-    fn isl_aff_div(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_ge_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_add_dims(aff: uintptr_t, type_: i32, n: u32) -> uintptr_t;
-
-    fn isl_aff_floor(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_ne_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_nan_on_domain_space(space: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_free(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_eq_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
 
     fn isl_aff_add_coefficient_val(aff: uintptr_t, type_: i32, pos: i32, v: uintptr_t)
                                    -> uintptr_t;
 
-    fn isl_aff_eq_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_get_denominator_val(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_param_on_domain_space_id(space: uintptr_t, id: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_zero_on_domain(ls: uintptr_t) -> uintptr_t;
-
     fn isl_aff_add_constant_num_si(aff: uintptr_t, v: i32) -> uintptr_t;
-
-    fn isl_aff_scale_down_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_to_str(aff: uintptr_t) -> *const c_char;
-
-    fn isl_aff_gist_params(aff: uintptr_t, context: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_set_tuple_id(aff: uintptr_t, type_: i32, id: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_mul(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_neg_basic_set(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_get_domain_space(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_sub(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_set_dim_name(aff: uintptr_t, type_: i32, pos: u32, s: *const c_char) -> uintptr_t;
-
-    fn isl_aff_le_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
 
     fn isl_aff_add_constant_si(aff: uintptr_t, v: i32) -> uintptr_t;
 
-    fn isl_aff_list_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+    fn isl_aff_add_constant_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+    fn isl_aff_add_dims(aff: uintptr_t, type_: i32, n: u32) -> uintptr_t;
 
-    fn isl_aff_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
+    fn isl_aff_align_params(aff: uintptr_t, model: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_bind_id(aff: uintptr_t, id: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_ceil(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_coefficient_sgn(aff: uintptr_t, type_: i32, pos: i32) -> i32;
+
+    fn isl_aff_copy(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_dim(aff: uintptr_t, type_: i32) -> i32;
+
+    fn isl_aff_div(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_domain_reverse(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_drop_dims(aff: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
 
     fn isl_aff_dump(aff: uintptr_t) -> ();
 
+    fn isl_aff_eq_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_eq_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_eval(aff: uintptr_t, pnt: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_find_dim_by_name(aff: uintptr_t, type_: i32, name: *const c_char) -> i32;
+
+    fn isl_aff_floor(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_free(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_from_range(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_ge_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_ge_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_get_coefficient_val(aff: uintptr_t, type_: i32, pos: i32) -> uintptr_t;
+
+    fn isl_aff_get_constant_val(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_get_ctx(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_get_denominator_val(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_get_dim_name(aff: uintptr_t, type_: i32, pos: u32) -> *const c_char;
+
+    fn isl_aff_get_div(aff: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_aff_get_domain_local_space(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_get_domain_space(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_get_hash(aff: uintptr_t) -> u32;
+
     fn isl_aff_get_local_space(aff: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_unbind_params_insert_domain(aff: uintptr_t, domain: uintptr_t) -> uintptr_t;
+    fn isl_aff_get_space(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_gist(aff: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_gist_params(aff: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_gt_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_gt_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_insert_dims(aff: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_aff_involves_dims(aff: uintptr_t, type_: i32, first: u32, n: u32) -> i32;
+
+    fn isl_aff_involves_locals(aff: uintptr_t) -> i32;
+
+    fn isl_aff_is_cst(aff: uintptr_t) -> i32;
+
+    fn isl_aff_is_nan(aff: uintptr_t) -> i32;
+
+    fn isl_aff_le_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_le_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+
+    fn isl_aff_list_clear(list: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_copy(list: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_aff_list_dump(list: uintptr_t) -> ();
+
+    fn isl_aff_list_free(list: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_from_aff(el: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_get_aff(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_aff_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_aff_list_get_ctx(list: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_n_aff(list: uintptr_t) -> i32;
+
+    fn isl_aff_list_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
+
+    fn isl_aff_list_reverse(list: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_list_set_aff(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
 
     fn isl_aff_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
 
     fn isl_aff_list_size(list: uintptr_t) -> i32;
 
-    fn isl_aff_get_div(aff: uintptr_t, pos: i32) -> uintptr_t;
+    fn isl_aff_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
 
-    fn isl_aff_involves_dims(aff: uintptr_t, type_: i32, first: u32, n: u32) -> i32;
+    fn isl_aff_list_to_str(list: uintptr_t) -> *const c_char;
+
+    fn isl_aff_lt_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_lt_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_mod_val(aff: uintptr_t, mod_: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_move_dims(aff: uintptr_t, dst_type: i32, dst_pos: u32, src_type: i32, src_pos: u32,
+                         n: u32)
+                         -> uintptr_t;
+
+    fn isl_aff_mul(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_nan_on_domain(ls: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_nan_on_domain_space(space: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_ne_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
 
     fn isl_aff_neg(aff: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_get_domain_local_space(aff: uintptr_t) -> uintptr_t;
+    fn isl_aff_neg_basic_set(aff: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_list_clear(list: uintptr_t) -> uintptr_t;
+    fn isl_aff_param_on_domain_space_id(space: uintptr_t, id: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_ge_basic_set(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+    fn isl_aff_plain_is_equal(aff1: uintptr_t, aff2: uintptr_t) -> i32;
 
-    fn isl_aff_list_get_aff(list: uintptr_t, index: i32) -> uintptr_t;
+    fn isl_aff_plain_is_zero(aff: uintptr_t) -> i32;
+
+    fn isl_aff_project_domain_on_params(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_pullback_aff(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_pullback_multi_aff(aff: uintptr_t, ma: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
 
     fn isl_aff_scale_down_ui(aff: uintptr_t, f: u32) -> uintptr_t;
 
-    fn isl_aff_zero_basic_set(aff: uintptr_t) -> uintptr_t;
-
-    fn isl_aff_set_coefficient_si(aff: uintptr_t, type_: i32, pos: i32, v: i32) -> uintptr_t;
-
-    fn isl_aff_is_nan(aff: uintptr_t) -> i32;
+    fn isl_aff_scale_down_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
 
     fn isl_aff_scale_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_add(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+    fn isl_aff_set_coefficient_si(aff: uintptr_t, type_: i32, pos: i32, v: i32) -> uintptr_t;
 
-    fn isl_aff_get_space(aff: uintptr_t) -> uintptr_t;
+    fn isl_aff_set_coefficient_val(aff: uintptr_t, type_: i32, pos: i32, v: uintptr_t)
+                                   -> uintptr_t;
 
-    fn isl_aff_list_dump(list: uintptr_t) -> ();
+    fn isl_aff_set_constant_si(aff: uintptr_t, v: i32) -> uintptr_t;
 
-    fn isl_aff_involves_locals(aff: uintptr_t) -> i32;
+    fn isl_aff_set_constant_val(aff: uintptr_t, v: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_insert_dims(aff: uintptr_t, type_: i32, first: u32, n: u32) -> uintptr_t;
+    fn isl_aff_set_dim_id(aff: uintptr_t, type_: i32, pos: u32, id: uintptr_t) -> uintptr_t;
 
-    fn isl_aff_nan_on_domain(ls: uintptr_t) -> uintptr_t;
+    fn isl_aff_set_dim_name(aff: uintptr_t, type_: i32, pos: u32, s: *const c_char) -> uintptr_t;
+
+    fn isl_aff_set_tuple_id(aff: uintptr_t, type_: i32, id: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_sub(aff1: uintptr_t, aff2: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_to_list(el: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_to_str(aff: uintptr_t) -> *const c_char;
+
+    fn isl_aff_unbind_params_insert_domain(aff: uintptr_t, domain: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_val_on_domain(ls: uintptr_t, val: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_val_on_domain_space(space: uintptr_t, val: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_var_on_domain(ls: uintptr_t, type_: i32, pos: u32) -> uintptr_t;
+
+    fn isl_aff_zero_basic_set(aff: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_zero_on_domain(ls: uintptr_t) -> uintptr_t;
+
+    fn isl_aff_zero_on_domain_space(space: uintptr_t) -> uintptr_t;
 
 }
 
 impl Aff {
-    /// Wraps `isl_aff_list_n_aff`.
-    pub fn list_n_aff(list: &AffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_n_aff(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_plain_is_equal`.
-    pub fn plain_is_equal(&self, aff2: &Aff) -> bool {
-        let aff1 = self;
-        let aff1 = aff1.ptr;
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_plain_is_equal(aff1, aff2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_project_domain_on_params`.
-    pub fn project_domain_on_params(self) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_project_domain_on_params(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_set_constant_val`.
-    pub fn set_constant_val(self, v: Val) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_aff_set_constant_val(aff, v) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> AffList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_alloc(ctx, n) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_move_dims`.
-    pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
-                     n: u32)
-                     -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let dst_type = dst_type.to_i32();
-        let src_type = src_type.to_i32();
-        let isl_rs_result =
-            unsafe { isl_aff_move_dims(aff, dst_type, dst_pos, src_type, src_pos, n) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_from_aff`.
-    pub fn list_from_aff(self) -> AffList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_from_aff(el) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_get_hash`.
-    pub fn get_hash(&self) -> u32 {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_hash(aff) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_gist`.
-    pub fn gist(self, context: Set) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_aff_gist(aff, context) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_is_cst`.
-    pub fn is_cst(&self) -> bool {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_is_cst(aff) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_set_coefficient_val`.
-    pub fn set_coefficient_val(self, type_: DimType, pos: i32, v: Val) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_aff_set_coefficient_val(aff, type_, pos, v) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_pullback_aff`.
-    pub fn pullback_aff(self, aff2: Aff) -> Aff {
+    /// Wraps `isl_aff_add`.
+    pub fn add(self, aff2: Aff) -> Aff {
         let aff1 = self;
         let mut aff1 = aff1;
         aff1.do_not_free_on_drop();
@@ -382,496 +244,7 @@ impl Aff {
         let mut aff2 = aff2;
         aff2.do_not_free_on_drop();
         let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_pullback_aff(aff1, aff2) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_reverse`.
-    pub fn list_reverse(list: AffList) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_reverse(list) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_set_dim_id`.
-    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_aff_set_dim_id(aff, type_, pos, id) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_le_basic_set`.
-    pub fn le_basic_set(self, aff2: Aff) -> BasicSet {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_le_basic_set(aff1, aff2) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_get_at`.
-    pub fn list_get_at(list: &AffList, index: i32) -> Aff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_get_at(list, index) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_coefficient_sgn`.
-    pub fn coefficient_sgn(&self, type_: DimType, pos: i32) -> i32 {
-        let aff = self;
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_coefficient_sgn(aff, type_, pos) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
-        let aff = self;
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let name = CString::new(name).unwrap();
-        let name = name.as_ptr();
-        let isl_rs_result = unsafe { isl_aff_find_dim_by_name(aff, type_, name) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_plain_is_zero`.
-    pub fn plain_is_zero(&self) -> bool {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_plain_is_zero(aff) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_add_constant_val`.
-    pub fn add_constant_val(self, v: Val) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_aff_add_constant_val(aff, v) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_val_on_domain`.
-    pub fn val_on_domain(ls: LocalSpace, val: Val) -> Aff {
-        let mut ls = ls;
-        ls.do_not_free_on_drop();
-        let ls = ls.ptr;
-        let mut val = val;
-        val.do_not_free_on_drop();
-        let val = val.ptr;
-        let isl_rs_result = unsafe { isl_aff_val_on_domain(ls, val) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_zero_on_domain_space`.
-    pub fn zero_on_domain_space(space: Space) -> Aff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_aff_zero_on_domain_space(space) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_val_on_domain_space`.
-    pub fn val_on_domain_space(space: Space, val: Val) -> Aff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let mut val = val;
-        val.do_not_free_on_drop();
-        let val = val.ptr;
-        let isl_rs_result = unsafe { isl_aff_val_on_domain_space(space, val) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
-        let aff = self;
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_dim(aff, type_) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_eval`.
-    pub fn eval(self, pnt: Point) -> Val {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut pnt = pnt;
-        pnt.do_not_free_on_drop();
-        let pnt = pnt.ptr;
-        let isl_rs_result = unsafe { isl_aff_eval(aff, pnt) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_pullback_multi_aff`.
-    pub fn pullback_multi_aff(self, ma: MultiAff) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut ma = ma;
-        ma.do_not_free_on_drop();
-        let ma = ma.ptr;
-        let isl_rs_result = unsafe { isl_aff_pullback_multi_aff(aff, ma) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_bind_id`.
-    pub fn bind_id(self, id: Id) -> BasicSet {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_aff_bind_id(aff, id) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_ctx(aff) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_drop_dims(aff, type_, first, n) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_set_aff`.
-    pub fn list_set_aff(list: AffList, index: i32, el: Aff) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_set_aff(list, index, el) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_var_on_domain`.
-    pub fn var_on_domain(ls: LocalSpace, type_: DimType, pos: u32) -> Aff {
-        let mut ls = ls;
-        ls.do_not_free_on_drop();
-        let ls = ls.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_var_on_domain(ls, type_, pos) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_to_str`.
-    pub fn list_to_str(list: &AffList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_from_range`.
-    pub fn from_range(self) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_from_range(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> Aff {
-        let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_aff_read_from_str(ctx, str_) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_get_constant_val`.
-    pub fn get_constant_val(&self) -> Val {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_constant_val(aff) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_gt_basic_set`.
-    pub fn gt_basic_set(self, aff2: Aff) -> BasicSet {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_gt_basic_set(aff1, aff2) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_ceil`.
-    pub fn ceil(self) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_ceil(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_get_coefficient_val`.
-    pub fn get_coefficient_val(&self, type_: DimType, pos: i32) -> Val {
-        let aff = self;
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_get_coefficient_val(aff, type_, pos) };
-        let isl_rs_result = Val { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_gt_set`.
-    pub fn gt_set(self, aff2: Aff) -> Set {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_gt_set(aff1, aff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_copy`.
-    pub fn copy(&self) -> Aff {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_copy(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_get_dim_name`.
-    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
-        let aff = self;
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_get_dim_name(aff, type_, pos) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_to_list`.
-    pub fn to_list(self) -> AffList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_aff_to_list(el) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_domain_reverse`.
-    pub fn domain_reverse(self) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_domain_reverse(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_free`.
-    pub fn list_free(list: AffList) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_free(list) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_mod_val`.
-    pub fn mod_val(self, mod_: Val) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut mod_ = mod_;
-        mod_.do_not_free_on_drop();
-        let mod_ = mod_.ptr;
-        let isl_rs_result = unsafe { isl_aff_mod_val(aff, mod_) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_lt_basic_set`.
-    pub fn lt_basic_set(self, aff2: Aff) -> BasicSet {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_lt_basic_set(aff1, aff2) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_align_params`.
-    pub fn align_params(self, model: Space) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut model = model;
-        model.do_not_free_on_drop();
-        let model = model.ptr;
-        let isl_rs_result = unsafe { isl_aff_align_params(aff, model) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_lt_set`.
-    pub fn lt_set(self, aff2: Aff) -> Set {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_lt_set(aff1, aff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_drop`.
-    pub fn list_drop(list: AffList, first: u32, n: u32) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_drop(list, first, n) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_add`.
-    pub fn list_add(list: AffList, el: Aff) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_add(list, el) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_set_constant_si`.
-    pub fn set_constant_si(self, v: i32) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_set_constant_si(aff, v) };
+        let isl_rs_result = unsafe { isl_aff_add(aff1, aff2) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
@@ -886,114 +259,6 @@ impl Aff {
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_aff_add_coefficient_si(aff, type_, pos, v) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_div`.
-    pub fn div(self, aff2: Aff) -> Aff {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_div(aff1, aff2) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_ge_set`.
-    pub fn ge_set(self, aff2: Aff) -> Set {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_ge_set(aff1, aff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_add_dims(aff, type_, n) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_floor`.
-    pub fn floor(self) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_floor(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_ne_set`.
-    pub fn ne_set(self, aff2: Aff) -> Set {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_ne_set(aff1, aff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_nan_on_domain_space`.
-    pub fn nan_on_domain_space(space: Space) -> Aff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_aff_nan_on_domain_space(space) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_free`.
-    pub fn free(self) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_free(aff) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_eq_set`.
-    pub fn eq_set(self, aff2: Aff) -> Set {
-        let aff1 = self;
-        let mut aff1 = aff1;
-        aff1.do_not_free_on_drop();
-        let aff1 = aff1.ptr;
-        let mut aff2 = aff2;
-        aff2.do_not_free_on_drop();
-        let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_eq_set(aff1, aff2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
     }
@@ -1014,6 +279,176 @@ impl Aff {
         isl_rs_result
     }
 
+    /// Wraps `isl_aff_add_constant_num_si`.
+    pub fn add_constant_num_si(self, v: i32) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_add_constant_num_si(aff, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_add_constant_si`.
+    pub fn add_constant_si(self, v: i32) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_add_constant_si(aff, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_add_constant_val`.
+    pub fn add_constant_val(self, v: Val) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_aff_add_constant_val(aff, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_add_dims`.
+    pub fn add_dims(self, type_: DimType, n: u32) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_add_dims(aff, type_, n) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_align_params`.
+    pub fn align_params(self, model: Space) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut model = model;
+        model.do_not_free_on_drop();
+        let model = model.ptr;
+        let isl_rs_result = unsafe { isl_aff_align_params(aff, model) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_bind_id`.
+    pub fn bind_id(self, id: Id) -> BasicSet {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_aff_bind_id(aff, id) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_ceil`.
+    pub fn ceil(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_ceil(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_coefficient_sgn`.
+    pub fn coefficient_sgn(&self, type_: DimType, pos: i32) -> i32 {
+        let aff = self;
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_coefficient_sgn(aff, type_, pos) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_copy`.
+    pub fn copy(&self) -> Aff {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_copy(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_dim`.
+    pub fn dim(&self, type_: DimType) -> i32 {
+        let aff = self;
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_dim(aff, type_) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_div`.
+    pub fn div(self, aff2: Aff) -> Aff {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_div(aff1, aff2) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_domain_reverse`.
+    pub fn domain_reverse(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_domain_reverse(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_drop_dims`.
+    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_drop_dims(aff, type_, first, n) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_dump`.
+    pub fn dump(&self) -> () {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_dump(aff) };
+        isl_rs_result
+    }
+
     /// Wraps `isl_aff_eq_basic_set`.
     pub fn eq_basic_set(self, aff2: Aff) -> BasicSet {
         let aff1 = self;
@@ -1029,6 +464,144 @@ impl Aff {
         isl_rs_result
     }
 
+    /// Wraps `isl_aff_eq_set`.
+    pub fn eq_set(self, aff2: Aff) -> Set {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_eq_set(aff1, aff2) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_eval`.
+    pub fn eval(self, pnt: Point) -> Val {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut pnt = pnt;
+        pnt.do_not_free_on_drop();
+        let pnt = pnt.ptr;
+        let isl_rs_result = unsafe { isl_aff_eval(aff, pnt) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_find_dim_by_name`.
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+        let aff = self;
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let name = CString::new(name).unwrap();
+        let name = name.as_ptr();
+        let isl_rs_result = unsafe { isl_aff_find_dim_by_name(aff, type_, name) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_floor`.
+    pub fn floor(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_floor(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_free`.
+    pub fn free(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_free(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_from_range`.
+    pub fn from_range(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_from_range(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_ge_basic_set`.
+    pub fn ge_basic_set(self, aff2: Aff) -> BasicSet {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_ge_basic_set(aff1, aff2) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_ge_set`.
+    pub fn ge_set(self, aff2: Aff) -> Set {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_ge_set(aff1, aff2) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_coefficient_val`.
+    pub fn get_coefficient_val(&self, type_: DimType, pos: i32) -> Val {
+        let aff = self;
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_get_coefficient_val(aff, type_, pos) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_constant_val`.
+    pub fn get_constant_val(&self) -> Val {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_constant_val(aff) };
+        let isl_rs_result = Val { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_ctx(aff) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
     /// Wraps `isl_aff_get_denominator_val`.
     pub fn get_denominator_val(&self) -> Val {
         let aff = self;
@@ -1039,88 +612,87 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_list_copy`.
-    pub fn list_copy(list: &AffList) -> AffList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_copy(list) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_param_on_domain_space_id`.
-    pub fn param_on_domain_space_id(space: Space, id: Id) -> Aff {
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_aff_param_on_domain_space_id(space, id) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_insert`.
-    pub fn list_insert(list: AffList, pos: u32, el: Aff) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_insert(list, pos, el) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_zero_on_domain`.
-    pub fn zero_on_domain(ls: LocalSpace) -> Aff {
-        let mut ls = ls;
-        ls.do_not_free_on_drop();
-        let ls = ls.ptr;
-        let isl_rs_result = unsafe { isl_aff_zero_on_domain(ls) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_add_constant_num_si`.
-    pub fn add_constant_num_si(self, v: i32) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_add_constant_num_si(aff, v) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_scale_down_val`.
-    pub fn scale_down_val(self, v: Val) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut v = v;
-        v.do_not_free_on_drop();
-        let v = v.ptr;
-        let isl_rs_result = unsafe { isl_aff_scale_down_val(aff, v) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_to_str`.
-    pub fn to_str(&self) -> &str {
+    /// Wraps `isl_aff_get_dim_name`.
+    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
         let aff = self;
         let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_to_str(aff) };
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_get_dim_name(aff, type_, pos) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_div`.
+    pub fn get_div(&self, pos: i32) -> Aff {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_div(aff, pos) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_domain_local_space`.
+    pub fn get_domain_local_space(&self) -> LocalSpace {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_domain_local_space(aff) };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_domain_space`.
+    pub fn get_domain_space(&self) -> Space {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_domain_space(aff) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_hash`.
+    pub fn get_hash(&self) -> u32 {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_hash(aff) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_local_space`.
+    pub fn get_local_space(&self) -> LocalSpace {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_local_space(aff) };
+        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
+                                         should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_get_space`.
+    pub fn get_space(&self) -> Space {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_get_space(aff) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_gist`.
+    pub fn gist(self, context: Set) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_aff_gist(aff, context) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1139,24 +711,8 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_set_tuple_id`.
-    pub fn set_tuple_id(self, type_: DimType, id: Id) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let mut id = id;
-        id.do_not_free_on_drop();
-        let id = id.ptr;
-        let isl_rs_result = unsafe { isl_aff_set_tuple_id(aff, type_, id) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_mul`.
-    pub fn mul(self, aff2: Aff) -> Aff {
+    /// Wraps `isl_aff_gt_basic_set`.
+    pub fn gt_basic_set(self, aff2: Aff) -> BasicSet {
         let aff1 = self;
         let mut aff1 = aff1;
         aff1.do_not_free_on_drop();
@@ -1164,45 +720,14 @@ impl Aff {
         let mut aff2 = aff2;
         aff2.do_not_free_on_drop();
         let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_mul(aff1, aff2) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_list_get_ctx`.
-    pub fn list_get_ctx(list: &AffList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_neg_basic_set`.
-    pub fn neg_basic_set(self) -> BasicSet {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_neg_basic_set(aff) };
+        let isl_rs_result = unsafe { isl_aff_gt_basic_set(aff1, aff2) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_get_domain_space`.
-    pub fn get_domain_space(&self) -> Space {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_domain_space(aff) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_sub`.
-    pub fn sub(self, aff2: Aff) -> Aff {
+    /// Wraps `isl_aff_gt_set`.
+    pub fn gt_set(self, aff2: Aff) -> Set {
         let aff1 = self;
         let mut aff1 = aff1;
         aff1.do_not_free_on_drop();
@@ -1210,24 +735,90 @@ impl Aff {
         let mut aff2 = aff2;
         aff2.do_not_free_on_drop();
         let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_sub(aff1, aff2) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
+        let isl_rs_result = unsafe { isl_aff_gt_set(aff1, aff2) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Aff {
+    /// Wraps `isl_aff_insert_dims`.
+    pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> Aff {
         let aff = self;
         let mut aff = aff;
         aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let type_ = type_.to_i32();
-        let s = CString::new(s).unwrap();
-        let s = s.as_ptr();
-        let isl_rs_result = unsafe { isl_aff_set_dim_name(aff, type_, pos, s) };
+        let isl_rs_result = unsafe { isl_aff_insert_dims(aff, type_, first, n) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_involves_dims`.
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+        let aff = self;
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_involves_dims(aff, type_, first, n) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_involves_locals`.
+    pub fn involves_locals(&self) -> bool {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_involves_locals(aff) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_is_cst`.
+    pub fn is_cst(&self) -> bool {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_is_cst(aff) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_is_nan`.
+    pub fn is_nan(&self) -> bool {
+        let aff = self;
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_is_nan(aff) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_le_basic_set`.
+    pub fn le_basic_set(self, aff2: Aff) -> BasicSet {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_le_basic_set(aff1, aff2) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1246,24 +837,35 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_add_constant_si`.
-    pub fn add_constant_si(self, v: i32) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_add_constant_si(aff, v) };
-        let isl_rs_result = Aff { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
+    /// Wraps `isl_aff_list_add`.
+    pub fn list_add(list: AffList, el: Aff) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_add(list, el) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_list_read_from_str`.
-    pub fn list_read_from_str(ctx: &Context, str_: &str) -> AffList {
+    /// Wraps `isl_aff_list_alloc`.
+    pub fn list_alloc(ctx: &Context, n: i32) -> AffList {
         let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_aff_list_read_from_str(ctx, str_) };
+        let isl_rs_result = unsafe { isl_aff_list_alloc(ctx, n) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_clear`.
+    pub fn list_clear(list: AffList) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_clear(list) };
         let isl_rs_result = AffList { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
@@ -1283,47 +885,137 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_list_swap`.
-    pub fn list_swap(list: AffList, pos1: u32, pos2: u32) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
+    /// Wraps `isl_aff_list_copy`.
+    pub fn list_copy(list: &AffList) -> AffList {
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_swap(list, pos1, pos2) };
+        let isl_rs_result = unsafe { isl_aff_list_copy(list) };
         let isl_rs_result = AffList { ptr: isl_rs_result,
                                       should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_dump`.
-    pub fn dump(&self) -> () {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_dump(aff) };
+    /// Wraps `isl_aff_list_drop`.
+    pub fn list_drop(list: AffList, first: u32, n: u32) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_drop(list, first, n) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_get_local_space`.
-    pub fn get_local_space(&self) -> LocalSpace {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_local_space(aff) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
+    /// Wraps `isl_aff_list_dump`.
+    pub fn list_dump(list: &AffList) -> () {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_dump(list) };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_unbind_params_insert_domain`.
-    pub fn unbind_params_insert_domain(self, domain: MultiId) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let isl_rs_result = unsafe { isl_aff_unbind_params_insert_domain(aff, domain) };
+    /// Wraps `isl_aff_list_free`.
+    pub fn list_free(list: AffList) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_free(list) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_from_aff`.
+    pub fn list_from_aff(self) -> AffList {
+        let el = self;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_from_aff(el) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_get_aff`.
+    pub fn list_get_aff(list: &AffList, index: i32) -> Aff {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_get_aff(list, index) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_get_at`.
+    pub fn list_get_at(list: &AffList, index: i32) -> Aff {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_get_at(list, index) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_get_ctx`.
+    pub fn list_get_ctx(list: &AffList) -> Context {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_get_ctx(list) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_insert`.
+    pub fn list_insert(list: AffList, pos: u32, el: Aff) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_insert(list, pos, el) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_n_aff`.
+    pub fn list_n_aff(list: &AffList) -> i32 {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_n_aff(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_read_from_str`.
+    pub fn list_read_from_str(ctx: &Context, str_: &str) -> AffList {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_aff_list_read_from_str(ctx, str_) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_reverse`.
+    pub fn list_reverse(list: AffList) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_reverse(list) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_set_aff`.
+    pub fn list_set_aff(list: AffList, index: i32, el: Aff) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_set_aff(list, index, el) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1348,27 +1040,137 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_get_div`.
-    pub fn get_div(&self, pos: i32) -> Aff {
+    /// Wraps `isl_aff_list_swap`.
+    pub fn list_swap(list: AffList, pos1: u32, pos2: u32) -> AffList {
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_swap(list, pos1, pos2) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_list_to_str`.
+    pub fn list_to_str(list: &AffList) -> &str {
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_aff_list_to_str(list) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_lt_basic_set`.
+    pub fn lt_basic_set(self, aff2: Aff) -> BasicSet {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_lt_basic_set(aff1, aff2) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_lt_set`.
+    pub fn lt_set(self, aff2: Aff) -> Set {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_lt_set(aff1, aff2) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_mod_val`.
+    pub fn mod_val(self, mod_: Val) -> Aff {
         let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
         let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_div(aff, pos) };
+        let mut mod_ = mod_;
+        mod_.do_not_free_on_drop();
+        let mod_ = mod_.ptr;
+        let isl_rs_result = unsafe { isl_aff_mod_val(aff, mod_) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+    /// Wraps `isl_aff_move_dims`.
+    pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
+                     n: u32)
+                     -> Aff {
         let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
         let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_involves_dims(aff, type_, first, n) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
+        let dst_type = dst_type.to_i32();
+        let src_type = src_type.to_i32();
+        let isl_rs_result =
+            unsafe { isl_aff_move_dims(aff, dst_type, dst_pos, src_type, src_pos, n) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_mul`.
+    pub fn mul(self, aff2: Aff) -> Aff {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_mul(aff1, aff2) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_nan_on_domain`.
+    pub fn nan_on_domain(ls: LocalSpace) -> Aff {
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
+        let ls = ls.ptr;
+        let isl_rs_result = unsafe { isl_aff_nan_on_domain(ls) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_nan_on_domain_space`.
+    pub fn nan_on_domain_space(space: Space) -> Aff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_aff_nan_on_domain_space(space) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_ne_set`.
+    pub fn ne_set(self, aff2: Aff) -> Set {
+        let aff1 = self;
+        let mut aff1 = aff1;
+        aff1.do_not_free_on_drop();
+        let aff1 = aff1.ptr;
+        let mut aff2 = aff2;
+        aff2.do_not_free_on_drop();
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_ne_set(aff1, aff2) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -1384,29 +1186,73 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_get_domain_local_space`.
-    pub fn get_domain_local_space(&self) -> LocalSpace {
+    /// Wraps `isl_aff_neg_basic_set`.
+    pub fn neg_basic_set(self) -> BasicSet {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_neg_basic_set(aff) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_param_on_domain_space_id`.
+    pub fn param_on_domain_space_id(space: Space, id: Id) -> Aff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_aff_param_on_domain_space_id(space, id) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_plain_is_equal`.
+    pub fn plain_is_equal(&self, aff2: &Aff) -> bool {
+        let aff1 = self;
+        let aff1 = aff1.ptr;
+        let aff2 = aff2.ptr;
+        let isl_rs_result = unsafe { isl_aff_plain_is_equal(aff1, aff2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_plain_is_zero`.
+    pub fn plain_is_zero(&self) -> bool {
         let aff = self;
         let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_domain_local_space(aff) };
-        let isl_rs_result = LocalSpace { ptr: isl_rs_result,
-                                         should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_aff_plain_is_zero(aff) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_list_clear`.
-    pub fn list_clear(list: AffList) -> AffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_clear(list) };
-        let isl_rs_result = AffList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
+    /// Wraps `isl_aff_project_domain_on_params`.
+    pub fn project_domain_on_params(self) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_project_domain_on_params(aff) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_ge_basic_set`.
-    pub fn ge_basic_set(self, aff2: Aff) -> BasicSet {
+    /// Wraps `isl_aff_pullback_aff`.
+    pub fn pullback_aff(self, aff2: Aff) -> Aff {
         let aff1 = self;
         let mut aff1 = aff1;
         aff1.do_not_free_on_drop();
@@ -1414,16 +1260,33 @@ impl Aff {
         let mut aff2 = aff2;
         aff2.do_not_free_on_drop();
         let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_ge_basic_set(aff1, aff2) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_aff_pullback_aff(aff1, aff2) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_list_get_aff`.
-    pub fn list_get_aff(list: &AffList, index: i32) -> Aff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_get_aff(list, index) };
+    /// Wraps `isl_aff_pullback_multi_aff`.
+    pub fn pullback_multi_aff(self, ma: MultiAff) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut ma = ma;
+        ma.do_not_free_on_drop();
+        let ma = ma.ptr;
+        let isl_rs_result = unsafe { isl_aff_pullback_multi_aff(aff, ma) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_read_from_str`.
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Aff {
+        let ctx = ctx.ptr;
+        let str_ = CString::new(str_).unwrap();
+        let str_ = str_.as_ptr();
+        let isl_rs_result = unsafe { isl_aff_read_from_str(ctx, str_) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
@@ -1441,41 +1304,18 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_zero_basic_set`.
-    pub fn zero_basic_set(self) -> BasicSet {
+    /// Wraps `isl_aff_scale_down_val`.
+    pub fn scale_down_val(self, v: Val) -> Aff {
         let aff = self;
         let mut aff = aff;
         aff.do_not_free_on_drop();
         let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_zero_basic_set(aff) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_set_coefficient_si`.
-    pub fn set_coefficient_si(self, type_: DimType, pos: i32, v: i32) -> Aff {
-        let aff = self;
-        let mut aff = aff;
-        aff.do_not_free_on_drop();
-        let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_set_coefficient_si(aff, type_, pos, v) };
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_aff_scale_down_val(aff, v) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_is_nan`.
-    pub fn is_nan(&self) -> bool {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_is_nan(aff) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
         isl_rs_result
     }
 
@@ -1494,8 +1334,111 @@ impl Aff {
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_add`.
-    pub fn add(self, aff2: Aff) -> Aff {
+    /// Wraps `isl_aff_set_coefficient_si`.
+    pub fn set_coefficient_si(self, type_: DimType, pos: i32, v: i32) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_set_coefficient_si(aff, type_, pos, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_set_coefficient_val`.
+    pub fn set_coefficient_val(self, type_: DimType, pos: i32, v: Val) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_aff_set_coefficient_val(aff, type_, pos, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_set_constant_si`.
+    pub fn set_constant_si(self, v: i32) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_set_constant_si(aff, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_set_constant_val`.
+    pub fn set_constant_val(self, v: Val) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let mut v = v;
+        v.do_not_free_on_drop();
+        let v = v.ptr;
+        let isl_rs_result = unsafe { isl_aff_set_constant_val(aff, v) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_set_dim_id`.
+    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_aff_set_dim_id(aff, type_, pos, id) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_set_dim_name`.
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let s = CString::new(s).unwrap();
+        let s = s.as_ptr();
+        let isl_rs_result = unsafe { isl_aff_set_dim_name(aff, type_, pos, s) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_set_tuple_id`.
+    pub fn set_tuple_id(self, type_: DimType, id: Id) -> Aff {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let type_ = type_.to_i32();
+        let mut id = id;
+        id.do_not_free_on_drop();
+        let id = id.ptr;
+        let isl_rs_result = unsafe { isl_aff_set_tuple_id(aff, type_, id) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_sub`.
+    pub fn sub(self, aff2: Aff) -> Aff {
         let aff1 = self;
         let mut aff1 = aff1;
         aff1.do_not_free_on_drop();
@@ -1503,61 +1446,118 @@ impl Aff {
         let mut aff2 = aff2;
         aff2.do_not_free_on_drop();
         let aff2 = aff2.ptr;
-        let isl_rs_result = unsafe { isl_aff_add(aff1, aff2) };
+        let isl_rs_result = unsafe { isl_aff_sub(aff1, aff2) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_get_space`.
-    pub fn get_space(&self) -> Space {
+    /// Wraps `isl_aff_to_list`.
+    pub fn to_list(self) -> AffList {
+        let el = self;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_aff_to_list(el) };
+        let isl_rs_result = AffList { ptr: isl_rs_result,
+                                      should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_to_str`.
+    pub fn to_str(&self) -> &str {
         let aff = self;
         let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_get_space(aff) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_aff_to_str(aff) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_list_dump`.
-    pub fn list_dump(list: &AffList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_aff_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_involves_locals`.
-    pub fn involves_locals(&self) -> bool {
-        let aff = self;
-        let aff = aff.ptr;
-        let isl_rs_result = unsafe { isl_aff_involves_locals(aff) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_aff_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> Aff {
+    /// Wraps `isl_aff_unbind_params_insert_domain`.
+    pub fn unbind_params_insert_domain(self, domain: MultiId) -> Aff {
         let aff = self;
         let mut aff = aff;
         aff.do_not_free_on_drop();
         let aff = aff.ptr;
-        let type_ = type_.to_i32();
-        let isl_rs_result = unsafe { isl_aff_insert_dims(aff, type_, first, n) };
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let isl_rs_result = unsafe { isl_aff_unbind_params_insert_domain(aff, domain) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_aff_nan_on_domain`.
-    pub fn nan_on_domain(ls: LocalSpace) -> Aff {
+    /// Wraps `isl_aff_val_on_domain`.
+    pub fn val_on_domain(ls: LocalSpace, val: Val) -> Aff {
         let mut ls = ls;
         ls.do_not_free_on_drop();
         let ls = ls.ptr;
-        let isl_rs_result = unsafe { isl_aff_nan_on_domain(ls) };
+        let mut val = val;
+        val.do_not_free_on_drop();
+        let val = val.ptr;
+        let isl_rs_result = unsafe { isl_aff_val_on_domain(ls, val) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_val_on_domain_space`.
+    pub fn val_on_domain_space(space: Space, val: Val) -> Aff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let mut val = val;
+        val.do_not_free_on_drop();
+        let val = val.ptr;
+        let isl_rs_result = unsafe { isl_aff_val_on_domain_space(space, val) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_var_on_domain`.
+    pub fn var_on_domain(ls: LocalSpace, type_: DimType, pos: u32) -> Aff {
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
+        let ls = ls.ptr;
+        let type_ = type_.to_i32();
+        let isl_rs_result = unsafe { isl_aff_var_on_domain(ls, type_, pos) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_zero_basic_set`.
+    pub fn zero_basic_set(self) -> BasicSet {
+        let aff = self;
+        let mut aff = aff;
+        aff.do_not_free_on_drop();
+        let aff = aff.ptr;
+        let isl_rs_result = unsafe { isl_aff_zero_basic_set(aff) };
+        let isl_rs_result = BasicSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_zero_on_domain`.
+    pub fn zero_on_domain(ls: LocalSpace) -> Aff {
+        let mut ls = ls;
+        ls.do_not_free_on_drop();
+        let ls = ls.ptr;
+        let isl_rs_result = unsafe { isl_aff_zero_on_domain(ls) };
+        let isl_rs_result = Aff { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_aff_zero_on_domain_space`.
+    pub fn zero_on_domain_space(space: Space) -> Aff {
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_aff_zero_on_domain_space(space) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
         isl_rs_result

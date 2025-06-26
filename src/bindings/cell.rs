@@ -12,15 +12,27 @@ pub struct Cell {
 
 extern "C" {
 
+    fn isl_cell_free(cell: uintptr_t) -> uintptr_t;
+
     fn isl_cell_get_ctx(cell: uintptr_t) -> uintptr_t;
 
     fn isl_cell_get_domain(cell: uintptr_t) -> uintptr_t;
 
-    fn isl_cell_free(cell: uintptr_t) -> uintptr_t;
-
 }
 
 impl Cell {
+    /// Wraps `isl_cell_free`.
+    pub fn free(self) -> Cell {
+        let cell = self;
+        let mut cell = cell;
+        cell.do_not_free_on_drop();
+        let cell = cell.ptr;
+        let isl_rs_result = unsafe { isl_cell_free(cell) };
+        let isl_rs_result = Cell { ptr: isl_rs_result,
+                                   should_free_on_drop: true };
+        isl_rs_result
+    }
+
     /// Wraps `isl_cell_get_ctx`.
     pub fn get_ctx(&self) -> Context {
         let cell = self;
@@ -38,18 +50,6 @@ impl Cell {
         let isl_rs_result = unsafe { isl_cell_get_domain(cell) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_cell_free`.
-    pub fn free(self) -> Cell {
-        let cell = self;
-        let mut cell = cell;
-        cell.do_not_free_on_drop();
-        let cell = cell.ptr;
-        let isl_rs_result = unsafe { isl_cell_free(cell) };
-        let isl_rs_result = Cell { ptr: isl_rs_result,
-                                   should_free_on_drop: true };
         isl_rs_result
     }
 

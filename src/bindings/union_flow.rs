@@ -14,46 +14,36 @@ pub struct UnionFlow {
 
 extern "C" {
 
-    fn isl_union_flow_get_must_no_source(flow: uintptr_t) -> uintptr_t;
-
-    fn isl_union_flow_to_str(flow: uintptr_t) -> *const c_char;
+    fn isl_union_flow_copy(flow: uintptr_t) -> uintptr_t;
 
     fn isl_union_flow_free(flow: uintptr_t) -> uintptr_t;
 
     fn isl_union_flow_get_ctx(flow: uintptr_t) -> uintptr_t;
 
-    fn isl_union_flow_get_must_dependence(flow: uintptr_t) -> uintptr_t;
-
-    fn isl_union_flow_get_may_no_source(flow: uintptr_t) -> uintptr_t;
+    fn isl_union_flow_get_full_may_dependence(flow: uintptr_t) -> uintptr_t;
 
     fn isl_union_flow_get_full_must_dependence(flow: uintptr_t) -> uintptr_t;
 
-    fn isl_union_flow_copy(flow: uintptr_t) -> uintptr_t;
-
     fn isl_union_flow_get_may_dependence(flow: uintptr_t) -> uintptr_t;
 
-    fn isl_union_flow_get_full_may_dependence(flow: uintptr_t) -> uintptr_t;
+    fn isl_union_flow_get_may_no_source(flow: uintptr_t) -> uintptr_t;
+
+    fn isl_union_flow_get_must_dependence(flow: uintptr_t) -> uintptr_t;
+
+    fn isl_union_flow_get_must_no_source(flow: uintptr_t) -> uintptr_t;
+
+    fn isl_union_flow_to_str(flow: uintptr_t) -> *const c_char;
 
 }
 
 impl UnionFlow {
-    /// Wraps `isl_union_flow_get_must_no_source`.
-    pub fn get_must_no_source(&self) -> UnionMap {
+    /// Wraps `isl_union_flow_copy`.
+    pub fn copy(&self) -> UnionFlow {
         let flow = self;
         let flow = flow.ptr;
-        let isl_rs_result = unsafe { isl_union_flow_get_must_no_source(flow) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_flow_to_str`.
-    pub fn to_str(&self) -> &str {
-        let flow = self;
-        let flow = flow.ptr;
-        let isl_rs_result = unsafe { isl_union_flow_to_str(flow) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        let isl_rs_result = unsafe { isl_union_flow_copy(flow) };
+        let isl_rs_result = UnionFlow { ptr: isl_rs_result,
+                                        should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -79,21 +69,11 @@ impl UnionFlow {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_flow_get_must_dependence`.
-    pub fn get_must_dependence(&self) -> UnionMap {
+    /// Wraps `isl_union_flow_get_full_may_dependence`.
+    pub fn get_full_may_dependence(&self) -> UnionMap {
         let flow = self;
         let flow = flow.ptr;
-        let isl_rs_result = unsafe { isl_union_flow_get_must_dependence(flow) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_flow_get_may_no_source`.
-    pub fn get_may_no_source(&self) -> UnionMap {
-        let flow = self;
-        let flow = flow.ptr;
-        let isl_rs_result = unsafe { isl_union_flow_get_may_no_source(flow) };
+        let isl_rs_result = unsafe { isl_union_flow_get_full_may_dependence(flow) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result
@@ -109,16 +89,6 @@ impl UnionFlow {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_flow_copy`.
-    pub fn copy(&self) -> UnionFlow {
-        let flow = self;
-        let flow = flow.ptr;
-        let isl_rs_result = unsafe { isl_union_flow_copy(flow) };
-        let isl_rs_result = UnionFlow { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_union_flow_get_may_dependence`.
     pub fn get_may_dependence(&self) -> UnionMap {
         let flow = self;
@@ -129,13 +99,43 @@ impl UnionFlow {
         isl_rs_result
     }
 
-    /// Wraps `isl_union_flow_get_full_may_dependence`.
-    pub fn get_full_may_dependence(&self) -> UnionMap {
+    /// Wraps `isl_union_flow_get_may_no_source`.
+    pub fn get_may_no_source(&self) -> UnionMap {
         let flow = self;
         let flow = flow.ptr;
-        let isl_rs_result = unsafe { isl_union_flow_get_full_may_dependence(flow) };
+        let isl_rs_result = unsafe { isl_union_flow_get_may_no_source(flow) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_flow_get_must_dependence`.
+    pub fn get_must_dependence(&self) -> UnionMap {
+        let flow = self;
+        let flow = flow.ptr;
+        let isl_rs_result = unsafe { isl_union_flow_get_must_dependence(flow) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_flow_get_must_no_source`.
+    pub fn get_must_no_source(&self) -> UnionMap {
+        let flow = self;
+        let flow = flow.ptr;
+        let isl_rs_result = unsafe { isl_union_flow_get_must_no_source(flow) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_union_flow_to_str`.
+    pub fn to_str(&self) -> &str {
+        let flow = self;
+        let flow = flow.ptr;
+        let isl_rs_result = unsafe { isl_union_flow_to_str(flow) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 

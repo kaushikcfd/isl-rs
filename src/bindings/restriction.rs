@@ -12,9 +12,7 @@ pub struct Restriction {
 
 extern "C" {
 
-    fn isl_restriction_output(source_restr: uintptr_t) -> uintptr_t;
-
-    fn isl_restriction_none(source_map: uintptr_t) -> uintptr_t;
+    fn isl_restriction_empty(source_map: uintptr_t) -> uintptr_t;
 
     fn isl_restriction_free(restr: uintptr_t) -> uintptr_t;
 
@@ -22,28 +20,19 @@ extern "C" {
 
     fn isl_restriction_input(source_restr: uintptr_t, sink_restr: uintptr_t) -> uintptr_t;
 
-    fn isl_restriction_empty(source_map: uintptr_t) -> uintptr_t;
+    fn isl_restriction_none(source_map: uintptr_t) -> uintptr_t;
+
+    fn isl_restriction_output(source_restr: uintptr_t) -> uintptr_t;
 
 }
 
 impl Restriction {
-    /// Wraps `isl_restriction_output`.
-    pub fn output(source_restr: Set) -> Restriction {
-        let mut source_restr = source_restr;
-        source_restr.do_not_free_on_drop();
-        let source_restr = source_restr.ptr;
-        let isl_rs_result = unsafe { isl_restriction_output(source_restr) };
-        let isl_rs_result = Restriction { ptr: isl_rs_result,
-                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_restriction_none`.
-    pub fn none(source_map: Map) -> Restriction {
+    /// Wraps `isl_restriction_empty`.
+    pub fn empty(source_map: Map) -> Restriction {
         let mut source_map = source_map;
         source_map.do_not_free_on_drop();
         let source_map = source_map.ptr;
-        let isl_rs_result = unsafe { isl_restriction_none(source_map) };
+        let isl_rs_result = unsafe { isl_restriction_empty(source_map) };
         let isl_rs_result = Restriction { ptr: isl_rs_result,
                                           should_free_on_drop: true };
         isl_rs_result
@@ -85,12 +74,23 @@ impl Restriction {
         isl_rs_result
     }
 
-    /// Wraps `isl_restriction_empty`.
-    pub fn empty(source_map: Map) -> Restriction {
+    /// Wraps `isl_restriction_none`.
+    pub fn none(source_map: Map) -> Restriction {
         let mut source_map = source_map;
         source_map.do_not_free_on_drop();
         let source_map = source_map.ptr;
-        let isl_rs_result = unsafe { isl_restriction_empty(source_map) };
+        let isl_rs_result = unsafe { isl_restriction_none(source_map) };
+        let isl_rs_result = Restriction { ptr: isl_rs_result,
+                                          should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_restriction_output`.
+    pub fn output(source_restr: Set) -> Restriction {
+        let mut source_restr = source_restr;
+        source_restr.do_not_free_on_drop();
+        let source_restr = source_restr.ptr;
+        let isl_rs_result = unsafe { isl_restriction_output(source_restr) };
         let isl_rs_result = Restriction { ptr: isl_rs_result,
                                           should_free_on_drop: true };
         isl_rs_result

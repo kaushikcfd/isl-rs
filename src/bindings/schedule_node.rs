@@ -17,354 +17,255 @@ pub struct ScheduleNode {
 
 extern "C" {
 
-    fn isl_schedule_node_group(node: uintptr_t, group_id: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_get_space(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_filter_get_filter(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_universe_domain(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_root(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_schedule_depth(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_copy(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_dump(node: uintptr_t) -> ();
-
-    fn isl_schedule_node_child(node: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_schedule_node_band_member_get_ast_loop_type(node: uintptr_t, pos: i32) -> i32;
-
-    fn isl_schedule_node_has_next_sibling(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_insert_partial_schedule(node: uintptr_t, schedule: uintptr_t)
-                                                 -> uintptr_t;
-
-    fn isl_schedule_node_cut(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_previous_sibling(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_subtree_expansion(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_get_permutable(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_reset_user(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_insert_filter(node: uintptr_t, filter: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_extension_get_extension(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_split(node: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_schedule_node_band_sink(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_ctx(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_sequence_splice_children(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_member_get_isolate_ast_loop_type(node: uintptr_t, pos: i32) -> i32;
-
-    fn isl_schedule_node_has_previous_sibling(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_expansion_get_expansion(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_sequence_splice_child(node: uintptr_t, pos: i32) -> uintptr_t;
-
-    fn isl_schedule_node_get_type(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_band_member_set_coincident(node: uintptr_t, pos: i32, coincident: i32)
-                                                    -> uintptr_t;
-
-    fn isl_schedule_node_band_shift(node: uintptr_t, shift: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_set_permutable(node: uintptr_t, permutable: i32) -> uintptr_t;
-
-    fn isl_schedule_node_get_schedule(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_delete(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_insert_sequence(node: uintptr_t, filters: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_prefix_schedule_multi_union_pw_aff(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_mod(node: uintptr_t, mv: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_get_partial_schedule(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_expansion_get_contraction(node: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_align_params(node: uintptr_t, space: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_node_ancestor(node: uintptr_t, generation: i32) -> uintptr_t;
 
-    fn isl_schedule_node_domain_get_domain(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_child_position(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_get_tree_depth(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_from_domain(domain: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_has_parent(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_order_before(node: uintptr_t, filter: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_insert_context(node: uintptr_t, context: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_graft_before(node: uintptr_t, graft: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_n_member(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_grandparent(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_ancestor_child_position(node: uintptr_t, ancestor: uintptr_t) -> i32;
+    fn isl_schedule_node_band_get_ast_build_options(node: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_node_band_get_ast_isolate_option(node: uintptr_t) -> uintptr_t;
 
+    fn isl_schedule_node_band_get_partial_schedule(node: uintptr_t) -> uintptr_t;
+
     fn isl_schedule_node_band_get_partial_schedule_union_map(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_band_get_permutable(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_band_get_space(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_band_member_get_ast_loop_type(node: uintptr_t, pos: i32) -> i32;
 
     fn isl_schedule_node_band_member_get_coincident(node: uintptr_t, pos: i32) -> i32;
 
-    fn isl_schedule_node_get_shared_ancestor(node1: uintptr_t, node2: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_band_member_get_isolate_ast_loop_type(node: uintptr_t, pos: i32) -> i32;
 
     fn isl_schedule_node_band_member_set_ast_loop_type(node: uintptr_t, pos: i32, type_: i32)
                                                        -> uintptr_t;
 
-    fn isl_schedule_node_get_subtree_contraction(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_insert_mark(node: uintptr_t, mark: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_is_equal(node1: uintptr_t, node2: uintptr_t) -> i32;
-
-    fn isl_schedule_node_band_tile(node: uintptr_t, sizes: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_scale(node: uintptr_t, mv: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_band_member_set_coincident(node: uintptr_t, pos: i32, coincident: i32)
+                                                    -> uintptr_t;
 
     fn isl_schedule_node_band_member_set_isolate_ast_loop_type(node: uintptr_t, pos: i32,
                                                                type_: i32)
                                                                -> uintptr_t;
 
-    fn isl_schedule_node_next_sibling(node: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_band_mod(node: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_node_insert_set(node: uintptr_t, filters: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_band_n_member(node: uintptr_t) -> i32;
 
-    fn isl_schedule_node_free(node: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_band_scale(node: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_node_align_params(node: uintptr_t, space: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_subtree_schedule_union_map(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_parent(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_has_children(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_get_prefix_schedule_relation(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_grandchild(node: uintptr_t, pos1: i32, pos2: i32) -> uintptr_t;
-
-    fn isl_schedule_node_n_children(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_guard_get_guard(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_graft_after(node: uintptr_t, graft: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_insert_guard(node: uintptr_t, context: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_parent_type(node: uintptr_t) -> i32;
-
-    fn isl_schedule_node_from_extension(extension: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_to_str(node: uintptr_t) -> *const c_char;
-
-    fn isl_schedule_node_context_get_context(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_get_prefix_schedule_union_map(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_band_get_ast_build_options(node: uintptr_t) -> uintptr_t;
-
-    fn isl_schedule_node_first_child(node: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_band_scale_down(node: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_node_band_set_ast_build_options(node: uintptr_t, options: uintptr_t)
                                                     -> uintptr_t;
 
+    fn isl_schedule_node_band_set_permutable(node: uintptr_t, permutable: i32) -> uintptr_t;
+
+    fn isl_schedule_node_band_shift(node: uintptr_t, shift: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_band_sink(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_band_split(node: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_schedule_node_band_tile(node: uintptr_t, sizes: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_child(node: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_schedule_node_context_get_context(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_copy(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_cut(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_delete(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_domain_get_domain(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_dump(node: uintptr_t) -> ();
+
+    fn isl_schedule_node_expansion_get_contraction(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_expansion_get_expansion(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_extension_get_extension(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_filter_get_filter(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_first_child(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_free(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_from_domain(domain: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_from_extension(extension: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_ancestor_child_position(node: uintptr_t, ancestor: uintptr_t) -> i32;
+
+    fn isl_schedule_node_get_child(node: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_schedule_node_get_child_position(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_get_ctx(node: uintptr_t) -> uintptr_t;
+
     fn isl_schedule_node_get_domain(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_parent_type(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_get_prefix_schedule_multi_union_pw_aff(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_prefix_schedule_relation(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_prefix_schedule_union_map(node: uintptr_t) -> uintptr_t;
 
     fn isl_schedule_node_get_prefix_schedule_union_pw_multi_aff(node: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_node_band_scale_down(node: uintptr_t, mv: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_get_schedule(node: uintptr_t) -> uintptr_t;
 
-    fn isl_schedule_node_order_after(node: uintptr_t, filter: uintptr_t) -> uintptr_t;
+    fn isl_schedule_node_get_schedule_depth(node: uintptr_t) -> i32;
 
-    fn isl_schedule_node_get_child(node: uintptr_t, pos: i32) -> uintptr_t;
+    fn isl_schedule_node_get_shared_ancestor(node1: uintptr_t, node2: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_subtree_contraction(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_subtree_expansion(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_subtree_schedule_union_map(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_get_tree_depth(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_get_type(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_get_universe_domain(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_graft_after(node: uintptr_t, graft: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_graft_before(node: uintptr_t, graft: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_grandchild(node: uintptr_t, pos1: i32, pos2: i32) -> uintptr_t;
+
+    fn isl_schedule_node_grandparent(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_group(node: uintptr_t, group_id: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_guard_get_guard(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_has_children(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_has_next_sibling(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_has_parent(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_has_previous_sibling(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_insert_context(node: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_insert_filter(node: uintptr_t, filter: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_insert_guard(node: uintptr_t, context: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_insert_mark(node: uintptr_t, mark: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_insert_partial_schedule(node: uintptr_t, schedule: uintptr_t)
+                                                 -> uintptr_t;
+
+    fn isl_schedule_node_insert_sequence(node: uintptr_t, filters: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_insert_set(node: uintptr_t, filters: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_is_equal(node1: uintptr_t, node2: uintptr_t) -> i32;
 
     fn isl_schedule_node_is_subtree_anchored(node: uintptr_t) -> i32;
 
     fn isl_schedule_node_mark_get_id(node: uintptr_t) -> uintptr_t;
 
+    fn isl_schedule_node_n_children(node: uintptr_t) -> i32;
+
+    fn isl_schedule_node_next_sibling(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_order_after(node: uintptr_t, filter: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_order_before(node: uintptr_t, filter: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_parent(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_previous_sibling(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_reset_user(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_root(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_sequence_splice_child(node: uintptr_t, pos: i32) -> uintptr_t;
+
+    fn isl_schedule_node_sequence_splice_children(node: uintptr_t) -> uintptr_t;
+
+    fn isl_schedule_node_to_str(node: uintptr_t) -> *const c_char;
+
 }
 
 impl ScheduleNode {
-    /// Wraps `isl_schedule_node_group`.
-    pub fn group(self, group_id: Id) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_align_params`.
+    pub fn align_params(self, space: Space) -> ScheduleNode {
         let node = self;
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
-        let mut group_id = group_id;
-        group_id.do_not_free_on_drop();
-        let group_id = group_id.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_group(node, group_id) };
+        let mut space = space;
+        space.do_not_free_on_drop();
+        let space = space.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_align_params(node, space) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_band_get_space`.
-    pub fn band_get_space(&self) -> Space {
+    /// Wraps `isl_schedule_node_ancestor`.
+    pub fn ancestor(self, generation: i32) -> ScheduleNode {
         let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_get_space(node) };
-        let isl_rs_result = Space { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_schedule_node_ancestor(node, generation) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_filter_get_filter`.
-    pub fn filter_get_filter(&self) -> UnionSet {
+    /// Wraps `isl_schedule_node_band_get_ast_build_options`.
+    pub fn band_get_ast_build_options(&self) -> UnionSet {
         let node = self;
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_filter_get_filter(node) };
+        let isl_rs_result = unsafe { isl_schedule_node_band_get_ast_build_options(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_get_universe_domain`.
-    pub fn get_universe_domain(&self) -> UnionSet {
+    /// Wraps `isl_schedule_node_band_get_ast_isolate_option`.
+    pub fn band_get_ast_isolate_option(&self) -> Set {
         let node = self;
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_universe_domain(node) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_schedule_node_band_get_ast_isolate_option(node) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_root`.
-    pub fn root(self) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_band_get_partial_schedule`.
+    pub fn band_get_partial_schedule(&self) -> MultiUnionPwAff {
         let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_root(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_schedule_node_band_get_partial_schedule(node) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_get_schedule_depth`.
-    pub fn get_schedule_depth(&self) -> i32 {
+    /// Wraps `isl_schedule_node_band_get_partial_schedule_union_map`.
+    pub fn band_get_partial_schedule_union_map(&self) -> UnionMap {
         let node = self;
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_schedule_depth(node) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_copy`.
-    pub fn copy(&self) -> ScheduleNode {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_copy(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_dump`.
-    pub fn dump(&self) -> () {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_dump(node) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_child`.
-    pub fn child(self, pos: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_child(node, pos) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_member_get_ast_loop_type`.
-    pub fn band_member_get_ast_loop_type(&self, pos: i32) -> ASTLoopType {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_member_get_ast_loop_type(node, pos) };
-        let isl_rs_result = ASTLoopType::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_has_next_sibling`.
-    pub fn has_next_sibling(&self) -> bool {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_has_next_sibling(node) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_insert_partial_schedule`.
-    pub fn insert_partial_schedule(self, schedule: MultiUnionPwAff) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut schedule = schedule;
-        schedule.do_not_free_on_drop();
-        let schedule = schedule.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_partial_schedule(node, schedule) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_cut`.
-    pub fn cut(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_cut(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_previous_sibling`.
-    pub fn previous_sibling(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_previous_sibling(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_subtree_expansion`.
-    pub fn get_subtree_expansion(&self) -> UnionMap {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_subtree_expansion(node) };
+        let isl_rs_result = unsafe { isl_schedule_node_band_get_partial_schedule_union_map(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result
@@ -383,420 +284,22 @@ impl ScheduleNode {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_reset_user`.
-    pub fn reset_user(self) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_band_get_space`.
+    pub fn band_get_space(&self) -> Space {
         let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_reset_user(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
+        let isl_rs_result = unsafe { isl_schedule_node_band_get_space(node) };
+        let isl_rs_result = Space { ptr: isl_rs_result,
+                                    should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_insert_filter`.
-    pub fn insert_filter(self, filter: UnionSet) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut filter = filter;
-        filter.do_not_free_on_drop();
-        let filter = filter.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_filter(node, filter) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_extension_get_extension`.
-    pub fn extension_get_extension(&self) -> UnionMap {
+    /// Wraps `isl_schedule_node_band_member_get_ast_loop_type`.
+    pub fn band_member_get_ast_loop_type(&self, pos: i32) -> ASTLoopType {
         let node = self;
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_extension_get_extension(node) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_split`.
-    pub fn band_split(self, pos: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_split(node, pos) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_sink`.
-    pub fn band_sink(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_sink(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_ctx(node) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_sequence_splice_children`.
-    pub fn sequence_splice_children(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_sequence_splice_children(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_member_get_isolate_ast_loop_type`.
-    pub fn band_member_get_isolate_ast_loop_type(&self, pos: i32) -> ASTLoopType {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result =
-            unsafe { isl_schedule_node_band_member_get_isolate_ast_loop_type(node, pos) };
+        let isl_rs_result = unsafe { isl_schedule_node_band_member_get_ast_loop_type(node, pos) };
         let isl_rs_result = ASTLoopType::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_has_previous_sibling`.
-    pub fn has_previous_sibling(&self) -> bool {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_has_previous_sibling(node) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_expansion_get_expansion`.
-    pub fn expansion_get_expansion(&self) -> UnionMap {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_expansion_get_expansion(node) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_sequence_splice_child`.
-    pub fn sequence_splice_child(self, pos: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_sequence_splice_child(node, pos) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_type`.
-    pub fn get_type(&self) -> ScheduleNodeType {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_type(node) };
-        let isl_rs_result = ScheduleNodeType::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_member_set_coincident`.
-    pub fn band_member_set_coincident(self, pos: i32, coincident: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result =
-            unsafe { isl_schedule_node_band_member_set_coincident(node, pos, coincident) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_shift`.
-    pub fn band_shift(self, shift: MultiUnionPwAff) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut shift = shift;
-        shift.do_not_free_on_drop();
-        let shift = shift.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_shift(node, shift) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_set_permutable`.
-    pub fn band_set_permutable(self, permutable: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_set_permutable(node, permutable) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_schedule`.
-    pub fn get_schedule(&self) -> Schedule {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_schedule(node) };
-        let isl_rs_result = Schedule { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_delete`.
-    pub fn delete(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_delete(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_insert_sequence`.
-    pub fn insert_sequence(self, filters: UnionSetList) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut filters = filters;
-        filters.do_not_free_on_drop();
-        let filters = filters.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_sequence(node, filters) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_prefix_schedule_multi_union_pw_aff`.
-    pub fn get_prefix_schedule_multi_union_pw_aff(&self) -> MultiUnionPwAff {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result =
-            unsafe { isl_schedule_node_get_prefix_schedule_multi_union_pw_aff(node) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_mod`.
-    pub fn band_mod(self, mv: MultiVal) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_mod(node, mv) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_get_partial_schedule`.
-    pub fn band_get_partial_schedule(&self) -> MultiUnionPwAff {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_get_partial_schedule(node) };
-        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_expansion_get_contraction`.
-    pub fn expansion_get_contraction(&self) -> UnionPwMultiAff {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_expansion_get_contraction(node) };
-        let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_ancestor`.
-    pub fn ancestor(self, generation: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_ancestor(node, generation) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_domain_get_domain`.
-    pub fn domain_get_domain(&self) -> UnionSet {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_domain_get_domain(node) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_child_position`.
-    pub fn get_child_position(&self) -> i32 {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_child_position(node) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_tree_depth`.
-    pub fn get_tree_depth(&self) -> i32 {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_tree_depth(node) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_from_domain`.
-    pub fn from_domain(domain: UnionSet) -> ScheduleNode {
-        let mut domain = domain;
-        domain.do_not_free_on_drop();
-        let domain = domain.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_from_domain(domain) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_has_parent`.
-    pub fn has_parent(&self) -> bool {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_has_parent(node) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_order_before`.
-    pub fn order_before(self, filter: UnionSet) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut filter = filter;
-        filter.do_not_free_on_drop();
-        let filter = filter.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_order_before(node, filter) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_insert_context`.
-    pub fn insert_context(self, context: Set) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_context(node, context) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_graft_before`.
-    pub fn graft_before(self, graft: ScheduleNode) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut graft = graft;
-        graft.do_not_free_on_drop();
-        let graft = graft.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_graft_before(node, graft) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_n_member`.
-    pub fn band_n_member(&self) -> i32 {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_n_member(node) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_grandparent`.
-    pub fn grandparent(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_grandparent(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_ancestor_child_position`.
-    pub fn get_ancestor_child_position(&self, ancestor: &ScheduleNode) -> i32 {
-        let node = self;
-        let node = node.ptr;
-        let ancestor = ancestor.ptr;
-        let isl_rs_result =
-            unsafe { isl_schedule_node_get_ancestor_child_position(node, ancestor) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_get_ast_isolate_option`.
-    pub fn band_get_ast_isolate_option(&self) -> Set {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_get_ast_isolate_option(node) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_get_partial_schedule_union_map`.
-    pub fn band_get_partial_schedule_union_map(&self) -> UnionMap {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_get_partial_schedule_union_map(node) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
         isl_rs_result
     }
 
@@ -813,14 +316,13 @@ impl ScheduleNode {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_get_shared_ancestor`.
-    pub fn get_shared_ancestor(&self, node2: &ScheduleNode) -> ScheduleNode {
-        let node1 = self;
-        let node1 = node1.ptr;
-        let node2 = node2.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_shared_ancestor(node1, node2) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
+    /// Wraps `isl_schedule_node_band_member_get_isolate_ast_loop_type`.
+    pub fn band_member_get_isolate_ast_loop_type(&self, pos: i32) -> ASTLoopType {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result =
+            unsafe { isl_schedule_node_band_member_get_isolate_ast_loop_type(node, pos) };
+        let isl_rs_result = ASTLoopType::from_i32(isl_rs_result);
         isl_rs_result
     }
 
@@ -838,70 +340,14 @@ impl ScheduleNode {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_get_subtree_contraction`.
-    pub fn get_subtree_contraction(&self) -> UnionPwMultiAff {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_subtree_contraction(node) };
-        let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_insert_mark`.
-    pub fn insert_mark(self, mark: Id) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_band_member_set_coincident`.
+    pub fn band_member_set_coincident(self, pos: i32, coincident: i32) -> ScheduleNode {
         let node = self;
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
-        let mut mark = mark;
-        mark.do_not_free_on_drop();
-        let mark = mark.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_mark(node, mark) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_is_equal`.
-    pub fn is_equal(&self, node2: &ScheduleNode) -> bool {
-        let node1 = self;
-        let node1 = node1.ptr;
-        let node2 = node2.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_is_equal(node1, node2) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_tile`.
-    pub fn band_tile(self, sizes: MultiVal) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut sizes = sizes;
-        sizes.do_not_free_on_drop();
-        let sizes = sizes.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_tile(node, sizes) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_scale`.
-    pub fn band_scale(self, mv: MultiVal) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_scale(node, mv) };
+        let isl_rs_result =
+            unsafe { isl_schedule_node_band_member_set_coincident(node, pos, coincident) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
@@ -922,232 +368,54 @@ impl ScheduleNode {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_next_sibling`.
-    pub fn next_sibling(self) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_band_mod`.
+    pub fn band_mod(self, mv: MultiVal) -> ScheduleNode {
         let node = self;
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_next_sibling(node) };
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_mod(node, mv) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_insert_set`.
-    pub fn insert_set(self, filters: UnionSetList) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_band_n_member`.
+    pub fn band_n_member(&self) -> i32 {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_n_member(node) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_band_scale`.
+    pub fn band_scale(self, mv: MultiVal) -> ScheduleNode {
         let node = self;
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
-        let mut filters = filters;
-        filters.do_not_free_on_drop();
-        let filters = filters.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_set(node, filters) };
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_scale(node, mv) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_free`.
-    pub fn free(self) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_band_scale_down`.
+    pub fn band_scale_down(self, mv: MultiVal) -> ScheduleNode {
         let node = self;
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_free(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_align_params`.
-    pub fn align_params(self, space: Space) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut space = space;
-        space.do_not_free_on_drop();
-        let space = space.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_align_params(node, space) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_subtree_schedule_union_map`.
-    pub fn get_subtree_schedule_union_map(&self) -> UnionMap {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_subtree_schedule_union_map(node) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_parent`.
-    pub fn parent(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_parent(node) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_has_children`.
-    pub fn has_children(&self) -> bool {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_has_children(node) };
-        let isl_rs_result = match isl_rs_result {
-            0 => false,
-            1 => true,
-            _ => panic!("Got isl_bool = -1"),
-        };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_prefix_schedule_relation`.
-    pub fn get_prefix_schedule_relation(&self) -> UnionMap {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_prefix_schedule_relation(node) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_grandchild`.
-    pub fn grandchild(self, pos1: i32, pos2: i32) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_grandchild(node, pos1, pos2) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_n_children`.
-    pub fn n_children(&self) -> i32 {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_n_children(node) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_guard_get_guard`.
-    pub fn guard_get_guard(&self) -> Set {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_guard_get_guard(node) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_graft_after`.
-    pub fn graft_after(self, graft: ScheduleNode) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut graft = graft;
-        graft.do_not_free_on_drop();
-        let graft = graft.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_graft_after(node, graft) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_insert_guard`.
-    pub fn insert_guard(self, context: Set) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let mut context = context;
-        context.do_not_free_on_drop();
-        let context = context.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_insert_guard(node, context) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_parent_type`.
-    pub fn get_parent_type(&self) -> ScheduleNodeType {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_parent_type(node) };
-        let isl_rs_result = ScheduleNodeType::from_i32(isl_rs_result);
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_from_extension`.
-    pub fn from_extension(extension: UnionMap) -> ScheduleNode {
-        let mut extension = extension;
-        extension.do_not_free_on_drop();
-        let extension = extension.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_from_extension(extension) };
-        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_to_str`.
-    pub fn to_str(&self) -> &str {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_to_str(node) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_context_get_context`.
-    pub fn context_get_context(&self) -> Set {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_context_get_context(node) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_get_prefix_schedule_union_map`.
-    pub fn get_prefix_schedule_union_map(&self) -> UnionMap {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_prefix_schedule_union_map(node) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_band_get_ast_build_options`.
-    pub fn band_get_ast_build_options(&self) -> UnionSet {
-        let node = self;
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_get_ast_build_options(node) };
-        let isl_rs_result = UnionSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_schedule_node_first_child`.
-    pub fn first_child(self) -> ScheduleNode {
-        let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
-        let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_first_child(node) };
+        let mut mv = mv;
+        mv.do_not_free_on_drop();
+        let mv = mv.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_scale_down(node, mv) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
@@ -1168,12 +436,316 @@ impl ScheduleNode {
         isl_rs_result
     }
 
+    /// Wraps `isl_schedule_node_band_set_permutable`.
+    pub fn band_set_permutable(self, permutable: i32) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_set_permutable(node, permutable) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_band_shift`.
+    pub fn band_shift(self, shift: MultiUnionPwAff) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut shift = shift;
+        shift.do_not_free_on_drop();
+        let shift = shift.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_shift(node, shift) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_band_sink`.
+    pub fn band_sink(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_sink(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_band_split`.
+    pub fn band_split(self, pos: i32) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_split(node, pos) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_band_tile`.
+    pub fn band_tile(self, sizes: MultiVal) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut sizes = sizes;
+        sizes.do_not_free_on_drop();
+        let sizes = sizes.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_band_tile(node, sizes) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_child`.
+    pub fn child(self, pos: i32) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_child(node, pos) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_context_get_context`.
+    pub fn context_get_context(&self) -> Set {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_context_get_context(node) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_copy`.
+    pub fn copy(&self) -> ScheduleNode {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_copy(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_cut`.
+    pub fn cut(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_cut(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_delete`.
+    pub fn delete(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_delete(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_domain_get_domain`.
+    pub fn domain_get_domain(&self) -> UnionSet {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_domain_get_domain(node) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_dump`.
+    pub fn dump(&self) -> () {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_dump(node) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_expansion_get_contraction`.
+    pub fn expansion_get_contraction(&self) -> UnionPwMultiAff {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_expansion_get_contraction(node) };
+        let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_expansion_get_expansion`.
+    pub fn expansion_get_expansion(&self) -> UnionMap {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_expansion_get_expansion(node) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_extension_get_extension`.
+    pub fn extension_get_extension(&self) -> UnionMap {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_extension_get_extension(node) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_filter_get_filter`.
+    pub fn filter_get_filter(&self) -> UnionSet {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_filter_get_filter(node) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_first_child`.
+    pub fn first_child(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_first_child(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_free`.
+    pub fn free(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_free(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_from_domain`.
+    pub fn from_domain(domain: UnionSet) -> ScheduleNode {
+        let mut domain = domain;
+        domain.do_not_free_on_drop();
+        let domain = domain.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_from_domain(domain) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_from_extension`.
+    pub fn from_extension(extension: UnionMap) -> ScheduleNode {
+        let mut extension = extension;
+        extension.do_not_free_on_drop();
+        let extension = extension.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_from_extension(extension) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_ancestor_child_position`.
+    pub fn get_ancestor_child_position(&self, ancestor: &ScheduleNode) -> i32 {
+        let node = self;
+        let node = node.ptr;
+        let ancestor = ancestor.ptr;
+        let isl_rs_result =
+            unsafe { isl_schedule_node_get_ancestor_child_position(node, ancestor) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_child`.
+    pub fn get_child(&self, pos: i32) -> ScheduleNode {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_child(node, pos) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_child_position`.
+    pub fn get_child_position(&self) -> i32 {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_child_position(node) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_ctx(node) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
     /// Wraps `isl_schedule_node_get_domain`.
     pub fn get_domain(&self) -> UnionSet {
         let node = self;
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_domain(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_parent_type`.
+    pub fn get_parent_type(&self) -> ScheduleNodeType {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_parent_type(node) };
+        let isl_rs_result = ScheduleNodeType::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_prefix_schedule_multi_union_pw_aff`.
+    pub fn get_prefix_schedule_multi_union_pw_aff(&self) -> MultiUnionPwAff {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result =
+            unsafe { isl_schedule_node_get_prefix_schedule_multi_union_pw_aff(node) };
+        let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_prefix_schedule_relation`.
+    pub fn get_prefix_schedule_relation(&self) -> UnionMap {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_prefix_schedule_relation(node) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_prefix_schedule_union_map`.
+    pub fn get_prefix_schedule_union_map(&self) -> UnionMap {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_prefix_schedule_union_map(node) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
         isl_rs_result
     }
@@ -1189,23 +761,240 @@ impl ScheduleNode {
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_band_scale_down`.
-    pub fn band_scale_down(self, mv: MultiVal) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_get_schedule`.
+    pub fn get_schedule(&self) -> Schedule {
         let node = self;
-        let mut node = node;
-        node.do_not_free_on_drop();
         let node = node.ptr;
-        let mut mv = mv;
-        mv.do_not_free_on_drop();
-        let mv = mv.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_band_scale_down(node, mv) };
+        let isl_rs_result = unsafe { isl_schedule_node_get_schedule(node) };
+        let isl_rs_result = Schedule { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_schedule_depth`.
+    pub fn get_schedule_depth(&self) -> i32 {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_schedule_depth(node) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_shared_ancestor`.
+    pub fn get_shared_ancestor(&self, node2: &ScheduleNode) -> ScheduleNode {
+        let node1 = self;
+        let node1 = node1.ptr;
+        let node2 = node2.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_shared_ancestor(node1, node2) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_order_after`.
-    pub fn order_after(self, filter: UnionSet) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_get_subtree_contraction`.
+    pub fn get_subtree_contraction(&self) -> UnionPwMultiAff {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_subtree_contraction(node) };
+        let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
+                                              should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_subtree_expansion`.
+    pub fn get_subtree_expansion(&self) -> UnionMap {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_subtree_expansion(node) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_subtree_schedule_union_map`.
+    pub fn get_subtree_schedule_union_map(&self) -> UnionMap {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_subtree_schedule_union_map(node) };
+        let isl_rs_result = UnionMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_tree_depth`.
+    pub fn get_tree_depth(&self) -> i32 {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_tree_depth(node) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_type`.
+    pub fn get_type(&self) -> ScheduleNodeType {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_type(node) };
+        let isl_rs_result = ScheduleNodeType::from_i32(isl_rs_result);
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_get_universe_domain`.
+    pub fn get_universe_domain(&self) -> UnionSet {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_get_universe_domain(node) };
+        let isl_rs_result = UnionSet { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_graft_after`.
+    pub fn graft_after(self, graft: ScheduleNode) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut graft = graft;
+        graft.do_not_free_on_drop();
+        let graft = graft.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_graft_after(node, graft) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_graft_before`.
+    pub fn graft_before(self, graft: ScheduleNode) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut graft = graft;
+        graft.do_not_free_on_drop();
+        let graft = graft.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_graft_before(node, graft) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_grandchild`.
+    pub fn grandchild(self, pos1: i32, pos2: i32) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_grandchild(node, pos1, pos2) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_grandparent`.
+    pub fn grandparent(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_grandparent(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_group`.
+    pub fn group(self, group_id: Id) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut group_id = group_id;
+        group_id.do_not_free_on_drop();
+        let group_id = group_id.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_group(node, group_id) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_guard_get_guard`.
+    pub fn guard_get_guard(&self) -> Set {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_guard_get_guard(node) };
+        let isl_rs_result = Set { ptr: isl_rs_result,
+                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_has_children`.
+    pub fn has_children(&self) -> bool {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_has_children(node) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_has_next_sibling`.
+    pub fn has_next_sibling(&self) -> bool {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_has_next_sibling(node) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_has_parent`.
+    pub fn has_parent(&self) -> bool {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_has_parent(node) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_has_previous_sibling`.
+    pub fn has_previous_sibling(&self) -> bool {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_has_previous_sibling(node) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_insert_context`.
+    pub fn insert_context(self, context: Set) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_insert_context(node, context) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_insert_filter`.
+    pub fn insert_filter(self, filter: UnionSet) -> ScheduleNode {
         let node = self;
         let mut node = node;
         node.do_not_free_on_drop();
@@ -1213,19 +1002,98 @@ impl ScheduleNode {
         let mut filter = filter;
         filter.do_not_free_on_drop();
         let filter = filter.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_order_after(node, filter) };
+        let isl_rs_result = unsafe { isl_schedule_node_insert_filter(node, filter) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
         isl_rs_result
     }
 
-    /// Wraps `isl_schedule_node_get_child`.
-    pub fn get_child(&self, pos: i32) -> ScheduleNode {
+    /// Wraps `isl_schedule_node_insert_guard`.
+    pub fn insert_guard(self, context: Set) -> ScheduleNode {
         let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
         let node = node.ptr;
-        let isl_rs_result = unsafe { isl_schedule_node_get_child(node, pos) };
+        let mut context = context;
+        context.do_not_free_on_drop();
+        let context = context.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_insert_guard(node, context) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_insert_mark`.
+    pub fn insert_mark(self, mark: Id) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut mark = mark;
+        mark.do_not_free_on_drop();
+        let mark = mark.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_insert_mark(node, mark) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_insert_partial_schedule`.
+    pub fn insert_partial_schedule(self, schedule: MultiUnionPwAff) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut schedule = schedule;
+        schedule.do_not_free_on_drop();
+        let schedule = schedule.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_insert_partial_schedule(node, schedule) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_insert_sequence`.
+    pub fn insert_sequence(self, filters: UnionSetList) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut filters = filters;
+        filters.do_not_free_on_drop();
+        let filters = filters.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_insert_sequence(node, filters) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_insert_set`.
+    pub fn insert_set(self, filters: UnionSetList) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut filters = filters;
+        filters.do_not_free_on_drop();
+        let filters = filters.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_insert_set(node, filters) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_is_equal`.
+    pub fn is_equal(&self, node2: &ScheduleNode) -> bool {
+        let node1 = self;
+        let node1 = node1.ptr;
+        let node2 = node2.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_is_equal(node1, node2) };
+        let isl_rs_result = match isl_rs_result {
+            0 => false,
+            1 => true,
+            _ => panic!("Got isl_bool = -1"),
+        };
         isl_rs_result
     }
 
@@ -1249,6 +1117,138 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_mark_get_id(node) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_n_children`.
+    pub fn n_children(&self) -> i32 {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_n_children(node) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_next_sibling`.
+    pub fn next_sibling(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_next_sibling(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_order_after`.
+    pub fn order_after(self, filter: UnionSet) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut filter = filter;
+        filter.do_not_free_on_drop();
+        let filter = filter.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_order_after(node, filter) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_order_before`.
+    pub fn order_before(self, filter: UnionSet) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let mut filter = filter;
+        filter.do_not_free_on_drop();
+        let filter = filter.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_order_before(node, filter) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_parent`.
+    pub fn parent(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_parent(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_previous_sibling`.
+    pub fn previous_sibling(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_previous_sibling(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_reset_user`.
+    pub fn reset_user(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_reset_user(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_root`.
+    pub fn root(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_root(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_sequence_splice_child`.
+    pub fn sequence_splice_child(self, pos: i32) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_sequence_splice_child(node, pos) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_sequence_splice_children`.
+    pub fn sequence_splice_children(self) -> ScheduleNode {
+        let node = self;
+        let mut node = node;
+        node.do_not_free_on_drop();
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_sequence_splice_children(node) };
+        let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_schedule_node_to_str`.
+    pub fn to_str(&self) -> &str {
+        let node = self;
+        let node = node.ptr;
+        let isl_rs_result = unsafe { isl_schedule_node_to_str(node) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 

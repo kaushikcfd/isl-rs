@@ -14,58 +14,217 @@ pub struct BasicMapList {
 
 extern "C" {
 
-    fn isl_basic_map_list_to_str(list: uintptr_t) -> *const c_char;
+    fn isl_basic_map_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+
+    fn isl_basic_map_list_clear(list: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_copy(list: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
+
+    fn isl_basic_map_list_dump(list: uintptr_t) -> ();
+
+    fn isl_basic_map_list_free(list: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_from_basic_map(el: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_basic_map_list_get_basic_map(list: uintptr_t, index: i32) -> uintptr_t;
+
+    fn isl_basic_map_list_get_ctx(list: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_intersect(list: uintptr_t) -> uintptr_t;
+
+    fn isl_basic_map_list_n_basic_map(list: uintptr_t) -> i32;
 
     fn isl_basic_map_list_reverse(list: uintptr_t) -> uintptr_t;
 
     fn isl_basic_map_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
 
-    fn isl_basic_map_list_get_basic_map(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_basic_map_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_n_basic_map(list: uintptr_t) -> i32;
-
-    fn isl_basic_map_list_clear(list: uintptr_t) -> uintptr_t;
-
     fn isl_basic_map_list_set_basic_map(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_basic_map_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_basic_map_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_intersect(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_from_basic_map(el: uintptr_t) -> uintptr_t;
 
     fn isl_basic_map_list_size(list: uintptr_t) -> i32;
 
-    fn isl_basic_map_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
+    fn isl_basic_map_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
 
-    fn isl_basic_map_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_basic_map_list_dump(list: uintptr_t) -> ();
+    fn isl_basic_map_list_to_str(list: uintptr_t) -> *const c_char;
 
 }
 
 impl BasicMapList {
-    /// Wraps `isl_basic_map_list_to_str`.
-    pub fn to_str(&self) -> &str {
+    /// Wraps `isl_basic_map_list_add`.
+    pub fn add(self, el: BasicMap) -> BasicMapList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_add(list, el) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_alloc`.
+    pub fn alloc(ctx: &Context, n: i32) -> BasicMapList {
+        let ctx = ctx.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_alloc(ctx, n) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_clear`.
+    pub fn clear(self) -> BasicMapList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_clear(list) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_concat`.
+    pub fn concat(self, list2: BasicMapList) -> BasicMapList {
+        let list1 = self;
+        let mut list1 = list1;
+        list1.do_not_free_on_drop();
+        let list1 = list1.ptr;
+        let mut list2 = list2;
+        list2.do_not_free_on_drop();
+        let list2 = list2.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_concat(list1, list2) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_copy`.
+    pub fn copy(&self) -> BasicMapList {
         let list = self;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
+        let isl_rs_result = unsafe { isl_basic_map_list_copy(list) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_drop`.
+    pub fn drop(self, first: u32, n: u32) -> BasicMapList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_drop(list, first, n) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_dump`.
+    pub fn dump(&self) -> () {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_dump(list) };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_free`.
+    pub fn free(self) -> BasicMapList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_free(list) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_from_basic_map`.
+    pub fn from_basic_map(el: BasicMap) -> BasicMapList {
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_from_basic_map(el) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_get_at`.
+    pub fn get_at(&self, index: i32) -> BasicMap {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_get_at(list, index) };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_get_basic_map`.
+    pub fn get_basic_map(&self, index: i32) -> BasicMap {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_get_basic_map(list, index) };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_get_ctx`.
+    pub fn get_ctx(&self) -> Context {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_get_ctx(list) };
+        let isl_rs_result = Context { ptr: isl_rs_result,
+                                      should_free_on_drop: false };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_insert`.
+    pub fn insert(self, pos: u32, el: BasicMap) -> BasicMapList {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let mut el = el;
+        el.do_not_free_on_drop();
+        let el = el.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_insert(list, pos, el) };
+        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
+                                           should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_intersect`.
+    pub fn intersect(self) -> BasicMap {
+        let list = self;
+        let mut list = list;
+        list.do_not_free_on_drop();
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_intersect(list) };
+        let isl_rs_result = BasicMap { ptr: isl_rs_result,
+                                       should_free_on_drop: true };
+        isl_rs_result
+    }
+
+    /// Wraps `isl_basic_map_list_n_basic_map`.
+    pub fn n_basic_map(&self) -> i32 {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_n_basic_map(list) };
         isl_rs_result
     }
 
@@ -96,56 +255,6 @@ impl BasicMapList {
         isl_rs_result
     }
 
-    /// Wraps `isl_basic_map_list_get_basic_map`.
-    pub fn get_basic_map(&self, index: i32) -> BasicMap {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_get_basic_map(list, index) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_copy`.
-    pub fn copy(&self) -> BasicMapList {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_copy(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_get_ctx`.
-    pub fn get_ctx(&self) -> Context {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_n_basic_map`.
-    pub fn n_basic_map(&self) -> i32 {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_n_basic_map(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_clear`.
-    pub fn clear(self) -> BasicMapList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_clear(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
     /// Wraps `isl_basic_map_list_set_basic_map`.
     pub fn set_basic_map(self, index: i32, el: BasicMap) -> BasicMapList {
         let list = self;
@@ -161,6 +270,14 @@ impl BasicMapList {
         isl_rs_result
     }
 
+    /// Wraps `isl_basic_map_list_size`.
+    pub fn size(&self) -> i32 {
+        let list = self;
+        let list = list.ptr;
+        let isl_rs_result = unsafe { isl_basic_map_list_size(list) };
+        isl_rs_result
+    }
+
     /// Wraps `isl_basic_map_list_swap`.
     pub fn swap(self, pos1: u32, pos2: u32) -> BasicMapList {
         let list = self;
@@ -173,130 +290,13 @@ impl BasicMapList {
         isl_rs_result
     }
 
-    /// Wraps `isl_basic_map_list_drop`.
-    pub fn drop(self, first: u32, n: u32) -> BasicMapList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_drop(list, first, n) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_concat`.
-    pub fn concat(self, list2: BasicMapList) -> BasicMapList {
-        let list1 = self;
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_concat(list1, list2) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_free`.
-    pub fn free(self) -> BasicMapList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_free(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_intersect`.
-    pub fn intersect(self) -> BasicMap {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_intersect(list) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_add`.
-    pub fn add(self, el: BasicMap) -> BasicMapList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_add(list, el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_insert`.
-    pub fn insert(self, pos: u32, el: BasicMap) -> BasicMapList {
-        let list = self;
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_insert(list, pos, el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_from_basic_map`.
-    pub fn from_basic_map(el: BasicMap) -> BasicMapList {
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_from_basic_map(el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_size`.
-    pub fn size(&self) -> i32 {
+    /// Wraps `isl_basic_map_list_to_str`.
+    pub fn to_str(&self) -> &str {
         let list = self;
         let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_alloc`.
-    pub fn alloc(ctx: &Context, n: i32) -> BasicMapList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_alloc(ctx, n) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_get_at`.
-    pub fn get_at(&self, index: i32) -> BasicMap {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_get_at(list, index) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_dump`.
-    pub fn dump(&self) -> () {
-        let list = self;
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_dump(list) };
+        let isl_rs_result = unsafe { isl_basic_map_list_to_str(list) };
+        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
+        let isl_rs_result = isl_rs_result.to_str().unwrap();
         isl_rs_result
     }
 
