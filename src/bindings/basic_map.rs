@@ -2,8 +2,8 @@
 // LICENSE: MIT
 
 use super::{
-    Aff, AffList, BasicMapList, BasicSet, Constraint, ConstraintList, Context, DimType, Id,
-    LocalSpace, Map, Mat, MultiAff, PwMultiAff, QPolynomial, Space, Val,
+    Aff, AffList, BasicMapList, BasicSet, Constraint, ConstraintList, Context, DimType, Error, Id,
+    LibISLError, LocalSpace, Map, Mat, MultiAff, PwMultiAff, QPolynomial, Space, Val,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -182,48 +182,6 @@ extern "C" {
 
     fn isl_basic_map_lexmin_pw_multi_aff(bmap: uintptr_t) -> uintptr_t;
 
-    fn isl_basic_map_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_basic_map_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_basic_map_list_dump(list: uintptr_t) -> ();
-
-    fn isl_basic_map_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_from_basic_map(el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_basic_map_list_get_basic_map(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_basic_map_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_intersect(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_n_basic_map(list: uintptr_t) -> i32;
-
-    fn isl_basic_map_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_set_basic_map(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_map_list_size(list: uintptr_t) -> i32;
-
-    fn isl_basic_map_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_basic_map_list_to_str(list: uintptr_t) -> *const c_char;
-
     fn isl_basic_map_lower_bound_si(bmap: uintptr_t, type_: i32, pos: u32, value: i32)
                                     -> uintptr_t;
 
@@ -312,8 +270,9 @@ extern "C" {
 
 impl BasicMap {
     /// Wraps `isl_basic_map_add_constraint`.
-    pub fn add_constraint(self, constraint: Constraint) -> BasicMap {
+    pub fn add_constraint(self, constraint: Constraint) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -323,12 +282,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_add_constraint(bmap, constraint) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> BasicMap {
+    pub fn add_dims(self, type_: DimType, n: u32) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -336,24 +300,34 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_add_dims(bmap, type_, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_affine_hull`.
-    pub fn affine_hull(self) -> BasicMap {
+    pub fn affine_hull(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_affine_hull(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_align_params`.
-    pub fn align_params(self, model: Space) -> BasicMap {
+    pub fn align_params(self, model: Space) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -363,12 +337,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_align_params(bmap, model) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_apply_domain`.
-    pub fn apply_domain(self, bmap2: BasicMap) -> BasicMap {
+    pub fn apply_domain(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -378,12 +357,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_apply_domain(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_apply_range`.
-    pub fn apply_range(self, bmap2: BasicMap) -> BasicMap {
+    pub fn apply_range(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -393,12 +377,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_apply_range(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_can_curry`.
-    pub fn can_curry(&self) -> bool {
+    pub fn can_curry(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_can_curry(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -406,12 +395,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_can_uncurry`.
-    pub fn can_uncurry(&self) -> bool {
+    pub fn can_uncurry(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_can_uncurry(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -419,12 +413,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_can_zip`.
-    pub fn can_zip(&self) -> bool {
+    pub fn can_zip(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_can_zip(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -432,115 +431,165 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_compute_divs`.
-    pub fn compute_divs(self) -> Map {
+    pub fn compute_divs(self) -> Result<Map, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_compute_divs(bmap) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_copy`.
-    pub fn copy(&self) -> BasicMap {
+    pub fn copy(&self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_copy(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_curry`.
-    pub fn curry(self) -> BasicMap {
+    pub fn curry(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_curry(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_deltas`.
-    pub fn deltas(self) -> BasicSet {
+    pub fn deltas(self) -> Result<BasicSet, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_deltas(bmap) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_deltas_map`.
-    pub fn deltas_map(self) -> BasicMap {
+    pub fn deltas_map(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_deltas_map(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_detect_equalities`.
-    pub fn detect_equalities(self) -> BasicMap {
+    pub fn detect_equalities(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_detect_equalities(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_map_dim(bmap, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_domain`.
-    pub fn domain(self) -> BasicSet {
+    pub fn domain(self) -> Result<BasicSet, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_domain(bmap) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_domain_map`.
-    pub fn domain_map(self) -> BasicMap {
+    pub fn domain_map(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_domain_map(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_domain_product`.
-    pub fn domain_product(self, bmap2: BasicMap) -> BasicMap {
+    pub fn domain_product(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -550,12 +599,18 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_domain_product(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_drop_constraints_involving_dims`.
-    pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32) -> BasicMap {
+    pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                           -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -564,13 +619,18 @@ impl BasicMap {
             unsafe { isl_basic_map_drop_constraints_involving_dims(bmap, type_, first, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_drop_constraints_not_involving_dims`.
     pub fn drop_constraints_not_involving_dims(self, type_: DimType, first: u32, n: u32)
-                                               -> BasicMap {
+                                               -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -579,32 +639,47 @@ impl BasicMap {
             unsafe { isl_basic_map_drop_constraints_not_involving_dims(bmap, type_, first, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_drop_unused_params`.
-    pub fn drop_unused_params(self) -> BasicMap {
+    pub fn drop_unused_params(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_drop_unused_params(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_dump(bmap) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_eliminate`.
-    pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> BasicMap {
+    pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -612,36 +687,51 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_eliminate(bmap, type_, first, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_empty`.
-    pub fn empty(space: Space) -> BasicMap {
+    pub fn empty(space: Space) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_empty(space) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_equal`.
-    pub fn equal(space: Space, n_equal: u32) -> BasicMap {
+    pub fn equal(space: Space, n_equal: u32) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_equal(space, n_equal) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_equalities_matrix`.
     pub fn equalities_matrix(&self, c1: DimType, c2: DimType, c3: DimType, c4: DimType,
                              c5: DimType)
-                             -> Mat {
+                             -> Result<Mat, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let c1 = c1.to_i32();
         let c2 = c2.to_i32();
@@ -651,12 +741,18 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_equalities_matrix(bmap, c1, c2, c3, c4, c5) };
         let isl_rs_result = Mat { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_equate`.
-    pub fn equate(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> BasicMap {
+    pub fn equate(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32)
+                  -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -665,23 +761,33 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_equate(bmap, type1, pos1, type2, pos2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_basic_map_find_dim_by_name(bmap, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_fix_si`.
-    pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> BasicMap {
+    pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -689,12 +795,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_fix_si(bmap, type_, pos, value) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_fix_val`.
-    pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> BasicMap {
+    pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -705,12 +816,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_fix_val(bmap, type_, pos, v) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_flat_product`.
-    pub fn flat_product(self, bmap2: BasicMap) -> BasicMap {
+    pub fn flat_product(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -720,12 +836,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_flat_product(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_flat_range_product`.
-    pub fn flat_range_product(self, bmap2: BasicMap) -> BasicMap {
+    pub fn flat_range_product(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -735,70 +856,100 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_flat_range_product(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_flatten`.
-    pub fn flatten(self) -> BasicMap {
+    pub fn flatten(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flatten(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_flatten_domain`.
-    pub fn flatten_domain(self) -> BasicMap {
+    pub fn flatten_domain(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flatten_domain(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_flatten_range`.
-    pub fn flatten_range(self) -> BasicMap {
+    pub fn flatten_range(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_flatten_range(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_free`.
-    pub fn free(self) -> BasicMap {
+    pub fn free(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_free(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_aff`.
-    pub fn from_aff(aff: Aff) -> BasicMap {
+    pub fn from_aff(aff: Aff) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = aff.get_ctx();
         let mut aff = aff;
         aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_aff(aff) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_aff_list`.
-    pub fn from_aff_list(domain_space: Space, list: AffList) -> BasicMap {
+    pub fn from_aff_list(domain_space: Space, list: AffList) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = domain_space.get_ctx();
         let mut domain_space = domain_space;
         domain_space.do_not_free_on_drop();
         let domain_space = domain_space.ptr;
@@ -808,24 +959,34 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_from_aff_list(domain_space, list) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_constraint`.
-    pub fn from_constraint(constraint: Constraint) -> BasicMap {
+    pub fn from_constraint(constraint: Constraint) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = constraint.get_ctx();
         let mut constraint = constraint;
         constraint.do_not_free_on_drop();
         let constraint = constraint.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_constraint(constraint) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_constraint_matrices`.
     pub fn from_constraint_matrices(space: Space, eq: Mat, ineq: Mat, c1: DimType, c2: DimType,
                                     c3: DimType, c4: DimType, c5: DimType)
-                                    -> BasicMap {
+                                    -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -844,22 +1005,33 @@ impl BasicMap {
             unsafe { isl_basic_map_from_constraint_matrices(space, eq, ineq, c1, c2, c3, c4, c5) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_domain`.
-    pub fn from_domain(bset: BasicSet) -> BasicMap {
+    pub fn from_domain(bset: BasicSet) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_domain(bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_domain_and_range`.
-    pub fn from_domain_and_range(domain: BasicSet, range: BasicSet) -> BasicMap {
+    pub fn from_domain_and_range(domain: BasicSet, range: BasicSet)
+                                 -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -869,50 +1041,74 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_from_domain_and_range(domain, range) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_multi_aff`.
-    pub fn from_multi_aff(maff: MultiAff) -> BasicMap {
+    pub fn from_multi_aff(maff: MultiAff) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = maff.get_ctx();
         let mut maff = maff;
         maff.do_not_free_on_drop();
         let maff = maff.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_multi_aff(maff) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_qpolynomial`.
-    pub fn from_qpolynomial(qp: QPolynomial) -> BasicMap {
+    pub fn from_qpolynomial(qp: QPolynomial) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = qp.get_ctx();
         let mut qp = qp;
         qp.do_not_free_on_drop();
         let qp = qp.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_qpolynomial(qp) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_from_range`.
-    pub fn from_range(bset: BasicSet) -> BasicMap {
+    pub fn from_range(bset: BasicSet) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_map_from_range(bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_get_constraint_list`.
-    pub fn get_constraint_list(&self) -> ConstraintList {
+    pub fn get_constraint_list(&self) -> Result<ConstraintList, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_constraint_list(bmap) };
         let isl_rs_result = ConstraintList { ptr: isl_rs_result,
                                              should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_get_ctx`.
@@ -926,60 +1122,86 @@ impl BasicMap {
     }
 
     /// Wraps `isl_basic_map_get_dim_name`.
-    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
+    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> Result<&str, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_map_get_dim_name(bmap, type_, pos) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_get_div`.
-    pub fn get_div(&self, pos: i32) -> Aff {
+    pub fn get_div(&self, pos: i32) -> Result<Aff, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_div(bmap, pos) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_get_local_space`.
-    pub fn get_local_space(&self) -> LocalSpace {
+    pub fn get_local_space(&self) -> Result<LocalSpace, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_local_space(bmap) };
         let isl_rs_result = LocalSpace { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_get_space(bmap) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_get_tuple_name`.
-    pub fn get_tuple_name(&self, type_: DimType) -> &str {
+    pub fn get_tuple_name(&self, type_: DimType) -> Result<&str, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_map_get_tuple_name(bmap, type_) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_gist`.
-    pub fn gist(self, context: BasicMap) -> BasicMap {
+    pub fn gist(self, context: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -989,12 +1211,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_gist(bmap, context) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_gist_domain`.
-    pub fn gist_domain(self, context: BasicSet) -> BasicMap {
+    pub fn gist_domain(self, context: BasicSet) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1004,12 +1231,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_gist_domain(bmap, context) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_has_dim_id`.
-    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> bool {
+    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_map_has_dim_id(bmap, type_, pos) };
@@ -1018,23 +1250,33 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_identity`.
-    pub fn identity(space: Space) -> BasicMap {
+    pub fn identity(space: Space) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_identity(space) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_image_is_bounded`.
-    pub fn image_is_bounded(&self) -> bool {
+    pub fn image_is_bounded(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_image_is_bounded(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1042,14 +1284,19 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_inequalities_matrix`.
     pub fn inequalities_matrix(&self, c1: DimType, c2: DimType, c3: DimType, c4: DimType,
                                c5: DimType)
-                               -> Mat {
+                               -> Result<Mat, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let c1 = c1.to_i32();
         let c2 = c2.to_i32();
@@ -1059,12 +1306,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_inequalities_matrix(bmap, c1, c2, c3, c4, c5) };
         let isl_rs_result = Mat { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> BasicMap {
+    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1072,12 +1324,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_insert_dims(bmap, type_, pos, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_intersect`.
-    pub fn intersect(self, bmap2: BasicMap) -> BasicMap {
+    pub fn intersect(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -1087,12 +1344,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_intersect(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_intersect_domain`.
-    pub fn intersect_domain(self, bset: BasicSet) -> BasicMap {
+    pub fn intersect_domain(self, bset: BasicSet) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1102,12 +1364,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_intersect_domain(bmap, bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_intersect_params`.
-    pub fn intersect_params(self, bset: BasicSet) -> BasicMap {
+    pub fn intersect_params(self, bset: BasicSet) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1117,12 +1384,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_intersect_params(bmap, bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_intersect_range`.
-    pub fn intersect_range(self, bset: BasicSet) -> BasicMap {
+    pub fn intersect_range(self, bset: BasicSet) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1132,12 +1404,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_intersect_range(bmap, bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_map_involves_dims(bmap, type_, first, n) };
@@ -1146,12 +1423,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_disjoint`.
-    pub fn is_disjoint(&self, bmap2: &BasicMap) -> bool {
+    pub fn is_disjoint(&self, bmap2: &BasicMap) -> Result<bool, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let bmap1 = bmap1.ptr;
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_disjoint(bmap1, bmap2) };
@@ -1160,12 +1442,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_empty`.
-    pub fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_empty(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1173,12 +1460,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_equal`.
-    pub fn is_equal(&self, bmap2: &BasicMap) -> bool {
+    pub fn is_equal(&self, bmap2: &BasicMap) -> Result<bool, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let bmap1 = bmap1.ptr;
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_equal(bmap1, bmap2) };
@@ -1187,12 +1479,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_rational`.
-    pub fn is_rational(&self) -> bool {
+    pub fn is_rational(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_rational(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1200,12 +1497,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_single_valued`.
-    pub fn is_single_valued(&self) -> bool {
+    pub fn is_single_valued(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_single_valued(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1213,12 +1515,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_strict_subset`.
-    pub fn is_strict_subset(&self, bmap2: &BasicMap) -> bool {
+    pub fn is_strict_subset(&self, bmap2: &BasicMap) -> Result<bool, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let bmap1 = bmap1.ptr;
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_strict_subset(bmap1, bmap2) };
@@ -1227,12 +1534,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_subset`.
-    pub fn is_subset(&self, bmap2: &BasicMap) -> bool {
+    pub fn is_subset(&self, bmap2: &BasicMap) -> Result<bool, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let bmap1 = bmap1.ptr;
         let bmap2 = bmap2.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_subset(bmap1, bmap2) };
@@ -1241,12 +1553,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_is_universe`.
-    pub fn is_universe(&self) -> bool {
+    pub fn is_universe(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_is_universe(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1254,282 +1571,85 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_less_at`.
-    pub fn less_at(space: Space, pos: u32) -> BasicMap {
+    pub fn less_at(space: Space, pos: u32) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_less_at(space, pos) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_lexmax`.
-    pub fn lexmax(self) -> Map {
+    pub fn lexmax(self) -> Result<Map, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_lexmax(bmap) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_lexmin`.
-    pub fn lexmin(self) -> Map {
+    pub fn lexmin(self) -> Result<Map, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_lexmin(bmap) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_lexmin_pw_multi_aff`.
-    pub fn lexmin_pw_multi_aff(self) -> PwMultiAff {
+    pub fn lexmin_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_lexmin_pw_multi_aff(bmap) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_add`.
-    pub fn list_add(list: BasicMapList, el: BasicMap) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_add(list, el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> BasicMapList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_alloc(ctx, n) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_clear`.
-    pub fn list_clear(list: BasicMapList) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_clear(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_concat`.
-    pub fn list_concat(list1: BasicMapList, list2: BasicMapList) -> BasicMapList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_concat(list1, list2) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_copy`.
-    pub fn list_copy(list: &BasicMapList) -> BasicMapList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_copy(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_drop`.
-    pub fn list_drop(list: BasicMapList, first: u32, n: u32) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_drop(list, first, n) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_dump`.
-    pub fn list_dump(list: &BasicMapList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_free`.
-    pub fn list_free(list: BasicMapList) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_free(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_from_basic_map`.
-    pub fn list_from_basic_map(self) -> BasicMapList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_from_basic_map(el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_get_at`.
-    pub fn list_get_at(list: &BasicMapList, index: i32) -> BasicMap {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_get_at(list, index) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_get_basic_map`.
-    pub fn list_get_basic_map(list: &BasicMapList, index: i32) -> BasicMap {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_get_basic_map(list, index) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_get_ctx`.
-    pub fn list_get_ctx(list: &BasicMapList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_insert`.
-    pub fn list_insert(list: BasicMapList, pos: u32, el: BasicMap) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_insert(list, pos, el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_intersect`.
-    pub fn list_intersect(list: BasicMapList) -> BasicMap {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_intersect(list) };
-        let isl_rs_result = BasicMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_n_basic_map`.
-    pub fn list_n_basic_map(list: &BasicMapList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_n_basic_map(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_reverse`.
-    pub fn list_reverse(list: BasicMapList) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_reverse(list) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_set_at`.
-    pub fn list_set_at(list: BasicMapList, index: i32, el: BasicMap) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_set_at(list, index, el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_set_basic_map`.
-    pub fn list_set_basic_map(list: BasicMapList, index: i32, el: BasicMap) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_set_basic_map(list, index, el) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_size`.
-    pub fn list_size(list: &BasicMapList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_swap`.
-    pub fn list_swap(list: BasicMapList, pos1: u32, pos2: u32) -> BasicMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_swap(list, pos1, pos2) };
-        let isl_rs_result = BasicMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_map_list_to_str`.
-    pub fn list_to_str(list: &BasicMapList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_map_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_lower_bound_si`.
-    pub fn lower_bound_si(self, type_: DimType, pos: u32, value: i32) -> BasicMap {
+    pub fn lower_bound_si(self, type_: DimType, pos: u32, value: i32)
+                          -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1537,25 +1657,35 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_lower_bound_si(bmap, type_, pos, value) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_more_at`.
-    pub fn more_at(space: Space, pos: u32) -> BasicMap {
+    pub fn more_at(space: Space, pos: u32) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_more_at(space, pos) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_move_dims`.
     pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
                      n: u32)
-                     -> BasicMap {
+                     -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1565,43 +1695,64 @@ impl BasicMap {
             unsafe { isl_basic_map_move_dims(bmap, dst_type, dst_pos, src_type, src_pos, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_n_constraint`.
-    pub fn n_constraint(&self) -> i32 {
+    pub fn n_constraint(&self) -> Result<i32, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_n_constraint(bmap) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_nat_universe`.
-    pub fn nat_universe(space: Space) -> BasicMap {
+    pub fn nat_universe(space: Space) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_nat_universe(space) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_neg`.
-    pub fn neg(self) -> BasicMap {
+    pub fn neg(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_neg(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_order_ge`.
-    pub fn order_ge(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> BasicMap {
+    pub fn order_ge(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32)
+                    -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1610,12 +1761,18 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_order_ge(bmap, type1, pos1, type2, pos2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_order_gt`.
-    pub fn order_gt(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> BasicMap {
+    pub fn order_gt(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32)
+                    -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1624,23 +1781,33 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_order_gt(bmap, type1, pos1, type2, pos2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_plain_get_val_if_fixed`.
-    pub fn plain_get_val_if_fixed(&self, type_: DimType, pos: u32) -> Val {
+    pub fn plain_get_val_if_fixed(&self, type_: DimType, pos: u32) -> Result<Val, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_map_plain_get_val_if_fixed(bmap, type_, pos) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_plain_is_empty`.
-    pub fn plain_is_empty(&self) -> bool {
+    pub fn plain_is_empty(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_plain_is_empty(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1648,12 +1815,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_plain_is_universe`.
-    pub fn plain_is_universe(&self) -> bool {
+    pub fn plain_is_universe(&self) -> Result<bool, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_plain_is_universe(bmap) };
         let isl_rs_result = match isl_rs_result {
@@ -1661,12 +1833,17 @@ impl BasicMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_preimage_domain_multi_aff`.
-    pub fn preimage_domain_multi_aff(self, ma: MultiAff) -> BasicMap {
+    pub fn preimage_domain_multi_aff(self, ma: MultiAff) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1676,12 +1853,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_preimage_domain_multi_aff(bmap, ma) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_preimage_range_multi_aff`.
-    pub fn preimage_range_multi_aff(self, ma: MultiAff) -> BasicMap {
+    pub fn preimage_range_multi_aff(self, ma: MultiAff) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1691,12 +1873,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_preimage_range_multi_aff(bmap, ma) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_product`.
-    pub fn product(self, bmap2: BasicMap) -> BasicMap {
+    pub fn product(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -1706,12 +1893,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_product(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_project_out`.
-    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> BasicMap {
+    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1719,36 +1911,51 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_project_out(bmap, type_, first, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_range`.
-    pub fn range(self) -> BasicSet {
+    pub fn range(self) -> Result<BasicSet, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_range(bmap) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_range_map`.
-    pub fn range_map(self) -> BasicMap {
+    pub fn range_map(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_range_map(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_range_product`.
-    pub fn range_product(self, bmap2: BasicMap) -> BasicMap {
+    pub fn range_product(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -1758,23 +1965,34 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_range_product(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> BasicMap {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_basic_map_read_from_str(ctx, str_) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_remove_dims`.
-    pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> BasicMap {
+    pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1782,24 +2000,35 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_remove_dims(bmap, type_, first, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_remove_divs`.
-    pub fn remove_divs(self) -> BasicMap {
+    pub fn remove_divs(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_remove_divs(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_remove_divs_involving_dims`.
-    pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32) -> BasicMap {
+    pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                      -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1808,48 +2037,68 @@ impl BasicMap {
             unsafe { isl_basic_map_remove_divs_involving_dims(bmap, type_, first, n) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_remove_redundancies`.
-    pub fn remove_redundancies(self) -> BasicMap {
+    pub fn remove_redundancies(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_remove_redundancies(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_reverse`.
-    pub fn reverse(self) -> BasicMap {
+    pub fn reverse(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_reverse(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_sample`.
-    pub fn sample(self) -> BasicMap {
+    pub fn sample(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_sample(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> BasicMap {
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1859,12 +2108,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_set_dim_name(bmap, type_, pos, s) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_set_tuple_id`.
-    pub fn set_tuple_id(self, type_: DimType, id: Id) -> BasicMap {
+    pub fn set_tuple_id(self, type_: DimType, id: Id) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1875,12 +2129,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_set_tuple_id(bmap, type_, id) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_set_tuple_name`.
-    pub fn set_tuple_name(self, type_: DimType, s: &str) -> BasicMap {
+    pub fn set_tuple_name(self, type_: DimType, s: &str) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1890,12 +2149,17 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_set_tuple_name(bmap, type_, s) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_sum`.
-    pub fn sum(self, bmap2: BasicMap) -> BasicMap {
+    pub fn sum(self, bmap2: BasicMap) -> Result<BasicMap, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -1905,54 +2169,79 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_sum(bmap1, bmap2) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_to_list`.
-    pub fn to_list(self) -> BasicMapList {
+    pub fn to_list(self) -> Result<BasicMapList, LibISLError> {
         let el = self;
+        let isl_rs_ctx = el.get_ctx();
         let mut el = el;
         el.do_not_free_on_drop();
         let el = el.ptr;
         let isl_rs_result = unsafe { isl_basic_map_to_list(el) };
         let isl_rs_result = BasicMapList { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_to_str(bmap) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_total_dim`.
-    pub fn total_dim(&self) -> i32 {
+    pub fn total_dim(&self) -> Result<i32, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_total_dim(bmap) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_uncurry`.
-    pub fn uncurry(self) -> BasicMap {
+    pub fn uncurry(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_uncurry(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_union`.
-    pub fn union(self, bmap2: BasicMap) -> Map {
+    pub fn union(self, bmap2: BasicMap) -> Result<Map, LibISLError> {
         let bmap1 = self;
+        let isl_rs_ctx = bmap1.get_ctx();
         let mut bmap1 = bmap1;
         bmap1.do_not_free_on_drop();
         let bmap1 = bmap1.ptr;
@@ -1962,23 +2251,34 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_union(bmap1, bmap2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_universe`.
-    pub fn universe(space: Space) -> BasicMap {
+    pub fn universe(space: Space) -> Result<BasicMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_map_universe(space) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_upper_bound_si`.
-    pub fn upper_bound_si(self, type_: DimType, pos: u32, value: i32) -> BasicMap {
+    pub fn upper_bound_si(self, type_: DimType, pos: u32, value: i32)
+                          -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
@@ -1986,31 +2286,45 @@ impl BasicMap {
         let isl_rs_result = unsafe { isl_basic_map_upper_bound_si(bmap, type_, pos, value) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_wrap`.
-    pub fn wrap(self) -> BasicSet {
+    pub fn wrap(self) -> Result<BasicSet, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_wrap(bmap) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_map_zip`.
-    pub fn zip(self) -> BasicMap {
+    pub fn zip(self) -> Result<BasicMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_basic_map_zip(bmap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_basic_map_free() on being dropped. (For internal use

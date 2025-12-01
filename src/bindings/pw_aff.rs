@@ -2,8 +2,8 @@
 // LICENSE: MIT
 
 use super::{
-    Aff, Context, DimType, Id, LocalSpace, Map, MultiAff, MultiId, MultiPwAff, Point, PwAffList,
-    PwMultiAff, Set, Space, UnionPwAff, Val,
+    Aff, Context, DimType, Error, Id, LibISLError, LocalSpace, Map, MultiAff, MultiId, MultiPwAff,
+    Point, PwAffList, PwMultiAff, Set, Space, UnionPwAff, Val,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -138,64 +138,6 @@ extern "C" {
 
     fn isl_pw_aff_le_set(pwaff1: uintptr_t, pwaff2: uintptr_t) -> uintptr_t;
 
-    fn isl_pw_aff_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_pw_aff_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_pw_aff_list_dump(list: uintptr_t) -> ();
-
-    fn isl_pw_aff_list_eq_set(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_from_pw_aff(el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_ge_set(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_pw_aff_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_get_pw_aff(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_pw_aff_list_gt_set(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_le_set(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_lt_set(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_max(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_min(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_n_pw_aff(list: uintptr_t) -> i32;
-
-    fn isl_pw_aff_list_ne_set(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_pw_aff_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_set_pw_aff(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_pw_aff_list_size(list: uintptr_t) -> i32;
-
-    fn isl_pw_aff_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_pw_aff_list_to_str(list: uintptr_t) -> *const c_char;
-
     fn isl_pw_aff_lt_map(pa1: uintptr_t, pa2: uintptr_t) -> uintptr_t;
 
     fn isl_pw_aff_lt_set(pwaff1: uintptr_t, pwaff2: uintptr_t) -> uintptr_t;
@@ -294,8 +236,9 @@ extern "C" {
 
 impl PwAff {
     /// Wraps `isl_pw_aff_add`.
-    pub fn add(self, pwaff2: PwAff) -> PwAff {
+    pub fn add(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -305,12 +248,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_add(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_add_constant_val`.
-    pub fn add_constant_val(self, v: Val) -> PwAff {
+    pub fn add_constant_val(self, v: Val) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -320,12 +268,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_add_constant_val(pa, v) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> PwAff {
+    pub fn add_dims(self, type_: DimType, n: u32) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -333,12 +286,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_add_dims(pwaff, type_, n) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_align_params`.
-    pub fn align_params(self, model: Space) -> PwAff {
+    pub fn align_params(self, model: Space) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -348,11 +306,16 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_align_params(pwaff, model) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_alloc`.
-    pub fn alloc(set: Set, aff: Aff) -> PwAff {
+    pub fn alloc(set: Set, aff: Aff) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -362,36 +325,51 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_alloc(set, aff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_as_aff`.
-    pub fn as_aff(self) -> Aff {
+    pub fn as_aff(self) -> Result<Aff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_as_aff(pa) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_as_map`.
-    pub fn as_map(self) -> Map {
+    pub fn as_map(self) -> Result<Map, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_as_map(pa) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_bind_domain`.
-    pub fn bind_domain(self, tuple: MultiId) -> PwAff {
+    pub fn bind_domain(self, tuple: MultiId) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -401,12 +379,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_bind_domain(pa, tuple) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_bind_domain_wrapped_domain`.
-    pub fn bind_domain_wrapped_domain(self, tuple: MultiId) -> PwAff {
+    pub fn bind_domain_wrapped_domain(self, tuple: MultiId) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -416,12 +399,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_bind_domain_wrapped_domain(pa, tuple) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_bind_id`.
-    pub fn bind_id(self, id: Id) -> Set {
+    pub fn bind_id(self, id: Id) -> Result<Set, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -431,36 +419,51 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_bind_id(pa, id) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_ceil`.
-    pub fn ceil(self) -> PwAff {
+    pub fn ceil(self) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_ceil(pwaff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_coalesce`.
-    pub fn coalesce(self) -> PwAff {
+    pub fn coalesce(self) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_coalesce(pa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_cond`.
-    pub fn cond(self, pwaff_true: PwAff, pwaff_false: PwAff) -> PwAff {
+    pub fn cond(self, pwaff_true: PwAff, pwaff_false: PwAff) -> Result<PwAff, LibISLError> {
         let cond = self;
+        let isl_rs_ctx = cond.get_ctx();
         let mut cond = cond;
         cond.do_not_free_on_drop();
         let cond = cond.ptr;
@@ -473,31 +476,46 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_cond(cond, pwaff_true, pwaff_false) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_copy`.
-    pub fn copy(&self) -> PwAff {
+    pub fn copy(&self) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_copy(pwaff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_dim(pwaff, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_div`.
-    pub fn div(self, pa2: PwAff) -> PwAff {
+    pub fn div(self, pa2: PwAff) -> Result<PwAff, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -507,36 +525,51 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_div(pa1, pa2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_domain`.
-    pub fn domain(self) -> Set {
+    pub fn domain(self) -> Result<Set, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_domain(pwaff) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_domain_reverse`.
-    pub fn domain_reverse(self) -> PwAff {
+    pub fn domain_reverse(self) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_domain_reverse(pa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> PwAff {
+    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -544,43 +577,63 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_drop_dims(pwaff, type_, first, n) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_drop_unused_params`.
-    pub fn drop_unused_params(self) -> PwAff {
+    pub fn drop_unused_params(self) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_drop_unused_params(pa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_dump(pwaff) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_empty`.
-    pub fn empty(space: Space) -> PwAff {
+    pub fn empty(space: Space) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_empty(space) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_eq_map`.
-    pub fn eq_map(self, pa2: PwAff) -> Map {
+    pub fn eq_map(self, pa2: PwAff) -> Result<Map, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -590,12 +643,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_eq_map(pa1, pa2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_eq_set`.
-    pub fn eq_set(self, pwaff2: PwAff) -> Set {
+    pub fn eq_set(self, pwaff2: PwAff) -> Result<Set, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -605,12 +663,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_eq_set(pwaff1, pwaff2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_eval`.
-    pub fn eval(self, pnt: Point) -> Val {
+    pub fn eval(self, pnt: Point) -> Result<Val, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -620,70 +683,100 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_eval(pa, pnt) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_pw_aff_find_dim_by_name(pa, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_floor`.
-    pub fn floor(self) -> PwAff {
+    pub fn floor(self) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_floor(pwaff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_free`.
-    pub fn free(self) -> PwAff {
+    pub fn free(self) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_free(pwaff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_from_aff`.
-    pub fn from_aff(aff: Aff) -> PwAff {
+    pub fn from_aff(aff: Aff) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = aff.get_ctx();
         let mut aff = aff;
         aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_from_aff(aff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_from_range`.
-    pub fn from_range(self) -> PwAff {
+    pub fn from_range(self) -> Result<PwAff, LibISLError> {
         let pwa = self;
+        let isl_rs_ctx = pwa.get_ctx();
         let mut pwa = pwa;
         pwa.do_not_free_on_drop();
         let pwa = pwa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_from_range(pwa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_ge_map`.
-    pub fn ge_map(self, pa2: PwAff) -> Map {
+    pub fn ge_map(self, pa2: PwAff) -> Result<Map, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -693,12 +786,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_ge_map(pa1, pa2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_ge_set`.
-    pub fn ge_set(self, pwaff2: PwAff) -> Set {
+    pub fn ge_set(self, pwaff2: PwAff) -> Result<Set, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -708,7 +806,11 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_ge_set(pwaff1, pwaff2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_get_ctx`.
@@ -722,69 +824,100 @@ impl PwAff {
     }
 
     /// Wraps `isl_pw_aff_get_dim_id`.
-    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
+    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Result<Id, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_get_dim_id(pa, type_, pos) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_get_dim_name`.
-    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
+    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> Result<&str, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_get_dim_name(pa, type_, pos) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_get_domain_space`.
-    pub fn get_domain_space(&self) -> Space {
+    pub fn get_domain_space(&self) -> Result<Space, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_domain_space(pwaff) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_get_hash`.
-    pub fn get_hash(&self) -> u32 {
+    pub fn get_hash(&self) -> Result<u32, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_hash(pa) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_get_space(pwaff) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_get_tuple_id`.
-    pub fn get_tuple_id(&self, type_: DimType) -> Id {
+    pub fn get_tuple_id(&self, type_: DimType) -> Result<Id, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_get_tuple_id(pa, type_) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_gist`.
-    pub fn gist(self, context: Set) -> PwAff {
+    pub fn gist(self, context: Set) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -794,12 +927,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_gist(pwaff, context) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_gist_params`.
-    pub fn gist_params(self, context: Set) -> PwAff {
+    pub fn gist_params(self, context: Set) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -809,12 +947,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_gist_params(pwaff, context) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_gt_map`.
-    pub fn gt_map(self, pa2: PwAff) -> Map {
+    pub fn gt_map(self, pa2: PwAff) -> Result<Map, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -824,12 +967,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_gt_map(pa1, pa2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_gt_set`.
-    pub fn gt_set(self, pwaff2: PwAff) -> Set {
+    pub fn gt_set(self, pwaff2: PwAff) -> Result<Set, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -839,12 +987,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_gt_set(pwaff1, pwaff2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_has_dim_id`.
-    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> bool {
+    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_has_dim_id(pa, type_, pos) };
@@ -853,12 +1006,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_has_tuple_id`.
-    pub fn has_tuple_id(&self, type_: DimType) -> bool {
+    pub fn has_tuple_id(&self, type_: DimType) -> Result<bool, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_has_tuple_id(pa, type_) };
@@ -867,12 +1025,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> PwAff {
+    pub fn insert_dims(self, type_: DimType, first: u32, n: u32) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -880,12 +1043,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_insert_dims(pwaff, type_, first, n) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_insert_domain`.
-    pub fn insert_domain(self, domain: Space) -> PwAff {
+    pub fn insert_domain(self, domain: Space) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -895,12 +1063,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_insert_domain(pa, domain) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_intersect_domain`.
-    pub fn intersect_domain(self, set: Set) -> PwAff {
+    pub fn intersect_domain(self, set: Set) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -910,12 +1083,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_intersect_domain(pa, set) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_intersect_domain_wrapped_domain`.
-    pub fn intersect_domain_wrapped_domain(self, set: Set) -> PwAff {
+    pub fn intersect_domain_wrapped_domain(self, set: Set) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -925,12 +1103,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_intersect_domain_wrapped_domain(pa, set) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_intersect_domain_wrapped_range`.
-    pub fn intersect_domain_wrapped_range(self, set: Set) -> PwAff {
+    pub fn intersect_domain_wrapped_range(self, set: Set) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -940,12 +1123,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_intersect_domain_wrapped_range(pa, set) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_intersect_params`.
-    pub fn intersect_params(self, set: Set) -> PwAff {
+    pub fn intersect_params(self, set: Set) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -955,12 +1143,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_intersect_params(pa, set) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> Result<bool, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_pw_aff_involves_dims(pwaff, type_, first, n) };
@@ -969,12 +1162,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_involves_nan`.
-    pub fn involves_nan(&self) -> bool {
+    pub fn involves_nan(&self) -> Result<bool, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_involves_nan(pa) };
         let isl_rs_result = match isl_rs_result {
@@ -982,12 +1180,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_involves_param_id`.
-    pub fn involves_param_id(&self, id: &Id) -> bool {
+    pub fn involves_param_id(&self, id: &Id) -> Result<bool, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_involves_param_id(pa, id) };
@@ -996,12 +1199,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_is_cst`.
-    pub fn is_cst(&self) -> bool {
+    pub fn is_cst(&self) -> Result<bool, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_is_cst(pwaff) };
         let isl_rs_result = match isl_rs_result {
@@ -1009,12 +1217,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_is_empty`.
-    pub fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> Result<bool, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_is_empty(pwaff) };
         let isl_rs_result = match isl_rs_result {
@@ -1022,12 +1235,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_is_equal`.
-    pub fn is_equal(&self, pa2: &PwAff) -> bool {
+    pub fn is_equal(&self, pa2: &PwAff) -> Result<bool, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let pa1 = pa1.ptr;
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_is_equal(pa1, pa2) };
@@ -1036,12 +1254,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_isa_aff`.
-    pub fn isa_aff(&self) -> bool {
+    pub fn isa_aff(&self) -> Result<bool, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_isa_aff(pa) };
         let isl_rs_result = match isl_rs_result {
@@ -1049,12 +1272,17 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_le_map`.
-    pub fn le_map(self, pa2: PwAff) -> Map {
+    pub fn le_map(self, pa2: PwAff) -> Result<Map, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -1064,12 +1292,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_le_map(pa1, pa2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_le_set`.
-    pub fn le_set(self, pwaff2: PwAff) -> Set {
+    pub fn le_set(self, pwaff2: PwAff) -> Result<Set, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1079,341 +1312,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_le_set(pwaff1, pwaff2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_add`.
-    pub fn list_add(list: PwAffList, el: PwAff) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_add(list, el) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> PwAffList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_alloc(ctx, n) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_clear`.
-    pub fn list_clear(list: PwAffList) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_clear(list) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_concat`.
-    pub fn list_concat(list1: PwAffList, list2: PwAffList) -> PwAffList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_concat(list1, list2) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_copy`.
-    pub fn list_copy(list: &PwAffList) -> PwAffList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_copy(list) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_drop`.
-    pub fn list_drop(list: PwAffList, first: u32, n: u32) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_drop(list, first, n) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_dump`.
-    pub fn list_dump(list: &PwAffList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_eq_set`.
-    pub fn list_eq_set(list1: PwAffList, list2: PwAffList) -> Set {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_eq_set(list1, list2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_free`.
-    pub fn list_free(list: PwAffList) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_free(list) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_from_pw_aff`.
-    pub fn list_from_pw_aff(self) -> PwAffList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_from_pw_aff(el) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_ge_set`.
-    pub fn list_ge_set(list1: PwAffList, list2: PwAffList) -> Set {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_ge_set(list1, list2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_get_at`.
-    pub fn list_get_at(list: &PwAffList, index: i32) -> PwAff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_get_at(list, index) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_get_ctx`.
-    pub fn list_get_ctx(list: &PwAffList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_get_pw_aff`.
-    pub fn list_get_pw_aff(list: &PwAffList, index: i32) -> PwAff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_get_pw_aff(list, index) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_gt_set`.
-    pub fn list_gt_set(list1: PwAffList, list2: PwAffList) -> Set {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_gt_set(list1, list2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_insert`.
-    pub fn list_insert(list: PwAffList, pos: u32, el: PwAff) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_insert(list, pos, el) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_le_set`.
-    pub fn list_le_set(list1: PwAffList, list2: PwAffList) -> Set {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_le_set(list1, list2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_lt_set`.
-    pub fn list_lt_set(list1: PwAffList, list2: PwAffList) -> Set {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_lt_set(list1, list2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_max`.
-    pub fn list_max(list: PwAffList) -> PwAff {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_max(list) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_min`.
-    pub fn list_min(list: PwAffList) -> PwAff {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_min(list) };
-        let isl_rs_result = PwAff { ptr: isl_rs_result,
-                                    should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_n_pw_aff`.
-    pub fn list_n_pw_aff(list: &PwAffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_n_pw_aff(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_ne_set`.
-    pub fn list_ne_set(list1: PwAffList, list2: PwAffList) -> Set {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_ne_set(list1, list2) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_read_from_str`.
-    pub fn list_read_from_str(ctx: &Context, str_: &str) -> PwAffList {
-        let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_pw_aff_list_read_from_str(ctx, str_) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_reverse`.
-    pub fn list_reverse(list: PwAffList) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_reverse(list) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_set_at`.
-    pub fn list_set_at(list: PwAffList, index: i32, el: PwAff) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_set_at(list, index, el) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_set_pw_aff`.
-    pub fn list_set_pw_aff(list: PwAffList, index: i32, el: PwAff) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_set_pw_aff(list, index, el) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_size`.
-    pub fn list_size(list: &PwAffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_swap`.
-    pub fn list_swap(list: PwAffList, pos1: u32, pos2: u32) -> PwAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_swap(list, pos1, pos2) };
-        let isl_rs_result = PwAffList { ptr: isl_rs_result,
-                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_pw_aff_list_to_str`.
-    pub fn list_to_str(list: &PwAffList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_pw_aff_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_lt_map`.
-    pub fn lt_map(self, pa2: PwAff) -> Map {
+    pub fn lt_map(self, pa2: PwAff) -> Result<Map, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -1423,12 +1332,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_lt_map(pa1, pa2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_lt_set`.
-    pub fn lt_set(self, pwaff2: PwAff) -> Set {
+    pub fn lt_set(self, pwaff2: PwAff) -> Result<Set, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1438,12 +1352,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_lt_set(pwaff1, pwaff2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_max`.
-    pub fn max(self, pwaff2: PwAff) -> PwAff {
+    pub fn max(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1453,24 +1372,34 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_max(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_max_val`.
-    pub fn max_val(self) -> Val {
+    pub fn max_val(self) -> Result<Val, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_max_val(pa) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_min`.
-    pub fn min(self, pwaff2: PwAff) -> PwAff {
+    pub fn min(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1480,24 +1409,34 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_min(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_min_val`.
-    pub fn min_val(self) -> Val {
+    pub fn min_val(self) -> Result<Val, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_min_val(pa) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_mod_val`.
-    pub fn mod_val(self, mod_: Val) -> PwAff {
+    pub fn mod_val(self, mod_: Val) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1507,14 +1446,19 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_mod_val(pa, mod_) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_move_dims`.
     pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
                      n: u32)
-                     -> PwAff {
+                     -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1524,12 +1468,17 @@ impl PwAff {
             unsafe { isl_pw_aff_move_dims(pa, dst_type, dst_pos, src_type, src_pos, n) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_mul`.
-    pub fn mul(self, pwaff2: PwAff) -> PwAff {
+    pub fn mul(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1539,42 +1488,62 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_mul(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_n_piece`.
-    pub fn n_piece(&self) -> i32 {
+    pub fn n_piece(&self) -> Result<i32, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_n_piece(pwaff) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_nan_on_domain`.
-    pub fn nan_on_domain(ls: LocalSpace) -> PwAff {
+    pub fn nan_on_domain(ls: LocalSpace) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = ls.get_ctx();
         let mut ls = ls;
         ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_nan_on_domain(ls) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_nan_on_domain_space`.
-    pub fn nan_on_domain_space(space: Space) -> PwAff {
+    pub fn nan_on_domain_space(space: Space) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_nan_on_domain_space(space) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_ne_set`.
-    pub fn ne_set(self, pwaff2: PwAff) -> Set {
+    pub fn ne_set(self, pwaff2: PwAff) -> Result<Set, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1584,47 +1553,67 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_ne_set(pwaff1, pwaff2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_neg`.
-    pub fn neg(self) -> PwAff {
+    pub fn neg(self) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_neg(pwaff) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_non_zero_set`.
-    pub fn non_zero_set(self) -> Set {
+    pub fn non_zero_set(self) -> Result<Set, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_non_zero_set(pwaff) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_nonneg_set`.
-    pub fn nonneg_set(self) -> Set {
+    pub fn nonneg_set(self) -> Result<Set, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_nonneg_set(pwaff) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_param_on_domain_id`.
-    pub fn param_on_domain_id(domain: Set, id: Id) -> PwAff {
+    pub fn param_on_domain_id(domain: Set, id: Id) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -1634,33 +1623,48 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_param_on_domain_id(domain, id) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_params`.
-    pub fn params(self) -> Set {
+    pub fn params(self) -> Result<Set, LibISLError> {
         let pwa = self;
+        let isl_rs_ctx = pwa.get_ctx();
         let mut pwa = pwa;
         pwa.do_not_free_on_drop();
         let pwa = pwa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_params(pwa) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_plain_cmp`.
-    pub fn plain_cmp(&self, pa2: &PwAff) -> i32 {
+    pub fn plain_cmp(&self, pa2: &PwAff) -> Result<i32, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let pa1 = pa1.ptr;
         let pa2 = pa2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_plain_cmp(pa1, pa2) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_plain_is_equal`.
-    pub fn plain_is_equal(&self, pwaff2: &PwAff) -> bool {
+    pub fn plain_is_equal(&self, pwaff2: &PwAff) -> Result<bool, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let pwaff1 = pwaff1.ptr;
         let pwaff2 = pwaff2.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_plain_is_equal(pwaff1, pwaff2) };
@@ -1669,36 +1673,51 @@ impl PwAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_pos_set`.
-    pub fn pos_set(self) -> Set {
+    pub fn pos_set(self) -> Result<Set, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_pos_set(pa) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_project_domain_on_params`.
-    pub fn project_domain_on_params(self) -> PwAff {
+    pub fn project_domain_on_params(self) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_project_domain_on_params(pa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_pullback_multi_aff`.
-    pub fn pullback_multi_aff(self, ma: MultiAff) -> PwAff {
+    pub fn pullback_multi_aff(self, ma: MultiAff) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1708,12 +1727,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_pullback_multi_aff(pa, ma) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_pullback_multi_pw_aff`.
-    pub fn pullback_multi_pw_aff(self, mpa: MultiPwAff) -> PwAff {
+    pub fn pullback_multi_pw_aff(self, mpa: MultiPwAff) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1723,12 +1747,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_pullback_multi_pw_aff(pa, mpa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_pullback_pw_multi_aff`.
-    pub fn pullback_pw_multi_aff(self, pma: PwMultiAff) -> PwAff {
+    pub fn pullback_pw_multi_aff(self, pma: PwMultiAff) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1738,23 +1767,34 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_pullback_pw_multi_aff(pa, pma) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> PwAff {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_pw_aff_read_from_str(ctx, str_) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_reset_tuple_id`.
-    pub fn reset_tuple_id(self, type_: DimType) -> PwAff {
+    pub fn reset_tuple_id(self, type_: DimType) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1762,24 +1802,34 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_reset_tuple_id(pa, type_) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_reset_user`.
-    pub fn reset_user(self) -> PwAff {
+    pub fn reset_user(self) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_reset_user(pa) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_scale_down_val`.
-    pub fn scale_down_val(self, f: Val) -> PwAff {
+    pub fn scale_down_val(self, f: Val) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1789,12 +1839,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_scale_down_val(pa, f) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_scale_val`.
-    pub fn scale_val(self, v: Val) -> PwAff {
+    pub fn scale_val(self, v: Val) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1804,12 +1859,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_scale_val(pa, v) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_set_dim_id`.
-    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> PwAff {
+    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Result<PwAff, LibISLError> {
         let pma = self;
+        let isl_rs_ctx = pma.get_ctx();
         let mut pma = pma;
         pma.do_not_free_on_drop();
         let pma = pma.ptr;
@@ -1820,12 +1880,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_set_dim_id(pma, type_, pos, id) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_set_tuple_id`.
-    pub fn set_tuple_id(self, type_: DimType, id: Id) -> PwAff {
+    pub fn set_tuple_id(self, type_: DimType, id: Id) -> Result<PwAff, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
@@ -1836,12 +1901,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_set_tuple_id(pwaff, type_, id) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_sub`.
-    pub fn sub(self, pwaff2: PwAff) -> PwAff {
+    pub fn sub(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1851,12 +1921,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_sub(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_subtract_domain`.
-    pub fn subtract_domain(self, set: Set) -> PwAff {
+    pub fn subtract_domain(self, set: Set) -> Result<PwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
@@ -1866,12 +1941,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_subtract_domain(pa, set) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_tdiv_q`.
-    pub fn tdiv_q(self, pa2: PwAff) -> PwAff {
+    pub fn tdiv_q(self, pa2: PwAff) -> Result<PwAff, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -1881,12 +1961,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_tdiv_q(pa1, pa2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_tdiv_r`.
-    pub fn tdiv_r(self, pa2: PwAff) -> PwAff {
+    pub fn tdiv_r(self, pa2: PwAff) -> Result<PwAff, LibISLError> {
         let pa1 = self;
+        let isl_rs_ctx = pa1.get_ctx();
         let mut pa1 = pa1;
         pa1.do_not_free_on_drop();
         let pa1 = pa1.ptr;
@@ -1896,46 +1981,66 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_tdiv_r(pa1, pa2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_to_list`.
-    pub fn to_list(self) -> PwAffList {
+    pub fn to_list(self) -> Result<PwAffList, LibISLError> {
         let el = self;
+        let isl_rs_ctx = el.get_ctx();
         let mut el = el;
         el.do_not_free_on_drop();
         let el = el.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_to_list(el) };
         let isl_rs_result = PwAffList { ptr: isl_rs_result,
                                         should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_to_str(pa) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_to_union_pw_aff`.
-    pub fn to_union_pw_aff(self) -> UnionPwAff {
+    pub fn to_union_pw_aff(self) -> Result<UnionPwAff, LibISLError> {
         let pa = self;
+        let isl_rs_ctx = pa.get_ctx();
         let mut pa = pa;
         pa.do_not_free_on_drop();
         let pa = pa.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_to_union_pw_aff(pa) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_union_add`.
-    pub fn union_add(self, pwaff2: PwAff) -> PwAff {
+    pub fn union_add(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1945,12 +2050,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_union_add(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_union_max`.
-    pub fn union_max(self, pwaff2: PwAff) -> PwAff {
+    pub fn union_max(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1960,12 +2070,17 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_union_max(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_union_min`.
-    pub fn union_min(self, pwaff2: PwAff) -> PwAff {
+    pub fn union_min(self, pwaff2: PwAff) -> Result<PwAff, LibISLError> {
         let pwaff1 = self;
+        let isl_rs_ctx = pwaff1.get_ctx();
         let mut pwaff1 = pwaff1;
         pwaff1.do_not_free_on_drop();
         let pwaff1 = pwaff1.ptr;
@@ -1975,11 +2090,16 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_union_min(pwaff1, pwaff2) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_val_on_domain`.
-    pub fn val_on_domain(domain: Set, v: Val) -> PwAff {
+    pub fn val_on_domain(domain: Set, v: Val) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -1989,11 +2109,16 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_val_on_domain(domain, v) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_var_on_domain`.
-    pub fn var_on_domain(ls: LocalSpace, type_: DimType, pos: u32) -> PwAff {
+    pub fn var_on_domain(ls: LocalSpace, type_: DimType, pos: u32) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = ls.get_ctx();
         let mut ls = ls;
         ls.do_not_free_on_drop();
         let ls = ls.ptr;
@@ -2001,30 +2126,44 @@ impl PwAff {
         let isl_rs_result = unsafe { isl_pw_aff_var_on_domain(ls, type_, pos) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_zero_on_domain`.
-    pub fn zero_on_domain(ls: LocalSpace) -> PwAff {
+    pub fn zero_on_domain(ls: LocalSpace) -> Result<PwAff, LibISLError> {
+        let isl_rs_ctx = ls.get_ctx();
         let mut ls = ls;
         ls.do_not_free_on_drop();
         let ls = ls.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_zero_on_domain(ls) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_pw_aff_zero_set`.
-    pub fn zero_set(self) -> Set {
+    pub fn zero_set(self) -> Result<Set, LibISLError> {
         let pwaff = self;
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_pw_aff_zero_set(pwaff) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_pw_aff_free() on being dropped. (For internal use

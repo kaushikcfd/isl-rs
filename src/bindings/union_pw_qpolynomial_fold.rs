@@ -2,11 +2,11 @@
 // LICENSE: MIT
 
 use super::{
-    Context, DimType, Fold, Point, PwQPolynomialFold, PwQPolynomialFoldList, Set, Space,
-    UnionPwQPolynomial, UnionSet, Val,
+    Context, DimType, Error, Fold, LibISLError, Point, PwQPolynomialFold, PwQPolynomialFoldList,
+    Set, Space, UnionPwQPolynomial, UnionSet, Val,
 };
 use libc::uintptr_t;
-use std::ffi::{CStr, CString};
+use std::ffi::CString;
 use std::os::raw::c_char;
 
 /// Wraps `isl_union_pw_qpolynomial_fold`.
@@ -120,8 +120,10 @@ extern "C" {
 
 impl UnionPwQPolynomialFold {
     /// Wraps `isl_union_pw_qpolynomial_fold_add_union_pw_qpolynomial`.
-    pub fn add_union_pw_qpolynomial(self, upwqp: UnionPwQPolynomial) -> UnionPwQPolynomialFold {
+    pub fn add_union_pw_qpolynomial(self, upwqp: UnionPwQPolynomial)
+                                    -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -132,12 +134,17 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_add_union_pw_qpolynomial(upwf, upwqp) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_align_params`.
-    pub fn align_params(self, model: Space) -> UnionPwQPolynomialFold {
+    pub fn align_params(self, model: Space) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -147,55 +154,81 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_align_params(upwf, model) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_coalesce`.
-    pub fn coalesce(self) -> UnionPwQPolynomialFold {
+    pub fn coalesce(self) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_coalesce(upwf) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_copy`.
-    pub fn copy(&self) -> UnionPwQPolynomialFold {
+    pub fn copy(&self) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_copy(upwf) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_dim(upwf, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_domain`.
-    pub fn domain(self) -> UnionSet {
+    pub fn domain(self) -> Result<UnionSet, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_domain(upwf) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> UnionPwQPolynomialFold {
+    pub fn drop_dims(self, type_: DimType, first: u32, n: u32)
+                     -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -204,24 +237,34 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_drop_dims(upwf, type_, first, n) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_drop_unused_params`.
-    pub fn drop_unused_params(self) -> UnionPwQPolynomialFold {
+    pub fn drop_unused_params(self) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_drop_unused_params(upwf) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_eval`.
-    pub fn eval(self, pnt: Point) -> Val {
+    pub fn eval(self, pnt: Point) -> Result<Val, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -231,12 +274,18 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_eval(upwf, pnt) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_extract_pw_qpolynomial_fold`.
-    pub fn extract_pw_qpolynomial_fold(&self, space: Space) -> PwQPolynomialFold {
+    pub fn extract_pw_qpolynomial_fold(&self, space: Space)
+                                       -> Result<PwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let mut space = space;
         space.do_not_free_on_drop();
@@ -245,24 +294,35 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_extract_pw_qpolynomial_fold(upwf, space) };
         let isl_rs_result = PwQPolynomialFold { ptr: isl_rs_result,
                                                 should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result =
             unsafe { isl_union_pw_qpolynomial_fold_find_dim_by_name(upwf, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_fold`.
-    pub fn fold(self, upwf2: UnionPwQPolynomialFold) -> UnionPwQPolynomialFold {
+    pub fn fold(self, upwf2: UnionPwQPolynomialFold)
+                -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf1 = self;
+        let isl_rs_ctx = upwf1.get_ctx();
         let mut upwf1 = upwf1;
         upwf1.do_not_free_on_drop();
         let upwf1 = upwf1.ptr;
@@ -272,12 +332,18 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_fold(upwf1, upwf2) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_fold_pw_qpolynomial_fold`.
-    pub fn fold_pw_qpolynomial_fold(self, pwqp: PwQPolynomialFold) -> UnionPwQPolynomialFold {
+    pub fn fold_pw_qpolynomial_fold(self, pwqp: PwQPolynomialFold)
+                                    -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwqp = self;
+        let isl_rs_ctx = upwqp.get_ctx();
         let mut upwqp = upwqp;
         upwqp.do_not_free_on_drop();
         let upwqp = upwqp.ptr;
@@ -288,30 +354,45 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_fold_pw_qpolynomial_fold(upwqp, pwqp) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_free`.
-    pub fn free(self) -> UnionPwQPolynomialFold {
+    pub fn free(self) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_free(upwf) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_from_pw_qpolynomial_fold`.
-    pub fn from_pw_qpolynomial_fold(pwf: PwQPolynomialFold) -> UnionPwQPolynomialFold {
+    pub fn from_pw_qpolynomial_fold(pwf: PwQPolynomialFold)
+                                    -> Result<UnionPwQPolynomialFold, LibISLError> {
+        let isl_rs_ctx = pwf.get_ctx();
         let mut pwf = pwf;
         pwf.do_not_free_on_drop();
         let pwf = pwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_from_pw_qpolynomial_fold(pwf) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_get_ctx`.
@@ -325,38 +406,54 @@ impl UnionPwQPolynomialFold {
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_get_pw_qpolynomial_fold_list`.
-    pub fn get_pw_qpolynomial_fold_list(&self) -> PwQPolynomialFoldList {
+    pub fn get_pw_qpolynomial_fold_list(&self) -> Result<PwQPolynomialFoldList, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let isl_rs_result =
             unsafe { isl_union_pw_qpolynomial_fold_get_pw_qpolynomial_fold_list(upwf) };
         let isl_rs_result = PwQPolynomialFoldList { ptr: isl_rs_result,
                                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_get_space(upwf) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_get_type`.
-    pub fn get_type(&self) -> Fold {
+    pub fn get_type(&self) -> Result<Fold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_get_type(upwf) };
         let isl_rs_result = Fold::from_i32(isl_rs_result);
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_gist`.
-    pub fn gist(self, context: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn gist(self, context: UnionSet) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -366,12 +463,17 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_gist(upwf, context) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_gist_params`.
-    pub fn gist_params(self, context: Set) -> UnionPwQPolynomialFold {
+    pub fn gist_params(self, context: Set) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -381,12 +483,17 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_gist_params(upwf, context) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_intersect_domain`.
-    pub fn intersect_domain(self, uset: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn intersect_domain(self, uset: UnionSet) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -396,12 +503,18 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_intersect_domain(upwf, uset) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_intersect_domain_space`.
-    pub fn intersect_domain_space(self, space: Space) -> UnionPwQPolynomialFold {
+    pub fn intersect_domain_space(self, space: Space)
+                                  -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -412,12 +525,18 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_intersect_domain_space(upwf, space) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_intersect_domain_union_set`.
-    pub fn intersect_domain_union_set(self, uset: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn intersect_domain_union_set(self, uset: UnionSet)
+                                      -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -428,12 +547,18 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_intersect_domain_union_set(upwf, uset) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_intersect_domain_wrapped_domain`.
-    pub fn intersect_domain_wrapped_domain(self, uset: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn intersect_domain_wrapped_domain(self, uset: UnionSet)
+                                           -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -444,12 +569,18 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_intersect_domain_wrapped_domain(upwf, uset) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_intersect_domain_wrapped_range`.
-    pub fn intersect_domain_wrapped_range(self, uset: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn intersect_domain_wrapped_range(self, uset: UnionSet)
+                                          -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -460,12 +591,17 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_intersect_domain_wrapped_range(upwf, uset) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_intersect_params`.
-    pub fn intersect_params(self, set: Set) -> UnionPwQPolynomialFold {
+    pub fn intersect_params(self, set: Set) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -475,12 +611,17 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_intersect_params(upwf, set) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_involves_nan`.
-    pub fn involves_nan(&self) -> bool {
+    pub fn involves_nan(&self) -> Result<bool, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_involves_nan(upwf) };
         let isl_rs_result = match isl_rs_result {
@@ -488,20 +629,30 @@ impl UnionPwQPolynomialFold {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_n_pw_qpolynomial_fold`.
-    pub fn n_pw_qpolynomial_fold(&self) -> i32 {
+    pub fn n_pw_qpolynomial_fold(&self) -> Result<i32, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_n_pw_qpolynomial_fold(upwf) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_plain_is_equal`.
-    pub fn plain_is_equal(&self, upwf2: &UnionPwQPolynomialFold) -> bool {
+    pub fn plain_is_equal(&self, upwf2: &UnionPwQPolynomialFold) -> Result<bool, LibISLError> {
         let upwf1 = self;
+        let isl_rs_ctx = upwf1.get_ctx();
         let upwf1 = upwf1.ptr;
         let upwf2 = upwf2.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_plain_is_equal(upwf1, upwf2) };
@@ -510,24 +661,34 @@ impl UnionPwQPolynomialFold {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_reset_user`.
-    pub fn reset_user(self) -> UnionPwQPolynomialFold {
+    pub fn reset_user(self) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_reset_user(upwf) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_scale_down_val`.
-    pub fn scale_down_val(self, v: Val) -> UnionPwQPolynomialFold {
+    pub fn scale_down_val(self, v: Val) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -537,12 +698,17 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_scale_down_val(upwf, v) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_scale_val`.
-    pub fn scale_val(self, v: Val) -> UnionPwQPolynomialFold {
+    pub fn scale_val(self, v: Val) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -552,12 +718,18 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_scale_val(upwf, v) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> UnionPwQPolynomialFold {
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str)
+                        -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -568,12 +740,17 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_set_dim_name(upwf, type_, pos, s) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_subtract_domain`.
-    pub fn subtract_domain(self, uset: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn subtract_domain(self, uset: UnionSet) -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -583,12 +760,18 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_subtract_domain(upwf, uset) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_subtract_domain_space`.
-    pub fn subtract_domain_space(self, space: Space) -> UnionPwQPolynomialFold {
+    pub fn subtract_domain_space(self, space: Space)
+                                 -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -599,12 +782,18 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_subtract_domain_space(upwf, space) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_subtract_domain_union_set`.
-    pub fn subtract_domain_union_set(self, uset: UnionSet) -> UnionPwQPolynomialFold {
+    pub fn subtract_domain_union_set(self, uset: UnionSet)
+                                     -> Result<UnionPwQPolynomialFold, LibISLError> {
         let upwf = self;
+        let isl_rs_ctx = upwf.get_ctx();
         let mut upwf = upwf;
         upwf.do_not_free_on_drop();
         let upwf = upwf.ptr;
@@ -615,11 +804,16 @@ impl UnionPwQPolynomialFold {
             unsafe { isl_union_pw_qpolynomial_fold_subtract_domain_union_set(upwf, uset) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_zero`.
-    pub fn zero(space: Space, type_: Fold) -> UnionPwQPolynomialFold {
+    pub fn zero(space: Space, type_: Fold) -> Result<UnionPwQPolynomialFold, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -627,21 +821,32 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_zero(space, type_) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_zero_ctx`.
-    pub fn zero_ctx(ctx: &Context, type_: Fold) -> UnionPwQPolynomialFold {
+    pub fn zero_ctx(ctx: &Context, type_: Fold) -> Result<UnionPwQPolynomialFold, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_zero_ctx(ctx, type_) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_qpolynomial_fold_zero_space`.
-    pub fn zero_space(space: Space, type_: Fold) -> UnionPwQPolynomialFold {
+    pub fn zero_space(space: Space, type_: Fold) -> Result<UnionPwQPolynomialFold, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -649,7 +854,11 @@ impl UnionPwQPolynomialFold {
         let isl_rs_result = unsafe { isl_union_pw_qpolynomial_fold_zero_space(space, type_) };
         let isl_rs_result = UnionPwQPolynomialFold { ptr: isl_rs_result,
                                                      should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_union_pw_qpolynomial_fold_free() on being dropped.

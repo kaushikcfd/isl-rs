@@ -3,7 +3,7 @@
 
 use super::{Error, Options};
 use libc::uintptr_t;
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
 use std::os::raw::c_char;
 
 /// Wraps `isl_ctx`.

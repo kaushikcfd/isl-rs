@@ -3,13 +3,14 @@
 
 use super::{
     ASTExpr, ASTExprList, ASTNode, ASTNodeList, Aff, AffList, BasicMap, BasicMapList, BasicSet,
-    BasicSetList, Constraint, ConstraintList, Context, FixedBox, Id, IdList, IdToASTExpr,
-    LocalSpace, Map, MapList, MultiAff, MultiId, MultiPwAff, MultiUnionPwAff, MultiVal, Point,
-    PwAff, PwAffList, PwMultiAff, PwMultiAffList, PwQPolynomial, PwQPolynomialFold,
-    PwQPolynomialFoldList, PwQPolynomialList, QPolynomial, QPolynomialFold, QPolynomialList,
-    Schedule, ScheduleConstraints, ScheduleNode, Set, SetList, Space, UnionAccessInfo, UnionFlow,
-    UnionMap, UnionMapList, UnionPwAff, UnionPwAffList, UnionPwMultiAff, UnionPwMultiAffList,
-    UnionPwQPolynomial, UnionPwQPolynomialFold, UnionSet, UnionSetList, Val, ValList, Vec,
+    BasicSetList, Constraint, ConstraintList, Context, Error, FixedBox, Id, IdList, IdToASTExpr,
+    LibISLError, LocalSpace, Map, MapList, MultiAff, MultiId, MultiPwAff, MultiUnionPwAff,
+    MultiVal, Point, PwAff, PwAffList, PwMultiAff, PwMultiAffList, PwQPolynomial,
+    PwQPolynomialFold, PwQPolynomialFoldList, PwQPolynomialList, QPolynomial, QPolynomialFold,
+    QPolynomialList, Schedule, ScheduleConstraints, ScheduleNode, Set, SetList, Space,
+    UnionAccessInfo, UnionFlow, UnionMap, UnionMapList, UnionPwAff, UnionPwAffList,
+    UnionPwMultiAff, UnionPwMultiAffList, UnionPwQPolynomial, UnionPwQPolynomialFold, UnionSet,
+    UnionSetList, Val, ValList, Vec,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -197,39 +198,54 @@ extern "C" {
 
 impl Printer {
     /// Wraps `isl_printer_end_line`.
-    pub fn end_line(self) -> Printer {
+    pub fn end_line(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_end_line(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_flush`.
-    pub fn flush(self) -> Printer {
+    pub fn flush(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_flush(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_free`.
-    pub fn free(self) -> Printer {
+    pub fn free(self) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
         let isl_rs_result = unsafe { isl_printer_free(printer) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_get_ctx`.
@@ -243,8 +259,9 @@ impl Printer {
     }
 
     /// Wraps `isl_printer_get_note`.
-    pub fn get_note(&self, id: Id) -> Id {
+    pub fn get_note(&self, id: Id) -> Result<Id, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let p = p.ptr;
         let mut id = id;
         id.do_not_free_on_drop();
@@ -252,38 +269,58 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_get_note(p, id) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_get_output_format`.
-    pub fn get_output_format(&self) -> i32 {
+    pub fn get_output_format(&self) -> Result<i32, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_get_output_format(p) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_get_str`.
-    pub fn get_str(&self) -> &str {
+    pub fn get_str(&self) -> Result<&str, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let printer = printer.ptr;
         let isl_rs_result = unsafe { isl_printer_get_str(printer) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_get_yaml_style`.
-    pub fn get_yaml_style(&self) -> i32 {
+    pub fn get_yaml_style(&self) -> Result<i32, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_get_yaml_style(p) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_has_note`.
-    pub fn has_note(&self, id: &Id) -> bool {
+    pub fn has_note(&self, id: &Id) -> Result<bool, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let p = p.ptr;
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_printer_has_note(p, id) };
@@ -292,24 +329,34 @@ impl Printer {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_indent`.
-    pub fn indent(self, indent: i32) -> Printer {
+    pub fn indent(self, indent: i32) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_indent(p, indent) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_aff`.
-    pub fn print_aff(self, aff: &Aff) -> Printer {
+    pub fn print_aff(self, aff: &Aff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -317,12 +364,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_aff(p, aff) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_aff_list`.
-    pub fn print_aff_list(self, list: &AffList) -> Printer {
+    pub fn print_aff_list(self, list: &AffList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -330,12 +382,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_ast_expr`.
-    pub fn print_ast_expr(self, expr: &ASTExpr) -> Printer {
+    pub fn print_ast_expr(self, expr: &ASTExpr) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -343,12 +400,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_ast_expr(p, expr) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_ast_expr_list`.
-    pub fn print_ast_expr_list(self, list: &ASTExprList) -> Printer {
+    pub fn print_ast_expr_list(self, list: &ASTExprList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -356,12 +418,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_ast_expr_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_ast_node`.
-    pub fn print_ast_node(self, node: &ASTNode) -> Printer {
+    pub fn print_ast_node(self, node: &ASTNode) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -369,12 +436,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_ast_node(p, node) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_ast_node_list`.
-    pub fn print_ast_node_list(self, list: &ASTNodeList) -> Printer {
+    pub fn print_ast_node_list(self, list: &ASTNodeList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -382,12 +454,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_ast_node_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_basic_map`.
-    pub fn print_basic_map(self, bmap: &BasicMap) -> Printer {
+    pub fn print_basic_map(self, bmap: &BasicMap) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
@@ -395,12 +472,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_basic_map(printer, bmap) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_basic_map_list`.
-    pub fn print_basic_map_list(self, list: &BasicMapList) -> Printer {
+    pub fn print_basic_map_list(self, list: &BasicMapList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -408,12 +490,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_basic_map_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_basic_set`.
-    pub fn print_basic_set(self, bset: &BasicSet) -> Printer {
+    pub fn print_basic_set(self, bset: &BasicSet) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
@@ -421,12 +508,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_basic_set(printer, bset) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_basic_set_list`.
-    pub fn print_basic_set_list(self, list: &BasicSetList) -> Printer {
+    pub fn print_basic_set_list(self, list: &BasicSetList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -434,12 +526,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_basic_set_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_constraint`.
-    pub fn print_constraint(self, c: &Constraint) -> Printer {
+    pub fn print_constraint(self, c: &Constraint) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -447,12 +544,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_constraint(p, c) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_constraint_list`.
-    pub fn print_constraint_list(self, list: &ConstraintList) -> Printer {
+    pub fn print_constraint_list(self, list: &ConstraintList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -460,24 +562,34 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_constraint_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_double`.
-    pub fn print_double(self, d: f64) -> Printer {
+    pub fn print_double(self, d: f64) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_print_double(p, d) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_fixed_box`.
-    pub fn print_fixed_box(self, box_: &FixedBox) -> Printer {
+    pub fn print_fixed_box(self, box_: &FixedBox) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -485,12 +597,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_fixed_box(p, box_) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_id`.
-    pub fn print_id(self, id: &Id) -> Printer {
+    pub fn print_id(self, id: &Id) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -498,12 +615,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_id(p, id) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_id_list`.
-    pub fn print_id_list(self, list: &IdList) -> Printer {
+    pub fn print_id_list(self, list: &IdList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -511,12 +633,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_id_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_id_to_ast_expr`.
-    pub fn print_id_to_ast_expr(self, hmap: &IdToASTExpr) -> Printer {
+    pub fn print_id_to_ast_expr(self, hmap: &IdToASTExpr) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -524,24 +651,34 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_id_to_ast_expr(p, hmap) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_int`.
-    pub fn print_int(self, i: i32) -> Printer {
+    pub fn print_int(self, i: i32) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_print_int(p, i) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_local_space`.
-    pub fn print_local_space(self, ls: &LocalSpace) -> Printer {
+    pub fn print_local_space(self, ls: &LocalSpace) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -549,12 +686,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_local_space(p, ls) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_map`.
-    pub fn print_map(self, map: &Map) -> Printer {
+    pub fn print_map(self, map: &Map) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
@@ -562,12 +704,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_map(printer, map) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_map_list`.
-    pub fn print_map_list(self, list: &MapList) -> Printer {
+    pub fn print_map_list(self, list: &MapList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -575,12 +722,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_map_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_multi_aff`.
-    pub fn print_multi_aff(self, maff: &MultiAff) -> Printer {
+    pub fn print_multi_aff(self, maff: &MultiAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -588,12 +740,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_multi_aff(p, maff) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_multi_id`.
-    pub fn print_multi_id(self, mi: &MultiId) -> Printer {
+    pub fn print_multi_id(self, mi: &MultiId) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -601,12 +758,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_multi_id(p, mi) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_multi_pw_aff`.
-    pub fn print_multi_pw_aff(self, mpa: &MultiPwAff) -> Printer {
+    pub fn print_multi_pw_aff(self, mpa: &MultiPwAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -614,12 +776,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_multi_pw_aff(p, mpa) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_multi_union_pw_aff`.
-    pub fn print_multi_union_pw_aff(self, mupa: &MultiUnionPwAff) -> Printer {
+    pub fn print_multi_union_pw_aff(self, mupa: &MultiUnionPwAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -627,12 +794,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_multi_union_pw_aff(p, mupa) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_multi_val`.
-    pub fn print_multi_val(self, mv: &MultiVal) -> Printer {
+    pub fn print_multi_val(self, mv: &MultiVal) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -640,12 +812,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_multi_val(p, mv) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_point`.
-    pub fn print_point(self, pnt: &Point) -> Printer {
+    pub fn print_point(self, pnt: &Point) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
@@ -653,12 +830,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_point(printer, pnt) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_aff`.
-    pub fn print_pw_aff(self, pwaff: &PwAff) -> Printer {
+    pub fn print_pw_aff(self, pwaff: &PwAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -666,12 +848,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_aff(p, pwaff) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_aff_list`.
-    pub fn print_pw_aff_list(self, list: &PwAffList) -> Printer {
+    pub fn print_pw_aff_list(self, list: &PwAffList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -679,12 +866,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_multi_aff`.
-    pub fn print_pw_multi_aff(self, pma: &PwMultiAff) -> Printer {
+    pub fn print_pw_multi_aff(self, pma: &PwMultiAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -692,12 +884,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_multi_aff(p, pma) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_multi_aff_list`.
-    pub fn print_pw_multi_aff_list(self, list: &PwMultiAffList) -> Printer {
+    pub fn print_pw_multi_aff_list(self, list: &PwMultiAffList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -705,12 +902,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_multi_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_qpolynomial`.
-    pub fn print_pw_qpolynomial(self, pwqp: &PwQPolynomial) -> Printer {
+    pub fn print_pw_qpolynomial(self, pwqp: &PwQPolynomial) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -718,12 +920,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial(p, pwqp) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_qpolynomial_fold`.
-    pub fn print_pw_qpolynomial_fold(self, pwf: &PwQPolynomialFold) -> Printer {
+    pub fn print_pw_qpolynomial_fold(self, pwf: &PwQPolynomialFold)
+                                     -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -731,12 +939,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_fold(p, pwf) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_qpolynomial_fold_list`.
-    pub fn print_pw_qpolynomial_fold_list(self, list: &PwQPolynomialFoldList) -> Printer {
+    pub fn print_pw_qpolynomial_fold_list(self, list: &PwQPolynomialFoldList)
+                                          -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -744,12 +958,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_fold_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_pw_qpolynomial_list`.
-    pub fn print_pw_qpolynomial_list(self, list: &PwQPolynomialList) -> Printer {
+    pub fn print_pw_qpolynomial_list(self, list: &PwQPolynomialList)
+                                     -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -757,12 +977,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_pw_qpolynomial_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_qpolynomial`.
-    pub fn print_qpolynomial(self, qp: &QPolynomial) -> Printer {
+    pub fn print_qpolynomial(self, qp: &QPolynomial) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -770,12 +995,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_qpolynomial(p, qp) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_qpolynomial_fold`.
-    pub fn print_qpolynomial_fold(self, fold: &QPolynomialFold) -> Printer {
+    pub fn print_qpolynomial_fold(self, fold: &QPolynomialFold) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -783,12 +1013,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_qpolynomial_fold(p, fold) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_qpolynomial_list`.
-    pub fn print_qpolynomial_list(self, list: &QPolynomialList) -> Printer {
+    pub fn print_qpolynomial_list(self, list: &QPolynomialList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -796,12 +1031,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_qpolynomial_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_schedule`.
-    pub fn print_schedule(self, schedule: &Schedule) -> Printer {
+    pub fn print_schedule(self, schedule: &Schedule) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -809,12 +1049,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_schedule(p, schedule) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_schedule_constraints`.
-    pub fn print_schedule_constraints(self, sc: &ScheduleConstraints) -> Printer {
+    pub fn print_schedule_constraints(self, sc: &ScheduleConstraints)
+                                      -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -822,12 +1068,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_schedule_constraints(p, sc) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_schedule_node`.
-    pub fn print_schedule_node(self, node: &ScheduleNode) -> Printer {
+    pub fn print_schedule_node(self, node: &ScheduleNode) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -835,12 +1086,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_schedule_node(p, node) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_set`.
-    pub fn print_set(self, map: &Set) -> Printer {
+    pub fn print_set(self, map: &Set) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
@@ -848,12 +1104,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_set(printer, map) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_set_list`.
-    pub fn print_set_list(self, list: &SetList) -> Printer {
+    pub fn print_set_list(self, list: &SetList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -861,12 +1122,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_set_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_space`.
-    pub fn print_space(self, space: &Space) -> Printer {
+    pub fn print_space(self, space: &Space) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -874,12 +1140,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_space(p, space) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_str`.
-    pub fn print_str(self, s: &str) -> Printer {
+    pub fn print_str(self, s: &str) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -888,12 +1159,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_str(p, s) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_access_info`.
-    pub fn print_union_access_info(self, access: &UnionAccessInfo) -> Printer {
+    pub fn print_union_access_info(self, access: &UnionAccessInfo) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -901,12 +1177,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_access_info(p, access) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_flow`.
-    pub fn print_union_flow(self, flow: &UnionFlow) -> Printer {
+    pub fn print_union_flow(self, flow: &UnionFlow) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -914,12 +1195,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_flow(p, flow) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_map`.
-    pub fn print_union_map(self, umap: &UnionMap) -> Printer {
+    pub fn print_union_map(self, umap: &UnionMap) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -927,12 +1213,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_map(p, umap) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_map_list`.
-    pub fn print_union_map_list(self, list: &UnionMapList) -> Printer {
+    pub fn print_union_map_list(self, list: &UnionMapList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -940,12 +1231,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_map_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_pw_aff`.
-    pub fn print_union_pw_aff(self, upa: &UnionPwAff) -> Printer {
+    pub fn print_union_pw_aff(self, upa: &UnionPwAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -953,12 +1249,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_pw_aff(p, upa) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_pw_aff_list`.
-    pub fn print_union_pw_aff_list(self, list: &UnionPwAffList) -> Printer {
+    pub fn print_union_pw_aff_list(self, list: &UnionPwAffList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -966,12 +1267,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_pw_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_pw_multi_aff`.
-    pub fn print_union_pw_multi_aff(self, upma: &UnionPwMultiAff) -> Printer {
+    pub fn print_union_pw_multi_aff(self, upma: &UnionPwMultiAff) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -979,12 +1285,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_pw_multi_aff(p, upma) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_pw_multi_aff_list`.
-    pub fn print_union_pw_multi_aff_list(self, list: &UnionPwMultiAffList) -> Printer {
+    pub fn print_union_pw_multi_aff_list(self, list: &UnionPwMultiAffList)
+                                         -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -992,12 +1304,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_pw_multi_aff_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_pw_qpolynomial`.
-    pub fn print_union_pw_qpolynomial(self, upwqp: &UnionPwQPolynomial) -> Printer {
+    pub fn print_union_pw_qpolynomial(self, upwqp: &UnionPwQPolynomial)
+                                      -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1005,12 +1323,18 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_pw_qpolynomial(p, upwqp) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_pw_qpolynomial_fold`.
-    pub fn print_union_pw_qpolynomial_fold(self, upwf: &UnionPwQPolynomialFold) -> Printer {
+    pub fn print_union_pw_qpolynomial_fold(self, upwf: &UnionPwQPolynomialFold)
+                                           -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1018,12 +1342,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_pw_qpolynomial_fold(p, upwf) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_set`.
-    pub fn print_union_set(self, uset: &UnionSet) -> Printer {
+    pub fn print_union_set(self, uset: &UnionSet) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1031,12 +1360,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_set(p, uset) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_union_set_list`.
-    pub fn print_union_set_list(self, list: &UnionSetList) -> Printer {
+    pub fn print_union_set_list(self, list: &UnionSetList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1044,12 +1378,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_union_set_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_val`.
-    pub fn print_val(self, v: &Val) -> Printer {
+    pub fn print_val(self, v: &Val) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1057,12 +1396,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_val(p, v) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_val_list`.
-    pub fn print_val_list(self, list: &ValList) -> Printer {
+    pub fn print_val_list(self, list: &ValList) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1070,12 +1414,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_val_list(p, list) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_print_vec`.
-    pub fn print_vec(self, vec: &Vec) -> Printer {
+    pub fn print_vec(self, vec: &Vec) -> Result<Printer, LibISLError> {
         let printer = self;
+        let isl_rs_ctx = printer.get_ctx();
         let mut printer = printer;
         printer.do_not_free_on_drop();
         let printer = printer.ptr;
@@ -1083,24 +1432,34 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_print_vec(printer, vec) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_indent`.
-    pub fn set_indent(self, indent: i32) -> Printer {
+    pub fn set_indent(self, indent: i32) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_set_indent(p, indent) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_indent_prefix`.
-    pub fn set_indent_prefix(self, prefix: &str) -> Printer {
+    pub fn set_indent_prefix(self, prefix: &str) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1109,24 +1468,34 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_set_indent_prefix(p, prefix) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_isl_int_width`.
-    pub fn set_isl_int_width(self, width: i32) -> Printer {
+    pub fn set_isl_int_width(self, width: i32) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_set_isl_int_width(p, width) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_note`.
-    pub fn set_note(self, id: Id, note: Id) -> Printer {
+    pub fn set_note(self, id: Id, note: Id) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1139,24 +1508,34 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_set_note(p, id, note) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_output_format`.
-    pub fn set_output_format(self, output_format: i32) -> Printer {
+    pub fn set_output_format(self, output_format: i32) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_set_output_format(p, output_format) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_prefix`.
-    pub fn set_prefix(self, prefix: &str) -> Printer {
+    pub fn set_prefix(self, prefix: &str) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1165,12 +1544,17 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_set_prefix(p, prefix) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_suffix`.
-    pub fn set_suffix(self, suffix: &str) -> Printer {
+    pub fn set_suffix(self, suffix: &str) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
@@ -1179,100 +1563,145 @@ impl Printer {
         let isl_rs_result = unsafe { isl_printer_set_suffix(p, suffix) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_set_yaml_style`.
-    pub fn set_yaml_style(self, yaml_style: i32) -> Printer {
+    pub fn set_yaml_style(self, yaml_style: i32) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_set_yaml_style(p, yaml_style) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_start_line`.
-    pub fn start_line(self) -> Printer {
+    pub fn start_line(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_start_line(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_to_str`.
-    pub fn to_str(ctx: &Context) -> Printer {
+    pub fn to_str(ctx: &Context) -> Result<Printer, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_printer_to_str(ctx) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_yaml_end_mapping`.
-    pub fn yaml_end_mapping(self) -> Printer {
+    pub fn yaml_end_mapping(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_yaml_end_mapping(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_yaml_end_sequence`.
-    pub fn yaml_end_sequence(self) -> Printer {
+    pub fn yaml_end_sequence(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_yaml_end_sequence(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_yaml_next`.
-    pub fn yaml_next(self) -> Printer {
+    pub fn yaml_next(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_yaml_next(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_yaml_start_mapping`.
-    pub fn yaml_start_mapping(self) -> Printer {
+    pub fn yaml_start_mapping(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_yaml_start_mapping(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_printer_yaml_start_sequence`.
-    pub fn yaml_start_sequence(self) -> Printer {
+    pub fn yaml_start_sequence(self) -> Result<Printer, LibISLError> {
         let p = self;
+        let isl_rs_ctx = p.get_ctx();
         let mut p = p;
         p.do_not_free_on_drop();
         let p = p.ptr;
         let isl_rs_result = unsafe { isl_printer_yaml_start_sequence(p) };
         let isl_rs_result = Printer { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_printer_free() on being dropped. (For internal use

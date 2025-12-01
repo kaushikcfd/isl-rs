@@ -298,3 +298,7 @@ pub use enums::Fold;
 pub use enums::ScheduleNodeType;
 
 pub use enums::Stat;
+
+mod libisl_error;
+
+pub use libisl_error::LibISLError;

@@ -321,7 +321,7 @@ impl DimType {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Error {
-    None,
+    None_,
     Abort,
     Alloc,
     Unknown,
@@ -335,7 +335,7 @@ impl Error {
     /// Returns i32 values as defined in libisl.
     pub fn to_i32(&self) -> i32 {
         match self {
-            Error::None => 0,
+            Error::None_ => 0,
             Error::Abort => 1,
             Error::Alloc => 2,
             Error::Unknown => 3,
@@ -351,7 +351,7 @@ impl Error {
     /// Constructor based on the i32 values as defined in libisl.
     pub fn from_i32(val: i32) -> Self {
         match val {
-            0 => Error::None,
+            0 => Error::None_,
             1 => Error::Abort,
             2 => Error::Alloc,
             3 => Error::Unknown,
