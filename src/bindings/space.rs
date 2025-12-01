@@ -2,8 +2,8 @@
 // LICENSE: MIT
 
 use super::{
-    Aff, AffList, Context, DimType, Id, IdList, Map, MultiAff, MultiId, MultiPwAff,
-    MultiUnionPwAff, MultiVal, PwAffList, PwMultiAff, Set, UnionPwAffList, ValList,
+    Aff, AffList, Context, DimType, Error, Id, IdList, LibISLError, Map, MultiAff, MultiId,
+    MultiPwAff, MultiUnionPwAff, MultiVal, PwAffList, PwMultiAff, Set, UnionPwAffList, ValList,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -264,8 +264,9 @@ extern "C" {
 
 impl Space {
     /// Wraps `isl_space_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> Space {
+    pub fn add_dims(self, type_: DimType, n: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -273,12 +274,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_add_dims(space, type_, n) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_add_named_tuple_id_ui`.
-    pub fn add_named_tuple_id_ui(self, tuple_id: Id, dim: u32) -> Space {
+    pub fn add_named_tuple_id_ui(self, tuple_id: Id, dim: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -288,12 +294,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_add_named_tuple_id_ui(space, tuple_id, dim) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_add_param_id`.
-    pub fn add_param_id(self, id: Id) -> Space {
+    pub fn add_param_id(self, id: Id) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -303,24 +314,34 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_add_param_id(space, id) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_add_unnamed_tuple_ui`.
-    pub fn add_unnamed_tuple_ui(self, dim: u32) -> Space {
+    pub fn add_unnamed_tuple_ui(self, dim: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_add_unnamed_tuple_ui(space, dim) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_align_params`.
-    pub fn align_params(self, space2: Space) -> Space {
+    pub fn align_params(self, space2: Space) -> Result<Space, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let mut space1 = space1;
         space1.do_not_free_on_drop();
         let space1 = space1.ptr;
@@ -330,21 +351,32 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_align_params(space1, space2) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_alloc`.
-    pub fn alloc(ctx: &Context, nparam: u32, n_in: u32, n_out: u32) -> Space {
+    pub fn alloc(ctx: &Context, nparam: u32, n_in: u32, n_out: u32) -> Result<Space, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_alloc(ctx, nparam, n_in, n_out) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_can_curry`.
-    pub fn can_curry(&self) -> bool {
+    pub fn can_curry(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_can_curry(space) };
         let isl_rs_result = match isl_rs_result {
@@ -352,12 +384,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_can_range_curry`.
-    pub fn can_range_curry(&self) -> bool {
+    pub fn can_range_curry(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_can_range_curry(space) };
         let isl_rs_result = match isl_rs_result {
@@ -365,12 +402,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_can_uncurry`.
-    pub fn can_uncurry(&self) -> bool {
+    pub fn can_uncurry(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_can_uncurry(space) };
         let isl_rs_result = match isl_rs_result {
@@ -378,12 +420,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_can_zip`.
-    pub fn can_zip(&self) -> bool {
+    pub fn can_zip(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_can_zip(space) };
         let isl_rs_result = match isl_rs_result {
@@ -391,79 +438,114 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_copy`.
-    pub fn copy(&self) -> Space {
+    pub fn copy(&self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_copy(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_curry`.
-    pub fn curry(self) -> Space {
+    pub fn curry(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_curry(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_dim(space, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain`.
-    pub fn domain(self) -> Space {
+    pub fn domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_factor_domain`.
-    pub fn domain_factor_domain(self) -> Space {
+    pub fn domain_factor_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_factor_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_factor_range`.
-    pub fn domain_factor_range(self) -> Space {
+    pub fn domain_factor_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_factor_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_is_wrapping`.
-    pub fn domain_is_wrapping(&self) -> bool {
+    pub fn domain_is_wrapping(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_is_wrapping(space) };
         let isl_rs_result = match isl_rs_result {
@@ -471,48 +553,68 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_map`.
-    pub fn domain_map(self) -> Space {
+    pub fn domain_map(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_map(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_map_multi_aff`.
-    pub fn domain_map_multi_aff(self) -> MultiAff {
+    pub fn domain_map_multi_aff(self) -> Result<MultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_map_multi_aff(space) };
         let isl_rs_result = MultiAff { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_map_pw_multi_aff`.
-    pub fn domain_map_pw_multi_aff(self) -> PwMultiAff {
+    pub fn domain_map_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_map_pw_multi_aff(space) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_product`.
-    pub fn domain_product(self, right: Space) -> Space {
+    pub fn domain_product(self, right: Space) -> Result<Space, LibISLError> {
         let left = self;
+        let isl_rs_ctx = left.get_ctx();
         let mut left = left;
         left.do_not_free_on_drop();
         let left = left.ptr;
@@ -522,60 +624,85 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_domain_product(left, right) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_reverse`.
-    pub fn domain_reverse(self) -> Space {
+    pub fn domain_reverse(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_reverse(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_wrapped_domain`.
-    pub fn domain_wrapped_domain(self) -> Space {
+    pub fn domain_wrapped_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_wrapped_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_domain_wrapped_range`.
-    pub fn domain_wrapped_range(self) -> Space {
+    pub fn domain_wrapped_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_domain_wrapped_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_drop_all_params`.
-    pub fn drop_all_params(self) -> Space {
+    pub fn drop_all_params(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_all_params(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, num: u32) -> Space {
+    pub fn drop_dims(self, type_: DimType, first: u32, num: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -583,144 +710,208 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_drop_dims(space, type_, first, num) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_drop_inputs`.
-    pub fn drop_inputs(self, first: u32, n: u32) -> Space {
+    pub fn drop_inputs(self, first: u32, n: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_inputs(space, first, n) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_drop_outputs`.
-    pub fn drop_outputs(self, first: u32, n: u32) -> Space {
+    pub fn drop_outputs(self, first: u32, n: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_drop_outputs(space, first, n) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_dump(space) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_factor_domain`.
-    pub fn factor_domain(self) -> Space {
+    pub fn factor_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_factor_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_factor_range`.
-    pub fn factor_range(self) -> Space {
+    pub fn factor_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_factor_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_find_dim_by_id`.
-    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> i32 {
+    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> Result<i32, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_space_find_dim_by_id(space, type_, id) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_space_find_dim_by_name(space, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_flatten_domain`.
-    pub fn flatten_domain(self) -> Space {
+    pub fn flatten_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_flatten_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_flatten_range`.
-    pub fn flatten_range(self) -> Space {
+    pub fn flatten_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_flatten_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_free`.
-    pub fn free(self) -> Space {
+    pub fn free(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_free(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_from_domain`.
-    pub fn from_domain(self) -> Space {
+    pub fn from_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_from_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_from_range`.
-    pub fn from_range(self) -> Space {
+    pub fn from_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_from_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_get_ctx`.
@@ -734,72 +925,103 @@ impl Space {
     }
 
     /// Wraps `isl_space_get_dim_id`.
-    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
+    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Result<Id, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_get_dim_id(space, type_, pos) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_get_dim_name`.
-    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
+    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> Result<&str, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_get_dim_name(space, type_, pos) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_get_domain_tuple_id`.
-    pub fn get_domain_tuple_id(&self) -> Id {
+    pub fn get_domain_tuple_id(&self) -> Result<Id, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_domain_tuple_id(space) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_get_range_tuple_id`.
-    pub fn get_range_tuple_id(&self) -> Id {
+    pub fn get_range_tuple_id(&self) -> Result<Id, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_get_range_tuple_id(space) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_get_tuple_id`.
-    pub fn get_tuple_id(&self, type_: DimType) -> Id {
+    pub fn get_tuple_id(&self, type_: DimType) -> Result<Id, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_get_tuple_id(space, type_) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_get_tuple_name`.
-    pub fn get_tuple_name(&self, type_: DimType) -> &str {
+    pub fn get_tuple_name(&self, type_: DimType) -> Result<&str, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_get_tuple_name(space, type_) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_dim_id`.
-    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> bool {
+    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_has_dim_id(space, type_, pos) };
@@ -808,12 +1030,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_dim_name`.
-    pub fn has_dim_name(&self, type_: DimType, pos: u32) -> bool {
+    pub fn has_dim_name(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_has_dim_name(space, type_, pos) };
@@ -822,12 +1049,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_domain_tuple_id`.
-    pub fn has_domain_tuple_id(&self) -> bool {
+    pub fn has_domain_tuple_id(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_has_domain_tuple_id(space) };
         let isl_rs_result = match isl_rs_result {
@@ -835,12 +1067,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_equal_params`.
-    pub fn has_equal_params(&self, space2: &Space) -> bool {
+    pub fn has_equal_params(&self, space2: &Space) -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let space2 = space2.ptr;
         let isl_rs_result = unsafe { isl_space_has_equal_params(space1, space2) };
@@ -849,12 +1086,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_equal_tuples`.
-    pub fn has_equal_tuples(&self, space2: &Space) -> bool {
+    pub fn has_equal_tuples(&self, space2: &Space) -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let space2 = space2.ptr;
         let isl_rs_result = unsafe { isl_space_has_equal_tuples(space1, space2) };
@@ -863,12 +1105,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_range_tuple_id`.
-    pub fn has_range_tuple_id(&self) -> bool {
+    pub fn has_range_tuple_id(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_has_range_tuple_id(space) };
         let isl_rs_result = match isl_rs_result {
@@ -876,12 +1123,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_tuple_id`.
-    pub fn has_tuple_id(&self, type_: DimType) -> bool {
+    pub fn has_tuple_id(&self, type_: DimType) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_has_tuple_id(space, type_) };
@@ -890,12 +1142,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_has_tuple_name`.
-    pub fn has_tuple_name(&self, type_: DimType) -> bool {
+    pub fn has_tuple_name(&self, type_: DimType) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_space_has_tuple_name(space, type_) };
@@ -904,48 +1161,68 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_identity_multi_aff_on_domain`.
-    pub fn identity_multi_aff_on_domain(self) -> MultiAff {
+    pub fn identity_multi_aff_on_domain(self) -> Result<MultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_identity_multi_aff_on_domain(space) };
         let isl_rs_result = MultiAff { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_identity_multi_pw_aff_on_domain`.
-    pub fn identity_multi_pw_aff_on_domain(self) -> MultiPwAff {
+    pub fn identity_multi_pw_aff_on_domain(self) -> Result<MultiPwAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_identity_multi_pw_aff_on_domain(space) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_identity_pw_multi_aff_on_domain`.
-    pub fn identity_pw_multi_aff_on_domain(self) -> PwMultiAff {
+    pub fn identity_pw_multi_aff_on_domain(self) -> Result<PwMultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_identity_pw_multi_aff_on_domain(space) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Space {
+    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -953,12 +1230,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_insert_dims(space, type_, pos, n) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_domain`.
-    pub fn is_domain(&self, space2: &Space) -> bool {
+    pub fn is_domain(&self, space2: &Space) -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let space2 = space2.ptr;
         let isl_rs_result = unsafe { isl_space_is_domain(space1, space2) };
@@ -967,12 +1249,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_equal`.
-    pub fn is_equal(&self, space2: &Space) -> bool {
+    pub fn is_equal(&self, space2: &Space) -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let space2 = space2.ptr;
         let isl_rs_result = unsafe { isl_space_is_equal(space1, space2) };
@@ -981,12 +1268,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_map`.
-    pub fn is_map(&self) -> bool {
+    pub fn is_map(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_is_map(space) };
         let isl_rs_result = match isl_rs_result {
@@ -994,12 +1286,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_params`.
-    pub fn is_params(&self) -> bool {
+    pub fn is_params(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_is_params(space) };
         let isl_rs_result = match isl_rs_result {
@@ -1007,12 +1304,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_product`.
-    pub fn is_product(&self) -> bool {
+    pub fn is_product(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_is_product(space) };
         let isl_rs_result = match isl_rs_result {
@@ -1020,12 +1322,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_range`.
-    pub fn is_range(&self, space2: &Space) -> bool {
+    pub fn is_range(&self, space2: &Space) -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let space2 = space2.ptr;
         let isl_rs_result = unsafe { isl_space_is_range(space1, space2) };
@@ -1034,12 +1341,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_set`.
-    pub fn is_set(&self) -> bool {
+    pub fn is_set(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_is_set(space) };
         let isl_rs_result = match isl_rs_result {
@@ -1047,12 +1359,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_is_wrapping`.
-    pub fn is_wrapping(&self) -> bool {
+    pub fn is_wrapping(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_is_wrapping(space) };
         let isl_rs_result = match isl_rs_result {
@@ -1060,12 +1377,17 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_join`.
-    pub fn join(self, right: Space) -> Space {
+    pub fn join(self, right: Space) -> Result<Space, LibISLError> {
         let left = self;
+        let isl_rs_ctx = left.get_ctx();
         let mut left = left;
         left.do_not_free_on_drop();
         let left = left.ptr;
@@ -1075,12 +1397,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_join(left, right) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_map_from_domain_and_range`.
-    pub fn map_from_domain_and_range(self, range: Space) -> Space {
+    pub fn map_from_domain_and_range(self, range: Space) -> Result<Space, LibISLError> {
         let domain = self;
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -1090,24 +1417,35 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_map_from_domain_and_range(domain, range) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_map_from_set`.
-    pub fn map_from_set(self) -> Space {
+    pub fn map_from_set(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_map_from_set(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_match`.
-    pub fn match_(&self, type1: DimType, space2: &Space, type2: DimType) -> bool {
+    pub fn match_(&self, type1: DimType, space2: &Space, type2: DimType)
+                  -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let type1 = type1.to_i32();
         let space2 = space2.ptr;
@@ -1118,14 +1456,19 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_move_dims`.
     pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
                      n: u32)
-                     -> Space {
+                     -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1135,12 +1478,17 @@ impl Space {
             unsafe { isl_space_move_dims(space, dst_type, dst_pos, src_type, src_pos, n) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_multi_aff`.
-    pub fn multi_aff(self, list: AffList) -> MultiAff {
+    pub fn multi_aff(self, list: AffList) -> Result<MultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1150,12 +1498,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_multi_aff(space, list) };
         let isl_rs_result = MultiAff { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_multi_aff_on_domain_multi_val`.
-    pub fn multi_aff_on_domain_multi_val(self, mv: MultiVal) -> MultiAff {
+    pub fn multi_aff_on_domain_multi_val(self, mv: MultiVal) -> Result<MultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1165,12 +1518,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_multi_aff_on_domain_multi_val(space, mv) };
         let isl_rs_result = MultiAff { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_multi_id`.
-    pub fn multi_id(self, list: IdList) -> MultiId {
+    pub fn multi_id(self, list: IdList) -> Result<MultiId, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1180,12 +1538,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_multi_id(space, list) };
         let isl_rs_result = MultiId { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_multi_pw_aff`.
-    pub fn multi_pw_aff(self, list: PwAffList) -> MultiPwAff {
+    pub fn multi_pw_aff(self, list: PwAffList) -> Result<MultiPwAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1195,12 +1558,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_multi_pw_aff(space, list) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_multi_union_pw_aff`.
-    pub fn multi_union_pw_aff(self, list: UnionPwAffList) -> MultiUnionPwAff {
+    pub fn multi_union_pw_aff(self, list: UnionPwAffList) -> Result<MultiUnionPwAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1210,12 +1578,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_multi_union_pw_aff(space, list) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_multi_val`.
-    pub fn multi_val(self, list: ValList) -> MultiVal {
+    pub fn multi_val(self, list: ValList) -> Result<MultiVal, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1225,12 +1598,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_multi_val(space, list) };
         let isl_rs_result = MultiVal { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_param_aff_on_domain_id`.
-    pub fn param_aff_on_domain_id(self, id: Id) -> Aff {
+    pub fn param_aff_on_domain_id(self, id: Id) -> Result<Aff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1240,33 +1618,49 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_param_aff_on_domain_id(space, id) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_params`.
-    pub fn params(self) -> Space {
+    pub fn params(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_params(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_params_alloc`.
-    pub fn params_alloc(ctx: &Context, nparam: u32) -> Space {
+    pub fn params_alloc(ctx: &Context, nparam: u32) -> Result<Space, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_params_alloc(ctx, nparam) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_product`.
-    pub fn product(self, right: Space) -> Space {
+    pub fn product(self, right: Space) -> Result<Space, LibISLError> {
         let left = self;
+        let isl_rs_ctx = left.get_ctx();
         let mut left = left;
         left.do_not_free_on_drop();
         let left = left.ptr;
@@ -1276,60 +1670,85 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_product(left, right) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range`.
-    pub fn range(self) -> Space {
+    pub fn range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_curry`.
-    pub fn range_curry(self) -> Space {
+    pub fn range_curry(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_curry(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_factor_domain`.
-    pub fn range_factor_domain(self) -> Space {
+    pub fn range_factor_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_factor_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_factor_range`.
-    pub fn range_factor_range(self) -> Space {
+    pub fn range_factor_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_factor_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_is_wrapping`.
-    pub fn range_is_wrapping(&self) -> bool {
+    pub fn range_is_wrapping(&self) -> Result<bool, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_is_wrapping(space) };
         let isl_rs_result = match isl_rs_result {
@@ -1337,48 +1756,68 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_map`.
-    pub fn range_map(self) -> Space {
+    pub fn range_map(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_map(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_map_multi_aff`.
-    pub fn range_map_multi_aff(self) -> MultiAff {
+    pub fn range_map_multi_aff(self) -> Result<MultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_map_multi_aff(space) };
         let isl_rs_result = MultiAff { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_map_pw_multi_aff`.
-    pub fn range_map_pw_multi_aff(self) -> PwMultiAff {
+    pub fn range_map_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_map_pw_multi_aff(space) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_product`.
-    pub fn range_product(self, right: Space) -> Space {
+    pub fn range_product(self, right: Space) -> Result<Space, LibISLError> {
         let left = self;
+        let isl_rs_ctx = left.get_ctx();
         let mut left = left;
         left.do_not_free_on_drop();
         let left = left.ptr;
@@ -1388,59 +1827,85 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_range_product(left, right) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_reverse`.
-    pub fn range_reverse(self) -> Space {
+    pub fn range_reverse(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_reverse(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_wrapped_domain`.
-    pub fn range_wrapped_domain(self) -> Space {
+    pub fn range_wrapped_domain(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_wrapped_domain(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_range_wrapped_range`.
-    pub fn range_wrapped_range(self) -> Space {
+    pub fn range_wrapped_range(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_range_wrapped_range(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> Space {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<Space, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_space_read_from_str(ctx, str_) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_reset_tuple_id`.
-    pub fn reset_tuple_id(self, type_: DimType) -> Space {
+    pub fn reset_tuple_id(self, type_: DimType) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1448,45 +1913,66 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_reset_tuple_id(space, type_) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_reset_user`.
-    pub fn reset_user(self) -> Space {
+    pub fn reset_user(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_reset_user(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_reverse`.
-    pub fn reverse(self) -> Space {
+    pub fn reverse(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_reverse(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_alloc`.
-    pub fn set_alloc(ctx: &Context, nparam: u32, dim: u32) -> Space {
+    pub fn set_alloc(ctx: &Context, nparam: u32, dim: u32) -> Result<Space, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_set_alloc(ctx, nparam, dim) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_dim_id`.
-    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Space {
+    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1497,12 +1983,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_set_dim_id(space, type_, pos, id) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, name: &str) -> Space {
+    pub fn set_dim_name(self, type_: DimType, pos: u32, name: &str) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1512,12 +2003,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_set_dim_name(space, type_, pos, name) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_domain_tuple_id`.
-    pub fn set_domain_tuple_id(self, id: Id) -> Space {
+    pub fn set_domain_tuple_id(self, id: Id) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1527,24 +2023,34 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_set_domain_tuple_id(space, id) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_from_params`.
-    pub fn set_from_params(self) -> Space {
+    pub fn set_from_params(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_set_from_params(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_range_tuple_id`.
-    pub fn set_range_tuple_id(self, id: Id) -> Space {
+    pub fn set_range_tuple_id(self, id: Id) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1554,12 +2060,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_set_range_tuple_id(space, id) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_tuple_id`.
-    pub fn set_tuple_id(self, type_: DimType, id: Id) -> Space {
+    pub fn set_tuple_id(self, type_: DimType, id: Id) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1570,12 +2081,17 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_set_tuple_id(space, type_, id) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_set_tuple_name`.
-    pub fn set_tuple_name(self, type_: DimType, s: &str) -> Space {
+    pub fn set_tuple_name(self, type_: DimType, s: &str) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -1585,22 +2101,33 @@ impl Space {
         let isl_rs_result = unsafe { isl_space_set_tuple_name(space, type_, s) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_to_str(space) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_tuple_is_equal`.
-    pub fn tuple_is_equal(&self, type1: DimType, space2: &Space, type2: DimType) -> bool {
+    pub fn tuple_is_equal(&self, type1: DimType, space2: &Space, type2: DimType)
+                          -> Result<bool, LibISLError> {
         let space1 = self;
+        let isl_rs_ctx = space1.get_ctx();
         let space1 = space1.ptr;
         let type1 = type1.to_i32();
         let space2 = space2.ptr;
@@ -1611,160 +2138,230 @@ impl Space {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_uncurry`.
-    pub fn uncurry(self) -> Space {
+    pub fn uncurry(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_uncurry(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_unit`.
-    pub fn unit(ctx: &Context) -> Space {
+    pub fn unit(ctx: &Context) -> Result<Space, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_space_unit(ctx) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_universe_map`.
-    pub fn universe_map(self) -> Map {
+    pub fn universe_map(self) -> Result<Map, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_universe_map(space) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_universe_set`.
-    pub fn universe_set(self) -> Set {
+    pub fn universe_set(self) -> Result<Set, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_universe_set(space) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_unwrap`.
-    pub fn unwrap(self) -> Space {
+    pub fn unwrap(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_unwrap(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_wrap`.
-    pub fn wrap(self) -> Space {
+    pub fn wrap(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_wrap(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_wrapped_reverse`.
-    pub fn wrapped_reverse(self) -> Space {
+    pub fn wrapped_reverse(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_wrapped_reverse(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_zero_aff_on_domain`.
-    pub fn zero_aff_on_domain(self) -> Aff {
+    pub fn zero_aff_on_domain(self) -> Result<Aff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zero_aff_on_domain(space) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_zero_multi_aff`.
-    pub fn zero_multi_aff(self) -> MultiAff {
+    pub fn zero_multi_aff(self) -> Result<MultiAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zero_multi_aff(space) };
         let isl_rs_result = MultiAff { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_zero_multi_pw_aff`.
-    pub fn zero_multi_pw_aff(self) -> MultiPwAff {
+    pub fn zero_multi_pw_aff(self) -> Result<MultiPwAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zero_multi_pw_aff(space) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_zero_multi_union_pw_aff`.
-    pub fn zero_multi_union_pw_aff(self) -> MultiUnionPwAff {
+    pub fn zero_multi_union_pw_aff(self) -> Result<MultiUnionPwAff, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zero_multi_union_pw_aff(space) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_zero_multi_val`.
-    pub fn zero_multi_val(self) -> MultiVal {
+    pub fn zero_multi_val(self) -> Result<MultiVal, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zero_multi_val(space) };
         let isl_rs_result = MultiVal { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_space_zip`.
-    pub fn zip(self) -> Space {
+    pub fn zip(self) -> Result<Space, LibISLError> {
         let space = self;
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_space_zip(space) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_space_free() on being dropped. (For internal use

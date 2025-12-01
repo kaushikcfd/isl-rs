@@ -2,9 +2,9 @@
 // LICENSE: MIT
 
 use super::{
-    Aff, BasicSet, BasicSetList, Constraint, Context, DimType, FixedBox, Id, IdList, Map, MultiAff,
-    MultiId, MultiPwAff, MultiVal, Point, PwAff, PwMultiAff, SetList, Space, StrideInfo, UnionSet,
-    Val,
+    Aff, BasicSet, BasicSetList, Constraint, Context, DimType, Error, FixedBox, Id, IdList,
+    LibISLError, Map, MultiAff, MultiId, MultiPwAff, MultiVal, Point, PwAff, PwMultiAff, SetList,
+    Space, StrideInfo, UnionSet, Val,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -228,50 +228,6 @@ extern "C" {
 
     fn isl_set_lift(set: uintptr_t) -> uintptr_t;
 
-    fn isl_set_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_set_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_set_list_dump(list: uintptr_t) -> ();
-
-    fn isl_set_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_from_set(el: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_set_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_get_set(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_set_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_n_set(list: uintptr_t) -> i32;
-
-    fn isl_set_list_read_from_str(ctx: uintptr_t, str_: *const c_char) -> uintptr_t;
-
-    fn isl_set_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_set_set(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_set_list_size(list: uintptr_t) -> i32;
-
-    fn isl_set_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_set_list_to_str(list: uintptr_t) -> *const c_char;
-
-    fn isl_set_list_union(list: uintptr_t) -> uintptr_t;
-
     fn isl_set_lower_bound_multi_pw_aff(set: uintptr_t, lower: uintptr_t) -> uintptr_t;
 
     fn isl_set_lower_bound_multi_val(set: uintptr_t, lower: uintptr_t) -> uintptr_t;
@@ -433,8 +389,9 @@ extern "C" {
 
 impl Set {
     /// Wraps `isl_set_add_constraint`.
-    pub fn add_constraint(self, constraint: Constraint) -> Set {
+    pub fn add_constraint(self, constraint: Constraint) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -444,12 +401,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_add_constraint(set, constraint) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> Set {
+    pub fn add_dims(self, type_: DimType, n: u32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -457,36 +419,51 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_add_dims(set, type_, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_affine_hull`.
-    pub fn affine_hull(self) -> BasicSet {
+    pub fn affine_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_affine_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_align_divs`.
-    pub fn align_divs(self) -> Set {
+    pub fn align_divs(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_align_divs(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_align_params`.
-    pub fn align_params(self, model: Space) -> Set {
+    pub fn align_params(self, model: Space) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -496,12 +473,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_align_params(set, model) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_apply`.
-    pub fn apply(self, map: Map) -> Set {
+    pub fn apply(self, map: Map) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -511,24 +493,34 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_apply(set, map) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_as_pw_multi_aff`.
-    pub fn as_pw_multi_aff(self) -> PwMultiAff {
+    pub fn as_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_as_pw_multi_aff(set) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_bind`.
-    pub fn bind(self, tuple: MultiId) -> Set {
+    pub fn bind(self, tuple: MultiId) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -538,23 +530,33 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_bind(set, tuple) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_bounded_simple_hull`.
-    pub fn bounded_simple_hull(self) -> BasicSet {
+    pub fn bounded_simple_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_bounded_simple_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_box_from_points`.
-    pub fn box_from_points(pnt1: Point, pnt2: Point) -> Set {
+    pub fn box_from_points(pnt1: Point, pnt2: Point) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = pnt1.get_ctx();
         let mut pnt1 = pnt1;
         pnt1.do_not_free_on_drop();
         let pnt1 = pnt1.ptr;
@@ -564,113 +566,163 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_box_from_points(pnt1, pnt2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_coalesce`.
-    pub fn coalesce(self) -> Set {
+    pub fn coalesce(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_coalesce(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_coefficients`.
-    pub fn coefficients(self) -> BasicSet {
+    pub fn coefficients(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_coefficients(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_complement`.
-    pub fn complement(self) -> Set {
+    pub fn complement(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_complement(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_compute_divs`.
-    pub fn compute_divs(self) -> Set {
+    pub fn compute_divs(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_compute_divs(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_convex_hull`.
-    pub fn convex_hull(self) -> BasicSet {
+    pub fn convex_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_convex_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_copy`.
-    pub fn copy(&self) -> Set {
+    pub fn copy(&self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_copy(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_count_val`.
-    pub fn count_val(&self) -> Val {
+    pub fn count_val(&self) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_count_val(set) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_detect_equalities`.
-    pub fn detect_equalities(self) -> Set {
+    pub fn detect_equalities(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_detect_equalities(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_dim(set, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_has_any_lower_bound`.
-    pub fn dim_has_any_lower_bound(&self, type_: DimType, pos: u32) -> bool {
+    pub fn dim_has_any_lower_bound(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_dim_has_any_lower_bound(set, type_, pos) };
@@ -679,12 +731,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_has_any_upper_bound`.
-    pub fn dim_has_any_upper_bound(&self, type_: DimType, pos: u32) -> bool {
+    pub fn dim_has_any_upper_bound(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_dim_has_any_upper_bound(set, type_, pos) };
@@ -693,12 +750,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_has_lower_bound`.
-    pub fn dim_has_lower_bound(&self, type_: DimType, pos: u32) -> bool {
+    pub fn dim_has_lower_bound(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_dim_has_lower_bound(set, type_, pos) };
@@ -707,12 +769,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_has_upper_bound`.
-    pub fn dim_has_upper_bound(&self, type_: DimType, pos: u32) -> bool {
+    pub fn dim_has_upper_bound(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_dim_has_upper_bound(set, type_, pos) };
@@ -721,12 +788,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_is_bounded`.
-    pub fn dim_is_bounded(&self, type_: DimType, pos: u32) -> bool {
+    pub fn dim_is_bounded(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_dim_is_bounded(set, type_, pos) };
@@ -735,60 +807,86 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_max`.
-    pub fn dim_max(self, pos: i32) -> PwAff {
+    pub fn dim_max(self, pos: i32) -> Result<PwAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_dim_max(set, pos) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_max_val`.
-    pub fn dim_max_val(self, pos: i32) -> Val {
+    pub fn dim_max_val(self, pos: i32) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_dim_max_val(set, pos) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_min`.
-    pub fn dim_min(self, pos: i32) -> PwAff {
+    pub fn dim_min(self, pos: i32) -> Result<PwAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_dim_min(set, pos) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dim_min_val`.
-    pub fn dim_min_val(self, pos: i32) -> Val {
+    pub fn dim_min_val(self, pos: i32) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_dim_min_val(set, pos) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_drop_constraints_involving_dims`.
-    pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                           -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -797,12 +895,18 @@ impl Set {
             unsafe { isl_set_drop_constraints_involving_dims(set, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_drop_constraints_not_involving_dims`.
-    pub fn drop_constraints_not_involving_dims(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn drop_constraints_not_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                               -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -811,32 +915,47 @@ impl Set {
             unsafe { isl_set_drop_constraints_not_involving_dims(set, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_drop_unused_params`.
-    pub fn drop_unused_params(self) -> Set {
+    pub fn drop_unused_params(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_drop_unused_params(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_dump(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_eliminate`.
-    pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -844,35 +963,51 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_eliminate(set, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_eliminate_dims`.
-    pub fn eliminate_dims(self, first: u32, n: u32) -> Set {
+    pub fn eliminate_dims(self, first: u32, n: u32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_eliminate_dims(set, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_empty`.
-    pub fn empty(space: Space) -> Set {
+    pub fn empty(space: Space) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_set_empty(space) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_equate`.
-    pub fn equate(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32) -> Set {
+    pub fn equate(self, type1: DimType, pos1: i32, type2: DimType, pos2: i32)
+                  -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -881,45 +1016,65 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_equate(set, type1, pos1, type2, pos2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_find_dim_by_id`.
-    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> i32 {
+    pub fn find_dim_by_id(&self, type_: DimType, id: &Id) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let id = id.ptr;
         let isl_rs_result = unsafe { isl_set_find_dim_by_id(set, type_, id) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_set_find_dim_by_name(set, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_fix_dim_si`.
-    pub fn fix_dim_si(self, dim: u32, value: i32) -> Set {
+    pub fn fix_dim_si(self, dim: u32, value: i32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_fix_dim_si(set, dim, value) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_fix_si`.
-    pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> Set {
+    pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -927,12 +1082,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_fix_si(set, type_, pos, value) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_fix_val`.
-    pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> Set {
+    pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -943,12 +1103,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_fix_val(set, type_, pos, v) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_flat_product`.
-    pub fn flat_product(self, set2: Set) -> Set {
+    pub fn flat_product(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -958,151 +1123,220 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_flat_product(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_flatten`.
-    pub fn flatten(self) -> Set {
+    pub fn flatten(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_flatten(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_flatten_map`.
-    pub fn flatten_map(self) -> Map {
+    pub fn flatten_map(self) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_flatten_map(set) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_follows_at`.
-    pub fn follows_at(&self, set2: &Set, pos: i32) -> i32 {
+    pub fn follows_at(&self, set2: &Set, pos: i32) -> Result<i32, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_follows_at(set1, set2, pos) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_free`.
-    pub fn free(self) -> Set {
+    pub fn free(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_free(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_basic_set`.
-    pub fn from_basic_set(bset: BasicSet) -> Set {
+    pub fn from_basic_set(bset: BasicSet) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_set_from_basic_set(bset) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_multi_aff`.
-    pub fn from_multi_aff(ma: MultiAff) -> Set {
+    pub fn from_multi_aff(ma: MultiAff) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = ma.get_ctx();
         let mut ma = ma;
         ma.do_not_free_on_drop();
         let ma = ma.ptr;
         let isl_rs_result = unsafe { isl_set_from_multi_aff(ma) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_multi_pw_aff`.
-    pub fn from_multi_pw_aff(mpa: MultiPwAff) -> Set {
+    pub fn from_multi_pw_aff(mpa: MultiPwAff) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = mpa.get_ctx();
         let mut mpa = mpa;
         mpa.do_not_free_on_drop();
         let mpa = mpa.ptr;
         let isl_rs_result = unsafe { isl_set_from_multi_pw_aff(mpa) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_params`.
-    pub fn from_params(self) -> Set {
+    pub fn from_params(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_from_params(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_point`.
-    pub fn from_point(pnt: Point) -> Set {
+    pub fn from_point(pnt: Point) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = pnt.get_ctx();
         let mut pnt = pnt;
         pnt.do_not_free_on_drop();
         let pnt = pnt.ptr;
         let isl_rs_result = unsafe { isl_set_from_point(pnt) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_pw_aff`.
-    pub fn from_pw_aff(pwaff: PwAff) -> Set {
+    pub fn from_pw_aff(pwaff: PwAff) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = pwaff.get_ctx();
         let mut pwaff = pwaff;
         pwaff.do_not_free_on_drop();
         let pwaff = pwaff.ptr;
         let isl_rs_result = unsafe { isl_set_from_pw_aff(pwaff) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_pw_multi_aff`.
-    pub fn from_pw_multi_aff(pma: PwMultiAff) -> Set {
+    pub fn from_pw_multi_aff(pma: PwMultiAff) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = pma.get_ctx();
         let mut pma = pma;
         pma.do_not_free_on_drop();
         let pma = pma.ptr;
         let isl_rs_result = unsafe { isl_set_from_pw_multi_aff(pma) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_from_union_set`.
-    pub fn from_union_set(uset: UnionSet) -> Set {
+    pub fn from_union_set(uset: UnionSet) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = uset.get_ctx();
         let mut uset = uset;
         uset.do_not_free_on_drop();
         let uset = uset.ptr;
         let isl_rs_result = unsafe { isl_set_from_union_set(uset) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_basic_set_list`.
-    pub fn get_basic_set_list(&self) -> BasicSetList {
+    pub fn get_basic_set_list(&self) -> Result<BasicSetList, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_basic_set_list(set) };
         let isl_rs_result = BasicSetList { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_ctx`.
@@ -1116,118 +1350,174 @@ impl Set {
     }
 
     /// Wraps `isl_set_get_dim_id`.
-    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
+    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Result<Id, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_get_dim_id(set, type_, pos) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_dim_name`.
-    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
+    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> Result<&str, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_get_dim_name(set, type_, pos) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_hash`.
-    pub fn get_hash(&self) -> u32 {
+    pub fn get_hash(&self) -> Result<u32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_hash(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_lattice_tile`.
-    pub fn get_lattice_tile(&self) -> FixedBox {
+    pub fn get_lattice_tile(&self) -> Result<FixedBox, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_lattice_tile(set) };
         let isl_rs_result = FixedBox { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_plain_multi_val_if_fixed`.
-    pub fn get_plain_multi_val_if_fixed(&self) -> MultiVal {
+    pub fn get_plain_multi_val_if_fixed(&self) -> Result<MultiVal, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_plain_multi_val_if_fixed(set) };
         let isl_rs_result = MultiVal { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_simple_fixed_box_hull`.
-    pub fn get_simple_fixed_box_hull(&self) -> FixedBox {
+    pub fn get_simple_fixed_box_hull(&self) -> Result<FixedBox, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_simple_fixed_box_hull(set) };
         let isl_rs_result = FixedBox { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_space(set) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_stride`.
-    pub fn get_stride(&self, pos: i32) -> Val {
+    pub fn get_stride(&self, pos: i32) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_stride(set, pos) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_stride_info`.
-    pub fn get_stride_info(&self, pos: i32) -> StrideInfo {
+    pub fn get_stride_info(&self, pos: i32) -> Result<StrideInfo, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_stride_info(set, pos) };
         let isl_rs_result = StrideInfo { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_tuple_id`.
-    pub fn get_tuple_id(&self) -> Id {
+    pub fn get_tuple_id(&self) -> Result<Id, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_tuple_id(set) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_get_tuple_name`.
-    pub fn get_tuple_name(&self) -> &str {
+    pub fn get_tuple_name(&self) -> Result<&str, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_get_tuple_name(set) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_gist`.
-    pub fn gist(self, context: Set) -> Set {
+    pub fn gist(self, context: Set) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1237,12 +1527,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_gist(set, context) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_gist_basic_set`.
-    pub fn gist_basic_set(self, context: BasicSet) -> Set {
+    pub fn gist_basic_set(self, context: BasicSet) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1252,12 +1547,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_gist_basic_set(set, context) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_gist_params`.
-    pub fn gist_params(self, context: Set) -> Set {
+    pub fn gist_params(self, context: Set) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1267,12 +1567,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_gist_params(set, context) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_has_dim_id`.
-    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> bool {
+    pub fn has_dim_id(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_has_dim_id(set, type_, pos) };
@@ -1281,12 +1586,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_has_dim_name`.
-    pub fn has_dim_name(&self, type_: DimType, pos: u32) -> bool {
+    pub fn has_dim_name(&self, type_: DimType, pos: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_has_dim_name(set, type_, pos) };
@@ -1295,12 +1605,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_has_equal_space`.
-    pub fn has_equal_space(&self, set2: &Set) -> bool {
+    pub fn has_equal_space(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_has_equal_space(set1, set2) };
@@ -1309,12 +1624,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_has_tuple_id`.
-    pub fn has_tuple_id(&self) -> bool {
+    pub fn has_tuple_id(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_has_tuple_id(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1322,12 +1642,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_has_tuple_name`.
-    pub fn has_tuple_name(&self) -> bool {
+    pub fn has_tuple_name(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_has_tuple_name(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1335,36 +1660,51 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_identity`.
-    pub fn identity(self) -> Map {
+    pub fn identity(self) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_identity(set) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_indicator_function`.
-    pub fn indicator_function(self) -> PwAff {
+    pub fn indicator_function(self) -> Result<PwAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_indicator_function(set) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Set {
+    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1372,12 +1712,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_insert_dims(set, type_, pos, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_insert_domain`.
-    pub fn insert_domain(self, domain: Space) -> Map {
+    pub fn insert_domain(self, domain: Space) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1387,12 +1732,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_insert_domain(set, domain) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_intersect`.
-    pub fn intersect(self, set2: Set) -> Set {
+    pub fn intersect(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -1402,12 +1752,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_intersect(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_intersect_factor_domain`.
-    pub fn intersect_factor_domain(self, domain: Set) -> Set {
+    pub fn intersect_factor_domain(self, domain: Set) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1417,12 +1772,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_intersect_factor_domain(set, domain) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_intersect_factor_range`.
-    pub fn intersect_factor_range(self, range: Set) -> Set {
+    pub fn intersect_factor_range(self, range: Set) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1432,12 +1792,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_intersect_factor_range(set, range) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_intersect_params`.
-    pub fn intersect_params(self, params: Set) -> Set {
+    pub fn intersect_params(self, params: Set) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1447,12 +1812,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_intersect_params(set, params) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_involves_dims(set, type_, first, n) };
@@ -1461,12 +1831,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_involves_locals`.
-    pub fn involves_locals(&self) -> bool {
+    pub fn involves_locals(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_involves_locals(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1474,12 +1849,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_bounded`.
-    pub fn is_bounded(&self) -> bool {
+    pub fn is_bounded(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_is_bounded(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1487,12 +1867,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_box`.
-    pub fn is_box(&self) -> bool {
+    pub fn is_box(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_is_box(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1500,12 +1885,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_disjoint`.
-    pub fn is_disjoint(&self, set2: &Set) -> bool {
+    pub fn is_disjoint(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_is_disjoint(set1, set2) };
@@ -1514,12 +1904,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_empty`.
-    pub fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_is_empty(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1527,12 +1922,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_equal`.
-    pub fn is_equal(&self, set2: &Set) -> bool {
+    pub fn is_equal(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_is_equal(set1, set2) };
@@ -1541,12 +1941,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_params`.
-    pub fn is_params(&self) -> bool {
+    pub fn is_params(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_is_params(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1554,12 +1959,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_singleton`.
-    pub fn is_singleton(&self) -> bool {
+    pub fn is_singleton(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_is_singleton(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1567,12 +1977,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_strict_subset`.
-    pub fn is_strict_subset(&self, set2: &Set) -> bool {
+    pub fn is_strict_subset(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_is_strict_subset(set1, set2) };
@@ -1581,12 +1996,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_subset`.
-    pub fn is_subset(&self, set2: &Set) -> bool {
+    pub fn is_subset(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_is_subset(set1, set2) };
@@ -1595,12 +2015,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_is_wrapping`.
-    pub fn is_wrapping(&self) -> bool {
+    pub fn is_wrapping(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_is_wrapping(set) };
         let isl_rs_result = match isl_rs_result {
@@ -1608,12 +2033,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lex_ge_set`.
-    pub fn lex_ge_set(self, set2: Set) -> Map {
+    pub fn lex_ge_set(self, set2: Set) -> Result<Map, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -1623,12 +2053,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lex_ge_set(set1, set2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lex_gt_set`.
-    pub fn lex_gt_set(self, set2: Set) -> Map {
+    pub fn lex_gt_set(self, set2: Set) -> Result<Map, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -1638,12 +2073,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lex_gt_set(set1, set2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lex_le_set`.
-    pub fn lex_le_set(self, set2: Set) -> Map {
+    pub fn lex_le_set(self, set2: Set) -> Result<Map, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -1653,12 +2093,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lex_le_set(set1, set2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lex_lt_set`.
-    pub fn lex_lt_set(self, set2: Set) -> Map {
+    pub fn lex_lt_set(self, set2: Set) -> Result<Map, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -1668,306 +2113,102 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lex_lt_set(set1, set2) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lexmax`.
-    pub fn lexmax(self) -> Set {
+    pub fn lexmax(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_lexmax(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lexmax_pw_multi_aff`.
-    pub fn lexmax_pw_multi_aff(self) -> PwMultiAff {
+    pub fn lexmax_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_lexmax_pw_multi_aff(set) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lexmin`.
-    pub fn lexmin(self) -> Set {
+    pub fn lexmin(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_lexmin(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lexmin_pw_multi_aff`.
-    pub fn lexmin_pw_multi_aff(self) -> PwMultiAff {
+    pub fn lexmin_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_lexmin_pw_multi_aff(set) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lift`.
-    pub fn lift(self) -> Set {
+    pub fn lift(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_lift(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_add`.
-    pub fn list_add(list: SetList, el: Set) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_set_list_add(list, el) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> SetList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_set_list_alloc(ctx, n) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_clear`.
-    pub fn list_clear(list: SetList) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_clear(list) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_concat`.
-    pub fn list_concat(list1: SetList, list2: SetList) -> SetList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_set_list_concat(list1, list2) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_copy`.
-    pub fn list_copy(list: &SetList) -> SetList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_copy(list) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_drop`.
-    pub fn list_drop(list: SetList, first: u32, n: u32) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_drop(list, first, n) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_dump`.
-    pub fn list_dump(list: &SetList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_free`.
-    pub fn list_free(list: SetList) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_free(list) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_from_set`.
-    pub fn list_from_set(self) -> SetList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_set_list_from_set(el) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_get_at`.
-    pub fn list_get_at(list: &SetList, index: i32) -> Set {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_get_at(list, index) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_get_ctx`.
-    pub fn list_get_ctx(list: &SetList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_get_set`.
-    pub fn list_get_set(list: &SetList, index: i32) -> Set {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_get_set(list, index) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_insert`.
-    pub fn list_insert(list: SetList, pos: u32, el: Set) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_set_list_insert(list, pos, el) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_n_set`.
-    pub fn list_n_set(list: &SetList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_n_set(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_read_from_str`.
-    pub fn list_read_from_str(ctx: &Context, str_: &str) -> SetList {
-        let ctx = ctx.ptr;
-        let str_ = CString::new(str_).unwrap();
-        let str_ = str_.as_ptr();
-        let isl_rs_result = unsafe { isl_set_list_read_from_str(ctx, str_) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_reverse`.
-    pub fn list_reverse(list: SetList) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_reverse(list) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_set_at`.
-    pub fn list_set_at(list: SetList, index: i32, el: Set) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_set_list_set_at(list, index, el) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_set_set`.
-    pub fn list_set_set(list: SetList, index: i32, el: Set) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_set_list_set_set(list, index, el) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_size`.
-    pub fn list_size(list: &SetList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_swap`.
-    pub fn list_swap(list: SetList, pos1: u32, pos2: u32) -> SetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_swap(list, pos1, pos2) };
-        let isl_rs_result = SetList { ptr: isl_rs_result,
-                                      should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_to_str`.
-    pub fn list_to_str(list: &SetList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
-    }
-
-    /// Wraps `isl_set_list_union`.
-    pub fn list_union(list: SetList) -> Set {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_set_list_union(list) };
-        let isl_rs_result = Set { ptr: isl_rs_result,
-                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lower_bound_multi_pw_aff`.
-    pub fn lower_bound_multi_pw_aff(self, lower: MultiPwAff) -> Set {
+    pub fn lower_bound_multi_pw_aff(self, lower: MultiPwAff) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1977,12 +2218,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lower_bound_multi_pw_aff(set, lower) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lower_bound_multi_val`.
-    pub fn lower_bound_multi_val(self, lower: MultiVal) -> Set {
+    pub fn lower_bound_multi_val(self, lower: MultiVal) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1992,12 +2238,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lower_bound_multi_val(set, lower) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lower_bound_si`.
-    pub fn lower_bound_si(self, type_: DimType, pos: u32, value: i32) -> Set {
+    pub fn lower_bound_si(self, type_: DimType, pos: u32, value: i32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2005,12 +2256,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lower_bound_si(set, type_, pos, value) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_lower_bound_val`.
-    pub fn lower_bound_val(self, type_: DimType, pos: u32, value: Val) -> Set {
+    pub fn lower_bound_val(self, type_: DimType, pos: u32, value: Val) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2021,72 +2277,102 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_lower_bound_val(set, type_, pos, value) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_make_disjoint`.
-    pub fn make_disjoint(self) -> Set {
+    pub fn make_disjoint(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_make_disjoint(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_max_multi_pw_aff`.
-    pub fn max_multi_pw_aff(self) -> MultiPwAff {
+    pub fn max_multi_pw_aff(self) -> Result<MultiPwAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_max_multi_pw_aff(set) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_max_val`.
-    pub fn max_val(&self, obj: &Aff) -> Val {
+    pub fn max_val(&self, obj: &Aff) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let obj = obj.ptr;
         let isl_rs_result = unsafe { isl_set_max_val(set, obj) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_min_multi_pw_aff`.
-    pub fn min_multi_pw_aff(self) -> MultiPwAff {
+    pub fn min_multi_pw_aff(self) -> Result<MultiPwAff, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_min_multi_pw_aff(set) };
         let isl_rs_result = MultiPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_min_val`.
-    pub fn min_val(&self, obj: &Aff) -> Val {
+    pub fn min_val(&self, obj: &Aff) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let obj = obj.ptr;
         let isl_rs_result = unsafe { isl_set_min_val(set, obj) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_move_dims`.
     pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
                      n: u32)
-                     -> Set {
+                     -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2096,59 +2382,89 @@ impl Set {
             unsafe { isl_set_move_dims(set, dst_type, dst_pos, src_type, src_pos, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_n_basic_set`.
-    pub fn n_basic_set(&self) -> i32 {
+    pub fn n_basic_set(&self) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_n_basic_set(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_n_dim`.
-    pub fn n_dim(&self) -> i32 {
+    pub fn n_dim(&self) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_n_dim(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_n_param`.
-    pub fn n_param(&self) -> i32 {
+    pub fn n_param(&self) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_n_param(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_nat_universe`.
-    pub fn nat_universe(space: Space) -> Set {
+    pub fn nat_universe(space: Space) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_set_nat_universe(space) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_neg`.
-    pub fn neg(self) -> Set {
+    pub fn neg(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_neg(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_param_pw_aff_on_domain_id`.
-    pub fn param_pw_aff_on_domain_id(self, id: Id) -> PwAff {
+    pub fn param_pw_aff_on_domain_id(self, id: Id) -> Result<PwAff, LibISLError> {
         let domain = self;
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -2158,44 +2474,64 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_param_pw_aff_on_domain_id(domain, id) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_params`.
-    pub fn params(self) -> Set {
+    pub fn params(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_params(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_cmp`.
-    pub fn plain_cmp(&self, set2: &Set) -> i32 {
+    pub fn plain_cmp(&self, set2: &Set) -> Result<i32, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_plain_cmp(set1, set2) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_get_val_if_fixed`.
-    pub fn plain_get_val_if_fixed(&self, type_: DimType, pos: u32) -> Val {
+    pub fn plain_get_val_if_fixed(&self, type_: DimType, pos: u32) -> Result<Val, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_set_plain_get_val_if_fixed(set, type_, pos) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_is_disjoint`.
-    pub fn plain_is_disjoint(&self, set2: &Set) -> bool {
+    pub fn plain_is_disjoint(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_plain_is_disjoint(set1, set2) };
@@ -2204,12 +2540,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_is_empty`.
-    pub fn plain_is_empty(&self) -> bool {
+    pub fn plain_is_empty(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_plain_is_empty(set) };
         let isl_rs_result = match isl_rs_result {
@@ -2217,12 +2558,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_is_equal`.
-    pub fn plain_is_equal(&self, set2: &Set) -> bool {
+    pub fn plain_is_equal(&self, set2: &Set) -> Result<bool, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let set1 = set1.ptr;
         let set2 = set2.ptr;
         let isl_rs_result = unsafe { isl_set_plain_is_equal(set1, set2) };
@@ -2231,12 +2577,17 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_is_universe`.
-    pub fn plain_is_universe(&self) -> bool {
+    pub fn plain_is_universe(&self) -> Result<bool, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_plain_is_universe(set) };
         let isl_rs_result = match isl_rs_result {
@@ -2244,36 +2595,51 @@ impl Set {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_plain_unshifted_simple_hull`.
-    pub fn plain_unshifted_simple_hull(self) -> BasicSet {
+    pub fn plain_unshifted_simple_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_plain_unshifted_simple_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_polyhedral_hull`.
-    pub fn polyhedral_hull(self) -> BasicSet {
+    pub fn polyhedral_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_polyhedral_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_preimage_multi_aff`.
-    pub fn preimage_multi_aff(self, ma: MultiAff) -> Set {
+    pub fn preimage_multi_aff(self, ma: MultiAff) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2283,12 +2649,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_preimage_multi_aff(set, ma) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_preimage_multi_pw_aff`.
-    pub fn preimage_multi_pw_aff(self, mpa: MultiPwAff) -> Set {
+    pub fn preimage_multi_pw_aff(self, mpa: MultiPwAff) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2298,12 +2669,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_preimage_multi_pw_aff(set, mpa) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_preimage_pw_multi_aff`.
-    pub fn preimage_pw_multi_aff(self, pma: PwMultiAff) -> Set {
+    pub fn preimage_pw_multi_aff(self, pma: PwMultiAff) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2313,12 +2689,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_preimage_pw_multi_aff(set, pma) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_product`.
-    pub fn product(self, set2: Set) -> Set {
+    pub fn product(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -2328,12 +2709,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_product(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_project_onto_map`.
-    pub fn project_onto_map(self, type_: DimType, first: u32, n: u32) -> Map {
+    pub fn project_onto_map(self, type_: DimType, first: u32, n: u32) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2341,12 +2727,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_project_onto_map(set, type_, first, n) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_project_out`.
-    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2354,24 +2745,34 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_project_out(set, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_project_out_all_params`.
-    pub fn project_out_all_params(self) -> Set {
+    pub fn project_out_all_params(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_project_out_all_params(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_project_out_param_id`.
-    pub fn project_out_param_id(self, id: Id) -> Set {
+    pub fn project_out_param_id(self, id: Id) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2381,12 +2782,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_project_out_param_id(set, id) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_project_out_param_id_list`.
-    pub fn project_out_param_id_list(self, list: IdList) -> Set {
+    pub fn project_out_param_id_list(self, list: IdList) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2396,12 +2802,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_project_out_param_id_list(set, list) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_pw_aff_on_domain_val`.
-    pub fn pw_aff_on_domain_val(self, v: Val) -> PwAff {
+    pub fn pw_aff_on_domain_val(self, v: Val) -> Result<PwAff, LibISLError> {
         let domain = self;
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -2411,12 +2822,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_pw_aff_on_domain_val(domain, v) };
         let isl_rs_result = PwAff { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_pw_multi_aff_on_domain_multi_val`.
-    pub fn pw_multi_aff_on_domain_multi_val(self, mv: MultiVal) -> PwMultiAff {
+    pub fn pw_multi_aff_on_domain_multi_val(self, mv: MultiVal) -> Result<PwMultiAff, LibISLError> {
         let domain = self;
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -2426,23 +2842,34 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_pw_multi_aff_on_domain_multi_val(domain, mv) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> Set {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_set_read_from_str(ctx, str_) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_remove_dims`.
-    pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> Result<Set, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -2450,24 +2877,35 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_remove_dims(bset, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_remove_divs`.
-    pub fn remove_divs(self) -> Set {
+    pub fn remove_divs(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_remove_divs(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_remove_divs_involving_dims`.
-    pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                      -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2475,36 +2913,51 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_remove_divs_involving_dims(set, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_remove_redundancies`.
-    pub fn remove_redundancies(self) -> Set {
+    pub fn remove_redundancies(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_remove_redundancies(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_remove_unknown_divs`.
-    pub fn remove_unknown_divs(self) -> Set {
+    pub fn remove_unknown_divs(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_remove_unknown_divs(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_reset_space`.
-    pub fn reset_space(self, space: Space) -> Set {
+    pub fn reset_space(self, space: Space) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2514,60 +2967,85 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_reset_space(set, space) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_reset_tuple_id`.
-    pub fn reset_tuple_id(self) -> Set {
+    pub fn reset_tuple_id(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_reset_tuple_id(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_reset_user`.
-    pub fn reset_user(self) -> Set {
+    pub fn reset_user(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_reset_user(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_sample`.
-    pub fn sample(self) -> BasicSet {
+    pub fn sample(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_sample(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_sample_point`.
-    pub fn sample_point(self) -> Point {
+    pub fn sample_point(self) -> Result<Point, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_sample_point(set) };
         let isl_rs_result = Point { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_set_dim_id`.
-    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Set {
+    pub fn set_dim_id(self, type_: DimType, pos: u32, id: Id) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2578,12 +3056,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_set_dim_id(set, type_, pos, id) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Set {
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2593,12 +3076,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_set_dim_name(set, type_, pos, s) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_set_tuple_id`.
-    pub fn set_tuple_id(self, id: Id) -> Set {
+    pub fn set_tuple_id(self, id: Id) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2608,12 +3096,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_set_tuple_id(set, id) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_set_tuple_name`.
-    pub fn set_tuple_name(self, s: &str) -> Set {
+    pub fn set_tuple_name(self, s: &str) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2622,44 +3115,64 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_set_tuple_name(set, s) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_simple_hull`.
-    pub fn simple_hull(self) -> BasicSet {
+    pub fn simple_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_simple_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_size`.
-    pub fn size(&self) -> i32 {
+    pub fn size(&self) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_size(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_solutions`.
-    pub fn solutions(self) -> BasicSet {
+    pub fn solutions(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_solutions(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_split_dims`.
-    pub fn split_dims(self, type_: DimType, first: u32, n: u32) -> Set {
+    pub fn split_dims(self, type_: DimType, first: u32, n: u32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2667,12 +3180,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_split_dims(set, type_, first, n) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_subtract`.
-    pub fn subtract(self, set2: Set) -> Set {
+    pub fn subtract(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -2682,12 +3200,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_subtract(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_sum`.
-    pub fn sum(self, set2: Set) -> Set {
+    pub fn sum(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -2697,66 +3220,96 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_sum(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_to_list`.
-    pub fn to_list(self) -> SetList {
+    pub fn to_list(self) -> Result<SetList, LibISLError> {
         let el = self;
+        let isl_rs_ctx = el.get_ctx();
         let mut el = el;
         el.do_not_free_on_drop();
         let el = el.ptr;
         let isl_rs_result = unsafe { isl_set_to_list(el) };
         let isl_rs_result = SetList { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_to_str(set) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_to_union_set`.
-    pub fn to_union_set(self) -> UnionSet {
+    pub fn to_union_set(self) -> Result<UnionSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_to_union_set(set) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_translation`.
-    pub fn translation(self) -> Map {
+    pub fn translation(self) -> Result<Map, LibISLError> {
         let deltas = self;
+        let isl_rs_ctx = deltas.get_ctx();
         let mut deltas = deltas;
         deltas.do_not_free_on_drop();
         let deltas = deltas.ptr;
         let isl_rs_result = unsafe { isl_set_translation(deltas) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_tuple_dim`.
-    pub fn tuple_dim(&self) -> i32 {
+    pub fn tuple_dim(&self) -> Result<i32, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_tuple_dim(set) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_unbind_params`.
-    pub fn unbind_params(self, tuple: MultiId) -> Set {
+    pub fn unbind_params(self, tuple: MultiId) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2766,12 +3319,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_unbind_params(set, tuple) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_unbind_params_insert_domain`.
-    pub fn unbind_params_insert_domain(self, domain: MultiId) -> Map {
+    pub fn unbind_params_insert_domain(self, domain: MultiId) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2781,12 +3339,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_unbind_params_insert_domain(set, domain) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_union`.
-    pub fn union(self, set2: Set) -> Set {
+    pub fn union(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -2796,12 +3359,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_union(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_union_disjoint`.
-    pub fn union_disjoint(self, set2: Set) -> Set {
+    pub fn union_disjoint(self, set2: Set) -> Result<Set, LibISLError> {
         let set1 = self;
+        let isl_rs_ctx = set1.get_ctx();
         let mut set1 = set1;
         set1.do_not_free_on_drop();
         let set1 = set1.ptr;
@@ -2811,35 +3379,51 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_union_disjoint(set1, set2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_universe`.
-    pub fn universe(space: Space) -> Set {
+    pub fn universe(space: Space) -> Result<Set, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_set_universe(space) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_unshifted_simple_hull`.
-    pub fn unshifted_simple_hull(self) -> BasicSet {
+    pub fn unshifted_simple_hull(self) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_unshifted_simple_hull(set) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_unshifted_simple_hull_from_set_list`.
-    pub fn unshifted_simple_hull_from_set_list(self, list: SetList) -> BasicSet {
+    pub fn unshifted_simple_hull_from_set_list(self, list: SetList)
+                                               -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2849,24 +3433,34 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_unshifted_simple_hull_from_set_list(set, list) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_unwrap`.
-    pub fn unwrap(self) -> Map {
+    pub fn unwrap(self) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_unwrap(set) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_upper_bound_multi_pw_aff`.
-    pub fn upper_bound_multi_pw_aff(self, upper: MultiPwAff) -> Set {
+    pub fn upper_bound_multi_pw_aff(self, upper: MultiPwAff) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2876,12 +3470,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_upper_bound_multi_pw_aff(set, upper) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_upper_bound_multi_val`.
-    pub fn upper_bound_multi_val(self, upper: MultiVal) -> Set {
+    pub fn upper_bound_multi_val(self, upper: MultiVal) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2891,12 +3490,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_upper_bound_multi_val(set, upper) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_upper_bound_si`.
-    pub fn upper_bound_si(self, type_: DimType, pos: u32, value: i32) -> Set {
+    pub fn upper_bound_si(self, type_: DimType, pos: u32, value: i32) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2904,12 +3508,17 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_upper_bound_si(set, type_, pos, value) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_upper_bound_val`.
-    pub fn upper_bound_val(self, type_: DimType, pos: u32, value: Val) -> Set {
+    pub fn upper_bound_val(self, type_: DimType, pos: u32, value: Val) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -2920,31 +3529,45 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_upper_bound_val(set, type_, pos, value) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_wrapped_domain_map`.
-    pub fn wrapped_domain_map(self) -> Map {
+    pub fn wrapped_domain_map(self) -> Result<Map, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_wrapped_domain_map(set) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_set_wrapped_reverse`.
-    pub fn wrapped_reverse(self) -> Set {
+    pub fn wrapped_reverse(self) -> Result<Set, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
         let isl_rs_result = unsafe { isl_set_wrapped_reverse(set) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_set_free() on being dropped. (For internal use only.)

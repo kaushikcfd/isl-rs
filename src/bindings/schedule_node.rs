@@ -2,11 +2,11 @@
 // LICENSE: MIT
 
 use super::{
-    ASTLoopType, Context, Id, MultiUnionPwAff, MultiVal, Schedule, ScheduleNodeType, Set, Space,
-    UnionMap, UnionPwMultiAff, UnionSet, UnionSetList,
+    ASTLoopType, Context, Error, Id, LibISLError, MultiUnionPwAff, MultiVal, Schedule,
+    ScheduleNodeType, Set, Space, UnionMap, UnionPwMultiAff, UnionSet, UnionSetList,
 };
 use libc::uintptr_t;
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
 use std::os::raw::c_char;
 
 /// Wraps `isl_schedule_node`.
@@ -205,8 +205,9 @@ extern "C" {
 
 impl ScheduleNode {
     /// Wraps `isl_schedule_node_align_params`.
-    pub fn align_params(self, space: Space) -> ScheduleNode {
+    pub fn align_params(self, space: Space) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -216,64 +217,94 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_align_params(node, space) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_ancestor`.
-    pub fn ancestor(self, generation: i32) -> ScheduleNode {
+    pub fn ancestor(self, generation: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_ancestor(node, generation) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_get_ast_build_options`.
-    pub fn band_get_ast_build_options(&self) -> UnionSet {
+    pub fn band_get_ast_build_options(&self) -> Result<UnionSet, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_get_ast_build_options(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_get_ast_isolate_option`.
-    pub fn band_get_ast_isolate_option(&self) -> Set {
+    pub fn band_get_ast_isolate_option(&self) -> Result<Set, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_get_ast_isolate_option(node) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_get_partial_schedule`.
-    pub fn band_get_partial_schedule(&self) -> MultiUnionPwAff {
+    pub fn band_get_partial_schedule(&self) -> Result<MultiUnionPwAff, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_get_partial_schedule(node) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_get_partial_schedule_union_map`.
-    pub fn band_get_partial_schedule_union_map(&self) -> UnionMap {
+    pub fn band_get_partial_schedule_union_map(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_get_partial_schedule_union_map(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_get_permutable`.
-    pub fn band_get_permutable(&self) -> bool {
+    pub fn band_get_permutable(&self) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_get_permutable(node) };
         let isl_rs_result = match isl_rs_result {
@@ -281,31 +312,46 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_get_space`.
-    pub fn band_get_space(&self) -> Space {
+    pub fn band_get_space(&self) -> Result<Space, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_get_space(node) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_member_get_ast_loop_type`.
-    pub fn band_member_get_ast_loop_type(&self, pos: i32) -> ASTLoopType {
+    pub fn band_member_get_ast_loop_type(&self, pos: i32) -> Result<ASTLoopType, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_member_get_ast_loop_type(node, pos) };
         let isl_rs_result = ASTLoopType::from_i32(isl_rs_result);
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_member_get_coincident`.
-    pub fn band_member_get_coincident(&self, pos: i32) -> bool {
+    pub fn band_member_get_coincident(&self, pos: i32) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_member_get_coincident(node, pos) };
         let isl_rs_result = match isl_rs_result {
@@ -313,22 +359,34 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_member_get_isolate_ast_loop_type`.
-    pub fn band_member_get_isolate_ast_loop_type(&self, pos: i32) -> ASTLoopType {
+    pub fn band_member_get_isolate_ast_loop_type(&self, pos: i32)
+                                                 -> Result<ASTLoopType, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result =
             unsafe { isl_schedule_node_band_member_get_isolate_ast_loop_type(node, pos) };
         let isl_rs_result = ASTLoopType::from_i32(isl_rs_result);
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_member_set_ast_loop_type`.
-    pub fn band_member_set_ast_loop_type(self, pos: i32, type_: ASTLoopType) -> ScheduleNode {
+    pub fn band_member_set_ast_loop_type(self, pos: i32, type_: ASTLoopType)
+                                         -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -337,12 +395,18 @@ impl ScheduleNode {
             unsafe { isl_schedule_node_band_member_set_ast_loop_type(node, pos, type_) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_member_set_coincident`.
-    pub fn band_member_set_coincident(self, pos: i32, coincident: i32) -> ScheduleNode {
+    pub fn band_member_set_coincident(self, pos: i32, coincident: i32)
+                                      -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -350,13 +414,18 @@ impl ScheduleNode {
             unsafe { isl_schedule_node_band_member_set_coincident(node, pos, coincident) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_member_set_isolate_ast_loop_type`.
     pub fn band_member_set_isolate_ast_loop_type(self, pos: i32, type_: ASTLoopType)
-                                                 -> ScheduleNode {
+                                                 -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -365,12 +434,17 @@ impl ScheduleNode {
             unsafe { isl_schedule_node_band_member_set_isolate_ast_loop_type(node, pos, type_) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_mod`.
-    pub fn band_mod(self, mv: MultiVal) -> ScheduleNode {
+    pub fn band_mod(self, mv: MultiVal) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -380,20 +454,30 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_band_mod(node, mv) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_n_member`.
-    pub fn band_n_member(&self) -> i32 {
+    pub fn band_n_member(&self) -> Result<i32, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_n_member(node) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_scale`.
-    pub fn band_scale(self, mv: MultiVal) -> ScheduleNode {
+    pub fn band_scale(self, mv: MultiVal) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -403,12 +487,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_band_scale(node, mv) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_scale_down`.
-    pub fn band_scale_down(self, mv: MultiVal) -> ScheduleNode {
+    pub fn band_scale_down(self, mv: MultiVal) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -418,12 +507,18 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_band_scale_down(node, mv) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_set_ast_build_options`.
-    pub fn band_set_ast_build_options(self, options: UnionSet) -> ScheduleNode {
+    pub fn band_set_ast_build_options(self, options: UnionSet)
+                                      -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -433,24 +528,34 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_band_set_ast_build_options(node, options) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_set_permutable`.
-    pub fn band_set_permutable(self, permutable: i32) -> ScheduleNode {
+    pub fn band_set_permutable(self, permutable: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_set_permutable(node, permutable) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_shift`.
-    pub fn band_shift(self, shift: MultiUnionPwAff) -> ScheduleNode {
+    pub fn band_shift(self, shift: MultiUnionPwAff) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -460,36 +565,51 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_band_shift(node, shift) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_sink`.
-    pub fn band_sink(self) -> ScheduleNode {
+    pub fn band_sink(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_sink(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_split`.
-    pub fn band_split(self, pos: i32) -> ScheduleNode {
+    pub fn band_split(self, pos: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_band_split(node, pos) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_band_tile`.
-    pub fn band_tile(self, sizes: MultiVal) -> ScheduleNode {
+    pub fn band_tile(self, sizes: MultiVal) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -499,195 +619,289 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_band_tile(node, sizes) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_child`.
-    pub fn child(self, pos: i32) -> ScheduleNode {
+    pub fn child(self, pos: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_child(node, pos) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_context_get_context`.
-    pub fn context_get_context(&self) -> Set {
+    pub fn context_get_context(&self) -> Result<Set, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_context_get_context(node) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_copy`.
-    pub fn copy(&self) -> ScheduleNode {
+    pub fn copy(&self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_copy(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_cut`.
-    pub fn cut(self) -> ScheduleNode {
+    pub fn cut(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_cut(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_delete`.
-    pub fn delete(self) -> ScheduleNode {
+    pub fn delete(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_delete(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_domain_get_domain`.
-    pub fn domain_get_domain(&self) -> UnionSet {
+    pub fn domain_get_domain(&self) -> Result<UnionSet, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_domain_get_domain(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_dump(node) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_expansion_get_contraction`.
-    pub fn expansion_get_contraction(&self) -> UnionPwMultiAff {
+    pub fn expansion_get_contraction(&self) -> Result<UnionPwMultiAff, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_expansion_get_contraction(node) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_expansion_get_expansion`.
-    pub fn expansion_get_expansion(&self) -> UnionMap {
+    pub fn expansion_get_expansion(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_expansion_get_expansion(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_extension_get_extension`.
-    pub fn extension_get_extension(&self) -> UnionMap {
+    pub fn extension_get_extension(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_extension_get_extension(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_filter_get_filter`.
-    pub fn filter_get_filter(&self) -> UnionSet {
+    pub fn filter_get_filter(&self) -> Result<UnionSet, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_filter_get_filter(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_first_child`.
-    pub fn first_child(self) -> ScheduleNode {
+    pub fn first_child(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_first_child(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_free`.
-    pub fn free(self) -> ScheduleNode {
+    pub fn free(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_free(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_from_domain`.
-    pub fn from_domain(domain: UnionSet) -> ScheduleNode {
+    pub fn from_domain(domain: UnionSet) -> Result<ScheduleNode, LibISLError> {
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_from_domain(domain) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_from_extension`.
-    pub fn from_extension(extension: UnionMap) -> ScheduleNode {
+    pub fn from_extension(extension: UnionMap) -> Result<ScheduleNode, LibISLError> {
+        let isl_rs_ctx = extension.get_ctx();
         let mut extension = extension;
         extension.do_not_free_on_drop();
         let extension = extension.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_from_extension(extension) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_ancestor_child_position`.
-    pub fn get_ancestor_child_position(&self, ancestor: &ScheduleNode) -> i32 {
+    pub fn get_ancestor_child_position(&self, ancestor: &ScheduleNode) -> Result<i32, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let ancestor = ancestor.ptr;
         let isl_rs_result =
             unsafe { isl_schedule_node_get_ancestor_child_position(node, ancestor) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_child`.
-    pub fn get_child(&self, pos: i32) -> ScheduleNode {
+    pub fn get_child(&self, pos: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_child(node, pos) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_child_position`.
-    pub fn get_child_position(&self) -> i32 {
+    pub fn get_child_position(&self) -> Result<i32, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_child_position(node) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_ctx`.
@@ -701,155 +915,231 @@ impl ScheduleNode {
     }
 
     /// Wraps `isl_schedule_node_get_domain`.
-    pub fn get_domain(&self) -> UnionSet {
+    pub fn get_domain(&self) -> Result<UnionSet, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_domain(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_parent_type`.
-    pub fn get_parent_type(&self) -> ScheduleNodeType {
+    pub fn get_parent_type(&self) -> Result<ScheduleNodeType, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_parent_type(node) };
         let isl_rs_result = ScheduleNodeType::from_i32(isl_rs_result);
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_prefix_schedule_multi_union_pw_aff`.
-    pub fn get_prefix_schedule_multi_union_pw_aff(&self) -> MultiUnionPwAff {
+    pub fn get_prefix_schedule_multi_union_pw_aff(&self) -> Result<MultiUnionPwAff, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result =
             unsafe { isl_schedule_node_get_prefix_schedule_multi_union_pw_aff(node) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_prefix_schedule_relation`.
-    pub fn get_prefix_schedule_relation(&self) -> UnionMap {
+    pub fn get_prefix_schedule_relation(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_prefix_schedule_relation(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_prefix_schedule_union_map`.
-    pub fn get_prefix_schedule_union_map(&self) -> UnionMap {
+    pub fn get_prefix_schedule_union_map(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_prefix_schedule_union_map(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_prefix_schedule_union_pw_multi_aff`.
-    pub fn get_prefix_schedule_union_pw_multi_aff(&self) -> UnionPwMultiAff {
+    pub fn get_prefix_schedule_union_pw_multi_aff(&self) -> Result<UnionPwMultiAff, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result =
             unsafe { isl_schedule_node_get_prefix_schedule_union_pw_multi_aff(node) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_schedule`.
-    pub fn get_schedule(&self) -> Schedule {
+    pub fn get_schedule(&self) -> Result<Schedule, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_schedule(node) };
         let isl_rs_result = Schedule { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_schedule_depth`.
-    pub fn get_schedule_depth(&self) -> i32 {
+    pub fn get_schedule_depth(&self) -> Result<i32, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_schedule_depth(node) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_shared_ancestor`.
-    pub fn get_shared_ancestor(&self, node2: &ScheduleNode) -> ScheduleNode {
+    pub fn get_shared_ancestor(&self, node2: &ScheduleNode) -> Result<ScheduleNode, LibISLError> {
         let node1 = self;
+        let isl_rs_ctx = node1.get_ctx();
         let node1 = node1.ptr;
         let node2 = node2.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_shared_ancestor(node1, node2) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_subtree_contraction`.
-    pub fn get_subtree_contraction(&self) -> UnionPwMultiAff {
+    pub fn get_subtree_contraction(&self) -> Result<UnionPwMultiAff, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_subtree_contraction(node) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_subtree_expansion`.
-    pub fn get_subtree_expansion(&self) -> UnionMap {
+    pub fn get_subtree_expansion(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_subtree_expansion(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_subtree_schedule_union_map`.
-    pub fn get_subtree_schedule_union_map(&self) -> UnionMap {
+    pub fn get_subtree_schedule_union_map(&self) -> Result<UnionMap, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_subtree_schedule_union_map(node) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_tree_depth`.
-    pub fn get_tree_depth(&self) -> i32 {
+    pub fn get_tree_depth(&self) -> Result<i32, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_tree_depth(node) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_type`.
-    pub fn get_type(&self) -> ScheduleNodeType {
+    pub fn get_type(&self) -> Result<ScheduleNodeType, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_type(node) };
         let isl_rs_result = ScheduleNodeType::from_i32(isl_rs_result);
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_get_universe_domain`.
-    pub fn get_universe_domain(&self) -> UnionSet {
+    pub fn get_universe_domain(&self) -> Result<UnionSet, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_get_universe_domain(node) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_graft_after`.
-    pub fn graft_after(self, graft: ScheduleNode) -> ScheduleNode {
+    pub fn graft_after(self, graft: ScheduleNode) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -859,12 +1149,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_graft_after(node, graft) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_graft_before`.
-    pub fn graft_before(self, graft: ScheduleNode) -> ScheduleNode {
+    pub fn graft_before(self, graft: ScheduleNode) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -874,36 +1169,51 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_graft_before(node, graft) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_grandchild`.
-    pub fn grandchild(self, pos1: i32, pos2: i32) -> ScheduleNode {
+    pub fn grandchild(self, pos1: i32, pos2: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_grandchild(node, pos1, pos2) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_grandparent`.
-    pub fn grandparent(self) -> ScheduleNode {
+    pub fn grandparent(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_grandparent(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_group`.
-    pub fn group(self, group_id: Id) -> ScheduleNode {
+    pub fn group(self, group_id: Id) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -913,22 +1223,32 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_group(node, group_id) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_guard_get_guard`.
-    pub fn guard_get_guard(&self) -> Set {
+    pub fn guard_get_guard(&self) -> Result<Set, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_guard_get_guard(node) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_has_children`.
-    pub fn has_children(&self) -> bool {
+    pub fn has_children(&self) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_has_children(node) };
         let isl_rs_result = match isl_rs_result {
@@ -936,12 +1256,17 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_has_next_sibling`.
-    pub fn has_next_sibling(&self) -> bool {
+    pub fn has_next_sibling(&self) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_has_next_sibling(node) };
         let isl_rs_result = match isl_rs_result {
@@ -949,12 +1274,17 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_has_parent`.
-    pub fn has_parent(&self) -> bool {
+    pub fn has_parent(&self) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_has_parent(node) };
         let isl_rs_result = match isl_rs_result {
@@ -962,12 +1292,17 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_has_previous_sibling`.
-    pub fn has_previous_sibling(&self) -> bool {
+    pub fn has_previous_sibling(&self) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_has_previous_sibling(node) };
         let isl_rs_result = match isl_rs_result {
@@ -975,12 +1310,17 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_context`.
-    pub fn insert_context(self, context: Set) -> ScheduleNode {
+    pub fn insert_context(self, context: Set) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -990,12 +1330,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_context(node, context) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_filter`.
-    pub fn insert_filter(self, filter: UnionSet) -> ScheduleNode {
+    pub fn insert_filter(self, filter: UnionSet) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1005,12 +1350,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_filter(node, filter) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_guard`.
-    pub fn insert_guard(self, context: Set) -> ScheduleNode {
+    pub fn insert_guard(self, context: Set) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1020,12 +1370,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_guard(node, context) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_mark`.
-    pub fn insert_mark(self, mark: Id) -> ScheduleNode {
+    pub fn insert_mark(self, mark: Id) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1035,12 +1390,18 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_mark(node, mark) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_partial_schedule`.
-    pub fn insert_partial_schedule(self, schedule: MultiUnionPwAff) -> ScheduleNode {
+    pub fn insert_partial_schedule(self, schedule: MultiUnionPwAff)
+                                   -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1050,12 +1411,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_partial_schedule(node, schedule) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_sequence`.
-    pub fn insert_sequence(self, filters: UnionSetList) -> ScheduleNode {
+    pub fn insert_sequence(self, filters: UnionSetList) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1065,12 +1431,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_sequence(node, filters) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_insert_set`.
-    pub fn insert_set(self, filters: UnionSetList) -> ScheduleNode {
+    pub fn insert_set(self, filters: UnionSetList) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1080,12 +1451,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_insert_set(node, filters) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_is_equal`.
-    pub fn is_equal(&self, node2: &ScheduleNode) -> bool {
+    pub fn is_equal(&self, node2: &ScheduleNode) -> Result<bool, LibISLError> {
         let node1 = self;
+        let isl_rs_ctx = node1.get_ctx();
         let node1 = node1.ptr;
         let node2 = node2.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_is_equal(node1, node2) };
@@ -1094,12 +1470,17 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_is_subtree_anchored`.
-    pub fn is_subtree_anchored(&self) -> bool {
+    pub fn is_subtree_anchored(&self) -> Result<bool, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_is_subtree_anchored(node) };
         let isl_rs_result = match isl_rs_result {
@@ -1107,42 +1488,62 @@ impl ScheduleNode {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_mark_get_id`.
-    pub fn mark_get_id(&self) -> Id {
+    pub fn mark_get_id(&self) -> Result<Id, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_mark_get_id(node) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_n_children`.
-    pub fn n_children(&self) -> i32 {
+    pub fn n_children(&self) -> Result<i32, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_n_children(node) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_next_sibling`.
-    pub fn next_sibling(self) -> ScheduleNode {
+    pub fn next_sibling(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_next_sibling(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_order_after`.
-    pub fn order_after(self, filter: UnionSet) -> ScheduleNode {
+    pub fn order_after(self, filter: UnionSet) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1152,12 +1553,17 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_order_after(node, filter) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_order_before`.
-    pub fn order_before(self, filter: UnionSet) -> ScheduleNode {
+    pub fn order_before(self, filter: UnionSet) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
@@ -1167,89 +1573,128 @@ impl ScheduleNode {
         let isl_rs_result = unsafe { isl_schedule_node_order_before(node, filter) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_parent`.
-    pub fn parent(self) -> ScheduleNode {
+    pub fn parent(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_parent(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_previous_sibling`.
-    pub fn previous_sibling(self) -> ScheduleNode {
+    pub fn previous_sibling(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_previous_sibling(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_reset_user`.
-    pub fn reset_user(self) -> ScheduleNode {
+    pub fn reset_user(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_reset_user(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_root`.
-    pub fn root(self) -> ScheduleNode {
+    pub fn root(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_root(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_sequence_splice_child`.
-    pub fn sequence_splice_child(self, pos: i32) -> ScheduleNode {
+    pub fn sequence_splice_child(self, pos: i32) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_sequence_splice_child(node, pos) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_sequence_splice_children`.
-    pub fn sequence_splice_children(self) -> ScheduleNode {
+    pub fn sequence_splice_children(self) -> Result<ScheduleNode, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let mut node = node;
         node.do_not_free_on_drop();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_sequence_splice_children(node) };
         let isl_rs_result = ScheduleNode { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_schedule_node_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let node = self;
+        let isl_rs_ctx = node.get_ctx();
         let node = node.ptr;
         let isl_rs_result = unsafe { isl_schedule_node_to_str(node) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_schedule_node_free() on being dropped. (For internal

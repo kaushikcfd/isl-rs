@@ -2,8 +2,8 @@
 // LICENSE: MIT
 
 use super::{
-    Aff, Context, DimType, MultiAff, MultiUnionPwAff, MultiVal, PwMultiAff, PwMultiAffList, Set,
-    Space, UnionMap, UnionPwAff, UnionPwMultiAffList, UnionSet, Val,
+    Aff, Context, DimType, Error, LibISLError, MultiAff, MultiUnionPwAff, MultiVal, PwMultiAff,
+    PwMultiAffList, Set, Space, UnionMap, UnionPwAff, UnionPwMultiAffList, UnionSet, Val,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -112,49 +112,6 @@ extern "C" {
 
     fn isl_union_pw_multi_aff_isa_pw_multi_aff(upma: uintptr_t) -> i32;
 
-    fn isl_union_pw_multi_aff_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_dump(list: uintptr_t) -> ();
-
-    fn isl_union_pw_multi_aff_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_from_union_pw_multi_aff(el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_get_union_pw_multi_aff(list: uintptr_t, index: i32)
-                                                          -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_n_union_pw_multi_aff(list: uintptr_t) -> i32;
-
-    fn isl_union_pw_multi_aff_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_set_union_pw_multi_aff(list: uintptr_t, index: i32,
-                                                          el: uintptr_t)
-                                                          -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_size(list: uintptr_t) -> i32;
-
-    fn isl_union_pw_multi_aff_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_union_pw_multi_aff_list_to_str(list: uintptr_t) -> *const c_char;
-
     fn isl_union_pw_multi_aff_multi_val_on_domain(domain: uintptr_t, mv: uintptr_t) -> uintptr_t;
 
     fn isl_union_pw_multi_aff_n_pw_multi_aff(upma: uintptr_t) -> i32;
@@ -211,8 +168,9 @@ extern "C" {
 
 impl UnionPwMultiAff {
     /// Wraps `isl_union_pw_multi_aff_add`.
-    pub fn add(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn add(self, upma2: UnionPwMultiAff) -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -222,12 +180,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_add(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_add_pw_multi_aff`.
-    pub fn add_pw_multi_aff(self, pma: PwMultiAff) -> UnionPwMultiAff {
+    pub fn add_pw_multi_aff(self, pma: PwMultiAff) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -237,12 +200,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_add_pw_multi_aff(upma, pma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_align_params`.
-    pub fn align_params(self, model: Space) -> UnionPwMultiAff {
+    pub fn align_params(self, model: Space) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -252,12 +220,18 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_align_params(upma, model) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_apply_union_pw_multi_aff`.
-    pub fn apply_union_pw_multi_aff(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn apply_union_pw_multi_aff(self, upma2: UnionPwMultiAff)
+                                    -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -268,91 +242,132 @@ impl UnionPwMultiAff {
             unsafe { isl_union_pw_multi_aff_apply_union_pw_multi_aff(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_as_multi_union_pw_aff`.
-    pub fn as_multi_union_pw_aff(self) -> MultiUnionPwAff {
+    pub fn as_multi_union_pw_aff(self) -> Result<MultiUnionPwAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_as_multi_union_pw_aff(upma) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_as_pw_multi_aff`.
-    pub fn as_pw_multi_aff(self) -> PwMultiAff {
+    pub fn as_pw_multi_aff(self) -> Result<PwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_as_pw_multi_aff(upma) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_as_union_map`.
-    pub fn as_union_map(self) -> UnionMap {
+    pub fn as_union_map(self) -> Result<UnionMap, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_as_union_map(upma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_coalesce`.
-    pub fn coalesce(self) -> UnionPwMultiAff {
+    pub fn coalesce(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_coalesce(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_copy`.
-    pub fn copy(&self) -> UnionPwMultiAff {
+    pub fn copy(&self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_copy(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_dim(upma, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_domain`.
-    pub fn domain(self) -> UnionSet {
+    pub fn domain(self) -> Result<UnionSet, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_domain(upma) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_drop_dims`.
-    pub fn drop_dims(self, type_: DimType, first: u32, n: u32) -> UnionPwMultiAff {
+    pub fn drop_dims(self, type_: DimType, first: u32, n: u32)
+                     -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -360,63 +375,94 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_drop_dims(upma, type_, first, n) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_drop_unused_params`.
-    pub fn drop_unused_params(self) -> UnionPwMultiAff {
+    pub fn drop_unused_params(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_drop_unused_params(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_dump(upma) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_empty`.
-    pub fn empty(space: Space) -> UnionPwMultiAff {
+    pub fn empty(space: Space) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_empty(space) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_empty_ctx`.
-    pub fn empty_ctx(ctx: &Context) -> UnionPwMultiAff {
+    pub fn empty_ctx(ctx: &Context) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_empty_ctx(ctx) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_empty_space`.
-    pub fn empty_space(space: Space) -> UnionPwMultiAff {
+    pub fn empty_space(space: Space) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_empty_space(space) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_extract_pw_multi_aff`.
-    pub fn extract_pw_multi_aff(&self, space: Space) -> PwMultiAff {
+    pub fn extract_pw_multi_aff(&self, space: Space) -> Result<PwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let mut space = space;
         space.do_not_free_on_drop();
@@ -424,23 +470,34 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_extract_pw_multi_aff(upma, space) };
         let isl_rs_result = PwMultiAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_find_dim_by_name(upma, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_flat_range_product`.
-    pub fn flat_range_product(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn flat_range_product(self, upma2: UnionPwMultiAff)
+                              -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -450,107 +507,156 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_flat_range_product(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_free`.
-    pub fn free(self) -> UnionPwMultiAff {
+    pub fn free(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_free(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_aff`.
-    pub fn from_aff(aff: Aff) -> UnionPwMultiAff {
+    pub fn from_aff(aff: Aff) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = aff.get_ctx();
         let mut aff = aff;
         aff.do_not_free_on_drop();
         let aff = aff.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_aff(aff) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_domain`.
-    pub fn from_domain(uset: UnionSet) -> UnionPwMultiAff {
+    pub fn from_domain(uset: UnionSet) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = uset.get_ctx();
         let mut uset = uset;
         uset.do_not_free_on_drop();
         let uset = uset.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_domain(uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_multi_aff`.
-    pub fn from_multi_aff(ma: MultiAff) -> UnionPwMultiAff {
+    pub fn from_multi_aff(ma: MultiAff) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = ma.get_ctx();
         let mut ma = ma;
         ma.do_not_free_on_drop();
         let ma = ma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_multi_aff(ma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_multi_union_pw_aff`.
-    pub fn from_multi_union_pw_aff(mupa: MultiUnionPwAff) -> UnionPwMultiAff {
+    pub fn from_multi_union_pw_aff(mupa: MultiUnionPwAff) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = mupa.get_ctx();
         let mut mupa = mupa;
         mupa.do_not_free_on_drop();
         let mupa = mupa.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_multi_union_pw_aff(mupa) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_pw_multi_aff`.
-    pub fn from_pw_multi_aff(pma: PwMultiAff) -> UnionPwMultiAff {
+    pub fn from_pw_multi_aff(pma: PwMultiAff) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = pma.get_ctx();
         let mut pma = pma;
         pma.do_not_free_on_drop();
         let pma = pma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_pw_multi_aff(pma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_union_map`.
-    pub fn from_union_map(umap: UnionMap) -> UnionPwMultiAff {
+    pub fn from_union_map(umap: UnionMap) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_union_map(umap) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_union_pw_aff`.
-    pub fn from_union_pw_aff(upa: UnionPwAff) -> UnionPwMultiAff {
+    pub fn from_union_pw_aff(upa: UnionPwAff) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = upa.get_ctx();
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_union_pw_aff(upa) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_from_union_set`.
-    pub fn from_union_set(uset: UnionSet) -> UnionPwMultiAff {
+    pub fn from_union_set(uset: UnionSet) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = uset.get_ctx();
         let mut uset = uset;
         uset.do_not_free_on_drop();
         let uset = uset.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_from_union_set(uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_get_ctx`.
@@ -564,38 +670,54 @@ impl UnionPwMultiAff {
     }
 
     /// Wraps `isl_union_pw_multi_aff_get_pw_multi_aff_list`.
-    pub fn get_pw_multi_aff_list(&self) -> PwMultiAffList {
+    pub fn get_pw_multi_aff_list(&self) -> Result<PwMultiAffList, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_get_pw_multi_aff_list(upma) };
         let isl_rs_result = PwMultiAffList { ptr: isl_rs_result,
                                              should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_get_space(upma) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_get_union_pw_aff`.
-    pub fn get_union_pw_aff(&self, pos: i32) -> UnionPwAff {
+    pub fn get_union_pw_aff(&self, pos: i32) -> Result<UnionPwAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_get_union_pw_aff(upma, pos) };
         let isl_rs_result = UnionPwAff { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_gist`.
-    pub fn gist(self, context: UnionSet) -> UnionPwMultiAff {
+    pub fn gist(self, context: UnionSet) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -605,12 +727,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_gist(upma, context) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_gist_params`.
-    pub fn gist_params(self, context: Set) -> UnionPwMultiAff {
+    pub fn gist_params(self, context: Set) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -620,12 +747,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_gist_params(upma, context) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_intersect_domain`.
-    pub fn intersect_domain(self, uset: UnionSet) -> UnionPwMultiAff {
+    pub fn intersect_domain(self, uset: UnionSet) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -635,12 +767,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_intersect_domain(upma, uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_intersect_domain_space`.
-    pub fn intersect_domain_space(self, space: Space) -> UnionPwMultiAff {
+    pub fn intersect_domain_space(self, space: Space) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -650,12 +787,18 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_intersect_domain_space(upma, space) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_intersect_domain_union_set`.
-    pub fn intersect_domain_union_set(self, uset: UnionSet) -> UnionPwMultiAff {
+    pub fn intersect_domain_union_set(self, uset: UnionSet)
+                                      -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -666,12 +809,18 @@ impl UnionPwMultiAff {
             unsafe { isl_union_pw_multi_aff_intersect_domain_union_set(upma, uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_intersect_domain_wrapped_domain`.
-    pub fn intersect_domain_wrapped_domain(self, uset: UnionSet) -> UnionPwMultiAff {
+    pub fn intersect_domain_wrapped_domain(self, uset: UnionSet)
+                                           -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -682,12 +831,18 @@ impl UnionPwMultiAff {
             unsafe { isl_union_pw_multi_aff_intersect_domain_wrapped_domain(upma, uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_intersect_domain_wrapped_range`.
-    pub fn intersect_domain_wrapped_range(self, uset: UnionSet) -> UnionPwMultiAff {
+    pub fn intersect_domain_wrapped_range(self, uset: UnionSet)
+                                          -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -698,12 +853,17 @@ impl UnionPwMultiAff {
             unsafe { isl_union_pw_multi_aff_intersect_domain_wrapped_range(upma, uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_intersect_params`.
-    pub fn intersect_params(self, set: Set) -> UnionPwMultiAff {
+    pub fn intersect_params(self, set: Set) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -713,12 +873,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_intersect_params(upma, set) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_involves_locals`.
-    pub fn involves_locals(&self) -> bool {
+    pub fn involves_locals(&self) -> Result<bool, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_involves_locals(upma) };
         let isl_rs_result = match isl_rs_result {
@@ -726,12 +891,17 @@ impl UnionPwMultiAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_involves_nan`.
-    pub fn involves_nan(&self) -> bool {
+    pub fn involves_nan(&self) -> Result<bool, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_involves_nan(upma) };
         let isl_rs_result = match isl_rs_result {
@@ -739,12 +909,17 @@ impl UnionPwMultiAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_isa_pw_multi_aff`.
-    pub fn isa_pw_multi_aff(&self) -> bool {
+    pub fn isa_pw_multi_aff(&self) -> Result<bool, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_isa_pw_multi_aff(upma) };
         let isl_rs_result = match isl_rs_result {
@@ -752,230 +927,17 @@ impl UnionPwMultiAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_add`.
-    pub fn list_add(list: UnionPwMultiAffList, el: UnionPwMultiAff) -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_add(list, el) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> UnionPwMultiAffList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_alloc(ctx, n) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_clear`.
-    pub fn list_clear(list: UnionPwMultiAffList) -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_clear(list) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_concat`.
-    pub fn list_concat(list1: UnionPwMultiAffList, list2: UnionPwMultiAffList)
-                       -> UnionPwMultiAffList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_concat(list1, list2) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_copy`.
-    pub fn list_copy(list: &UnionPwMultiAffList) -> UnionPwMultiAffList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_copy(list) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_drop`.
-    pub fn list_drop(list: UnionPwMultiAffList, first: u32, n: u32) -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_drop(list, first, n) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_dump`.
-    pub fn list_dump(list: &UnionPwMultiAffList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_free`.
-    pub fn list_free(list: UnionPwMultiAffList) -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_free(list) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_from_union_pw_multi_aff`.
-    pub fn list_from_union_pw_multi_aff(self) -> UnionPwMultiAffList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_from_union_pw_multi_aff(el) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_get_at`.
-    pub fn list_get_at(list: &UnionPwMultiAffList, index: i32) -> UnionPwMultiAff {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_get_at(list, index) };
-        let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_get_ctx`.
-    pub fn list_get_ctx(list: &UnionPwMultiAffList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_get_union_pw_multi_aff`.
-    pub fn list_get_union_pw_multi_aff(list: &UnionPwMultiAffList, index: i32) -> UnionPwMultiAff {
-        let list = list.ptr;
-        let isl_rs_result =
-            unsafe { isl_union_pw_multi_aff_list_get_union_pw_multi_aff(list, index) };
-        let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
-                                              should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_insert`.
-    pub fn list_insert(list: UnionPwMultiAffList, pos: u32, el: UnionPwMultiAff)
-                       -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_insert(list, pos, el) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_n_union_pw_multi_aff`.
-    pub fn list_n_union_pw_multi_aff(list: &UnionPwMultiAffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_n_union_pw_multi_aff(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_reverse`.
-    pub fn list_reverse(list: UnionPwMultiAffList) -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_reverse(list) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_set_at`.
-    pub fn list_set_at(list: UnionPwMultiAffList, index: i32, el: UnionPwMultiAff)
-                       -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_set_at(list, index, el) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_set_union_pw_multi_aff`.
-    pub fn list_set_union_pw_multi_aff(list: UnionPwMultiAffList, index: i32,
-                                       el: UnionPwMultiAff)
-                                       -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result =
-            unsafe { isl_union_pw_multi_aff_list_set_union_pw_multi_aff(list, index, el) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_size`.
-    pub fn list_size(list: &UnionPwMultiAffList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_swap`.
-    pub fn list_swap(list: UnionPwMultiAffList, pos1: u32, pos2: u32) -> UnionPwMultiAffList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_swap(list, pos1, pos2) };
-        let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
-                                                  should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_pw_multi_aff_list_to_str`.
-    pub fn list_to_str(list: &UnionPwMultiAffList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_pw_multi_aff_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_multi_val_on_domain`.
-    pub fn multi_val_on_domain(domain: UnionSet, mv: MultiVal) -> UnionPwMultiAff {
+    pub fn multi_val_on_domain(domain: UnionSet, mv: MultiVal)
+                               -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -985,32 +947,47 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_multi_val_on_domain(domain, mv) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_n_pw_multi_aff`.
-    pub fn n_pw_multi_aff(&self) -> i32 {
+    pub fn n_pw_multi_aff(&self) -> Result<i32, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_n_pw_multi_aff(upma) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_neg`.
-    pub fn neg(self) -> UnionPwMultiAff {
+    pub fn neg(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_neg(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_plain_is_empty`.
-    pub fn plain_is_empty(&self) -> bool {
+    pub fn plain_is_empty(&self) -> Result<bool, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_plain_is_empty(upma) };
         let isl_rs_result = match isl_rs_result {
@@ -1018,12 +995,17 @@ impl UnionPwMultiAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_plain_is_equal`.
-    pub fn plain_is_equal(&self, upma2: &UnionPwMultiAff) -> bool {
+    pub fn plain_is_equal(&self, upma2: &UnionPwMultiAff) -> Result<bool, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let upma1 = upma1.ptr;
         let upma2 = upma2.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_plain_is_equal(upma1, upma2) };
@@ -1032,13 +1014,19 @@ impl UnionPwMultiAff {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_preimage_domain_wrapped_domain_union_pw_multi_aff`.
-    pub fn preimage_domain_wrapped_domain_union_pw_multi_aff(self, upma2: UnionPwMultiAff)
-                                                             -> UnionPwMultiAff {
+    pub fn preimage_domain_wrapped_domain_union_pw_multi_aff(
+        self, upma2: UnionPwMultiAff)
+        -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -1050,12 +1038,18 @@ impl UnionPwMultiAff {
         };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_pullback_union_pw_multi_aff`.
-    pub fn pullback_union_pw_multi_aff(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn pullback_union_pw_multi_aff(self, upma2: UnionPwMultiAff)
+                                       -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -1066,36 +1060,51 @@ impl UnionPwMultiAff {
             unsafe { isl_union_pw_multi_aff_pullback_union_pw_multi_aff(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_range_factor_domain`.
-    pub fn range_factor_domain(self) -> UnionPwMultiAff {
+    pub fn range_factor_domain(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_range_factor_domain(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_range_factor_range`.
-    pub fn range_factor_range(self) -> UnionPwMultiAff {
+    pub fn range_factor_range(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_range_factor_range(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_range_product`.
-    pub fn range_product(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn range_product(self, upma2: UnionPwMultiAff) -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -1105,35 +1114,51 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_range_product(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> UnionPwMultiAff {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<UnionPwMultiAff, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_read_from_str(ctx, str_) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_reset_user`.
-    pub fn reset_user(self) -> UnionPwMultiAff {
+    pub fn reset_user(self) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_reset_user(upma) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_scale_down_val`.
-    pub fn scale_down_val(self, val: Val) -> UnionPwMultiAff {
+    pub fn scale_down_val(self, val: Val) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1143,12 +1168,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_scale_down_val(upma, val) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_scale_multi_val`.
-    pub fn scale_multi_val(self, mv: MultiVal) -> UnionPwMultiAff {
+    pub fn scale_multi_val(self, mv: MultiVal) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1158,12 +1188,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_scale_multi_val(upma, mv) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_scale_val`.
-    pub fn scale_val(self, val: Val) -> UnionPwMultiAff {
+    pub fn scale_val(self, val: Val) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1173,12 +1208,18 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_scale_val(upma, val) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> UnionPwMultiAff {
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str)
+                        -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1188,12 +1229,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_set_dim_name(upma, type_, pos, s) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_sub`.
-    pub fn sub(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn sub(self, upma2: UnionPwMultiAff) -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -1203,12 +1249,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_sub(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_subtract_domain`.
-    pub fn subtract_domain(self, uset: UnionSet) -> UnionPwMultiAff {
+    pub fn subtract_domain(self, uset: UnionSet) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1218,12 +1269,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_subtract_domain(upma, uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_subtract_domain_space`.
-    pub fn subtract_domain_space(self, space: Space) -> UnionPwMultiAff {
+    pub fn subtract_domain_space(self, space: Space) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1233,12 +1289,17 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_subtract_domain_space(upma, space) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_subtract_domain_union_set`.
-    pub fn subtract_domain_union_set(self, uset: UnionSet) -> UnionPwMultiAff {
+    pub fn subtract_domain_union_set(self, uset: UnionSet) -> Result<UnionPwMultiAff, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
@@ -1248,34 +1309,49 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_subtract_domain_union_set(upma, uset) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_to_list`.
-    pub fn to_list(self) -> UnionPwMultiAffList {
+    pub fn to_list(self) -> Result<UnionPwMultiAffList, LibISLError> {
         let el = self;
+        let isl_rs_ctx = el.get_ctx();
         let mut el = el;
         el.do_not_free_on_drop();
         let el = el.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_to_list(el) };
         let isl_rs_result = UnionPwMultiAffList { ptr: isl_rs_result,
                                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let upma = self;
+        let isl_rs_ctx = upma.get_ctx();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_to_str(upma) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_pw_multi_aff_union_add`.
-    pub fn union_add(self, upma2: UnionPwMultiAff) -> UnionPwMultiAff {
+    pub fn union_add(self, upma2: UnionPwMultiAff) -> Result<UnionPwMultiAff, LibISLError> {
         let upma1 = self;
+        let isl_rs_ctx = upma1.get_ctx();
         let mut upma1 = upma1;
         upma1.do_not_free_on_drop();
         let upma1 = upma1.ptr;
@@ -1285,7 +1361,11 @@ impl UnionPwMultiAff {
         let isl_rs_result = unsafe { isl_union_pw_multi_aff_union_add(upma1, upma2) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_union_pw_multi_aff_free() on being dropped. (For

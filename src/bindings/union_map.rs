@@ -2,9 +2,9 @@
 // LICENSE: MIT
 
 use super::{
-    BasicMap, Context, DimType, Id, IdList, Map, MapList, MultiAff, MultiId, MultiPwAff,
-    MultiUnionPwAff, PwMultiAff, Set, Space, UnionMapList, UnionPwAff, UnionPwMultiAff, UnionSet,
-    Val,
+    BasicMap, Context, DimType, Error, Id, IdList, LibISLError, Map, MapList, MultiAff, MultiId,
+    MultiPwAff, MultiUnionPwAff, PwMultiAff, Set, Space, UnionMapList, UnionPwAff, UnionPwMultiAff,
+    UnionSet, Val,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -205,46 +205,6 @@ extern "C" {
 
     fn isl_union_map_lexmin(umap: uintptr_t) -> uintptr_t;
 
-    fn isl_union_map_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_union_map_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_union_map_list_dump(list: uintptr_t) -> ();
-
-    fn isl_union_map_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_from_union_map(el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_union_map_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_get_union_map(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_union_map_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_n_union_map(list: uintptr_t) -> i32;
-
-    fn isl_union_map_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_set_union_map(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_union_map_list_size(list: uintptr_t) -> i32;
-
-    fn isl_union_map_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_union_map_list_to_str(list: uintptr_t) -> *const c_char;
-
     fn isl_union_map_n_map(umap: uintptr_t) -> i32;
 
     fn isl_union_map_params(umap: uintptr_t) -> uintptr_t;
@@ -335,8 +295,9 @@ extern "C" {
 
 impl UnionMap {
     /// Wraps `isl_union_map_add_map`.
-    pub fn add_map(self, map: Map) -> UnionMap {
+    pub fn add_map(self, map: Map) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -346,24 +307,34 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_add_map(umap, map) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_affine_hull`.
-    pub fn affine_hull(self) -> UnionMap {
+    pub fn affine_hull(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_affine_hull(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_align_params`.
-    pub fn align_params(self, model: Space) -> UnionMap {
+    pub fn align_params(self, model: Space) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -373,12 +344,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_align_params(umap, model) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_apply_domain`.
-    pub fn apply_domain(self, umap2: UnionMap) -> UnionMap {
+    pub fn apply_domain(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -388,12 +364,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_apply_domain(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_apply_range`.
-    pub fn apply_range(self, umap2: UnionMap) -> UnionMap {
+    pub fn apply_range(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -403,48 +384,68 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_apply_range(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_as_map`.
-    pub fn as_map(self) -> Map {
+    pub fn as_map(self) -> Result<Map, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_as_map(umap) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_as_multi_union_pw_aff`.
-    pub fn as_multi_union_pw_aff(self) -> MultiUnionPwAff {
+    pub fn as_multi_union_pw_aff(self) -> Result<MultiUnionPwAff, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_as_multi_union_pw_aff(umap) };
         let isl_rs_result = MultiUnionPwAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_as_union_pw_multi_aff`.
-    pub fn as_union_pw_multi_aff(self) -> UnionPwMultiAff {
+    pub fn as_union_pw_multi_aff(self) -> Result<UnionPwMultiAff, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_as_union_pw_multi_aff(umap) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_bind_range`.
-    pub fn bind_range(self, tuple: MultiId) -> UnionSet {
+    pub fn bind_range(self, tuple: MultiId) -> Result<UnionSet, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -454,36 +455,51 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_bind_range(umap, tuple) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_coalesce`.
-    pub fn coalesce(self) -> UnionMap {
+    pub fn coalesce(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_coalesce(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_compute_divs`.
-    pub fn compute_divs(self) -> UnionMap {
+    pub fn compute_divs(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_compute_divs(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_contains`.
-    pub fn contains(&self, space: &Space) -> bool {
+    pub fn contains(&self, space: &Space) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_union_map_contains(umap, space) };
@@ -492,139 +508,199 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_copy`.
-    pub fn copy(&self) -> UnionMap {
+    pub fn copy(&self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_copy(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_curry`.
-    pub fn curry(self) -> UnionMap {
+    pub fn curry(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_curry(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_deltas`.
-    pub fn deltas(self) -> UnionSet {
+    pub fn deltas(self) -> Result<UnionSet, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_deltas(umap) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_deltas_map`.
-    pub fn deltas_map(self) -> UnionMap {
+    pub fn deltas_map(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_deltas_map(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_detect_equalities`.
-    pub fn detect_equalities(self) -> UnionMap {
+    pub fn detect_equalities(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_detect_equalities(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_union_map_dim(umap, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain`.
-    pub fn domain(self) -> UnionSet {
+    pub fn domain(self) -> Result<UnionSet, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_domain(umap) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain_factor_domain`.
-    pub fn domain_factor_domain(self) -> UnionMap {
+    pub fn domain_factor_domain(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_domain_factor_domain(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain_factor_range`.
-    pub fn domain_factor_range(self) -> UnionMap {
+    pub fn domain_factor_range(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_domain_factor_range(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain_map`.
-    pub fn domain_map(self) -> UnionMap {
+    pub fn domain_map(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_domain_map(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain_map_union_pw_multi_aff`.
-    pub fn domain_map_union_pw_multi_aff(self) -> UnionPwMultiAff {
+    pub fn domain_map_union_pw_multi_aff(self) -> Result<UnionPwMultiAff, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_domain_map_union_pw_multi_aff(umap) };
         let isl_rs_result = UnionPwMultiAff { ptr: isl_rs_result,
                                               should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain_product`.
-    pub fn domain_product(self, umap2: UnionMap) -> UnionMap {
+    pub fn domain_product(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -634,75 +710,111 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_domain_product(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_domain_reverse`.
-    pub fn domain_reverse(self) -> UnionMap {
+    pub fn domain_reverse(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_domain_reverse(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_drop_unused_params`.
-    pub fn drop_unused_params(self) -> UnionMap {
+    pub fn drop_unused_params(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_drop_unused_params(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_dump(umap) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_empty`.
-    pub fn empty(space: Space) -> UnionMap {
+    pub fn empty(space: Space) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_union_map_empty(space) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_empty_ctx`.
-    pub fn empty_ctx(ctx: &Context) -> UnionMap {
+    pub fn empty_ctx(ctx: &Context) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let isl_rs_result = unsafe { isl_union_map_empty_ctx(ctx) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_empty_space`.
-    pub fn empty_space(space: Space) -> UnionMap {
+    pub fn empty_space(space: Space) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_union_map_empty_space(space) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_eq_at_multi_union_pw_aff`.
-    pub fn eq_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff) -> UnionMap {
+    pub fn eq_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -712,12 +824,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_eq_at_multi_union_pw_aff(umap, mupa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_extract_map`.
-    pub fn extract_map(&self, space: Space) -> Map {
+    pub fn extract_map(&self, space: Space) -> Result<Map, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let mut space = space;
         space.do_not_free_on_drop();
@@ -725,47 +842,67 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_extract_map(umap, space) };
         let isl_rs_result = Map { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_factor_domain`.
-    pub fn factor_domain(self) -> UnionMap {
+    pub fn factor_domain(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_factor_domain(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_factor_range`.
-    pub fn factor_range(self) -> UnionMap {
+    pub fn factor_range(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_factor_range(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_find_dim_by_name`.
-    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> i32 {
+    pub fn find_dim_by_name(&self, type_: DimType, name: &str) -> Result<i32, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let type_ = type_.to_i32();
         let name = CString::new(name).unwrap();
         let name = name.as_ptr();
         let isl_rs_result = unsafe { isl_union_map_find_dim_by_name(umap, type_, name) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_fixed_power_val`.
-    pub fn fixed_power_val(self, exp: Val) -> UnionMap {
+    pub fn fixed_power_val(self, exp: Val) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -775,12 +912,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_fixed_power_val(umap, exp) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_flat_domain_product`.
-    pub fn flat_domain_product(self, umap2: UnionMap) -> UnionMap {
+    pub fn flat_domain_product(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -790,12 +932,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_flat_domain_product(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_flat_range_product`.
-    pub fn flat_range_product(self, umap2: UnionMap) -> UnionMap {
+    pub fn flat_range_product(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -805,45 +952,66 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_flat_range_product(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_free`.
-    pub fn free(self) -> UnionMap {
+    pub fn free(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_free(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_basic_map`.
-    pub fn from_basic_map(bmap: BasicMap) -> UnionMap {
+    pub fn from_basic_map(bmap: BasicMap) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_basic_map(bmap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_domain`.
-    pub fn from_domain(uset: UnionSet) -> UnionMap {
+    pub fn from_domain(uset: UnionSet) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = uset.get_ctx();
         let mut uset = uset;
         uset.do_not_free_on_drop();
         let uset = uset.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_domain(uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_domain_and_range`.
-    pub fn from_domain_and_range(domain: UnionSet, range: UnionSet) -> UnionMap {
+    pub fn from_domain_and_range(domain: UnionSet, range: UnionSet)
+                                 -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = domain.get_ctx();
         let mut domain = domain;
         domain.do_not_free_on_drop();
         let domain = domain.ptr;
@@ -853,62 +1021,91 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_from_domain_and_range(domain, range) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_map`.
-    pub fn from_map(map: Map) -> UnionMap {
+    pub fn from_map(map: Map) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = map.get_ctx();
         let mut map = map;
         map.do_not_free_on_drop();
         let map = map.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_map(map) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_multi_union_pw_aff`.
-    pub fn from_multi_union_pw_aff(mupa: MultiUnionPwAff) -> UnionMap {
+    pub fn from_multi_union_pw_aff(mupa: MultiUnionPwAff) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = mupa.get_ctx();
         let mut mupa = mupa;
         mupa.do_not_free_on_drop();
         let mupa = mupa.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_multi_union_pw_aff(mupa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_range`.
-    pub fn from_range(uset: UnionSet) -> UnionMap {
+    pub fn from_range(uset: UnionSet) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = uset.get_ctx();
         let mut uset = uset;
         uset.do_not_free_on_drop();
         let uset = uset.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_range(uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_union_pw_aff`.
-    pub fn from_union_pw_aff(upa: UnionPwAff) -> UnionMap {
+    pub fn from_union_pw_aff(upa: UnionPwAff) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = upa.get_ctx();
         let mut upa = upa;
         upa.do_not_free_on_drop();
         let upa = upa.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_union_pw_aff(upa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_from_union_pw_multi_aff`.
-    pub fn from_union_pw_multi_aff(upma: UnionPwMultiAff) -> UnionMap {
+    pub fn from_union_pw_multi_aff(upma: UnionPwMultiAff) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = upma.get_ctx();
         let mut upma = upma;
         upma.do_not_free_on_drop();
         let upma = upma.ptr;
         let isl_rs_result = unsafe { isl_union_map_from_union_pw_multi_aff(upma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_get_ctx`.
@@ -922,47 +1119,68 @@ impl UnionMap {
     }
 
     /// Wraps `isl_union_map_get_dim_id`.
-    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
+    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Result<Id, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_union_map_get_dim_id(umap, type_, pos) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_get_hash`.
-    pub fn get_hash(&self) -> u32 {
+    pub fn get_hash(&self) -> Result<u32, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_get_hash(umap) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_get_map_list`.
-    pub fn get_map_list(&self) -> MapList {
+    pub fn get_map_list(&self) -> Result<MapList, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_get_map_list(umap) };
         let isl_rs_result = MapList { ptr: isl_rs_result,
                                       should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_get_space(umap) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_gist`.
-    pub fn gist(self, context: UnionMap) -> UnionMap {
+    pub fn gist(self, context: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -972,12 +1190,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_gist(umap, context) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_gist_domain`.
-    pub fn gist_domain(self, uset: UnionSet) -> UnionMap {
+    pub fn gist_domain(self, uset: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -987,12 +1210,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_gist_domain(umap, uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_gist_params`.
-    pub fn gist_params(self, set: Set) -> UnionMap {
+    pub fn gist_params(self, set: Set) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1002,12 +1230,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_gist_params(umap, set) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_gist_range`.
-    pub fn gist_range(self, uset: UnionSet) -> UnionMap {
+    pub fn gist_range(self, uset: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1017,12 +1250,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_gist_range(umap, uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect`.
-    pub fn intersect(self, umap2: UnionMap) -> UnionMap {
+    pub fn intersect(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -1032,12 +1270,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_domain`.
-    pub fn intersect_domain(self, uset: UnionSet) -> UnionMap {
+    pub fn intersect_domain(self, uset: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1047,12 +1290,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_domain(umap, uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_domain_factor_domain`.
-    pub fn intersect_domain_factor_domain(self, factor: UnionMap) -> UnionMap {
+    pub fn intersect_domain_factor_domain(self, factor: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1062,12 +1310,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_domain_factor_domain(umap, factor) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_domain_factor_range`.
-    pub fn intersect_domain_factor_range(self, factor: UnionMap) -> UnionMap {
+    pub fn intersect_domain_factor_range(self, factor: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1077,12 +1330,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_domain_factor_range(umap, factor) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_domain_space`.
-    pub fn intersect_domain_space(self, space: Space) -> UnionMap {
+    pub fn intersect_domain_space(self, space: Space) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1092,12 +1350,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_domain_space(umap, space) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_domain_union_set`.
-    pub fn intersect_domain_union_set(self, uset: UnionSet) -> UnionMap {
+    pub fn intersect_domain_union_set(self, uset: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1107,12 +1370,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_domain_union_set(umap, uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_domain_wrapped_domain_union_set`.
-    pub fn intersect_domain_wrapped_domain_union_set(self, domain: UnionSet) -> UnionMap {
+    pub fn intersect_domain_wrapped_domain_union_set(self, domain: UnionSet)
+                                                     -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1123,12 +1392,17 @@ impl UnionMap {
             unsafe { isl_union_map_intersect_domain_wrapped_domain_union_set(umap, domain) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_params`.
-    pub fn intersect_params(self, set: Set) -> UnionMap {
+    pub fn intersect_params(self, set: Set) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1138,12 +1412,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_params(umap, set) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_range`.
-    pub fn intersect_range(self, uset: UnionSet) -> UnionMap {
+    pub fn intersect_range(self, uset: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1153,12 +1432,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_range(umap, uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_range_factor_domain`.
-    pub fn intersect_range_factor_domain(self, factor: UnionMap) -> UnionMap {
+    pub fn intersect_range_factor_domain(self, factor: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1168,12 +1452,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_range_factor_domain(umap, factor) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_range_factor_range`.
-    pub fn intersect_range_factor_range(self, factor: UnionMap) -> UnionMap {
+    pub fn intersect_range_factor_range(self, factor: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1183,12 +1472,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_range_factor_range(umap, factor) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_range_space`.
-    pub fn intersect_range_space(self, space: Space) -> UnionMap {
+    pub fn intersect_range_space(self, space: Space) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1198,12 +1492,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_range_space(umap, space) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_range_union_set`.
-    pub fn intersect_range_union_set(self, uset: UnionSet) -> UnionMap {
+    pub fn intersect_range_union_set(self, uset: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1213,12 +1512,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_intersect_range_union_set(umap, uset) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_intersect_range_wrapped_domain_union_set`.
-    pub fn intersect_range_wrapped_domain_union_set(self, domain: UnionSet) -> UnionMap {
+    pub fn intersect_range_wrapped_domain_union_set(self, domain: UnionSet)
+                                                    -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1229,12 +1534,17 @@ impl UnionMap {
             unsafe { isl_union_map_intersect_range_wrapped_domain_union_set(umap, domain) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_union_map_involves_dims(umap, type_, first, n) };
@@ -1243,12 +1553,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_bijective`.
-    pub fn is_bijective(&self) -> bool {
+    pub fn is_bijective(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_bijective(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1256,12 +1571,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_disjoint`.
-    pub fn is_disjoint(&self, umap2: &UnionMap) -> bool {
+    pub fn is_disjoint(&self, umap2: &UnionMap) -> Result<bool, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let umap1 = umap1.ptr;
         let umap2 = umap2.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_disjoint(umap1, umap2) };
@@ -1270,12 +1590,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_empty`.
-    pub fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_empty(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1283,12 +1608,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_equal`.
-    pub fn is_equal(&self, umap2: &UnionMap) -> bool {
+    pub fn is_equal(&self, umap2: &UnionMap) -> Result<bool, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let umap1 = umap1.ptr;
         let umap2 = umap2.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_equal(umap1, umap2) };
@@ -1297,12 +1627,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_identity`.
-    pub fn is_identity(&self) -> bool {
+    pub fn is_identity(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_identity(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1310,12 +1645,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_injective`.
-    pub fn is_injective(&self) -> bool {
+    pub fn is_injective(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_injective(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1323,12 +1663,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_single_valued`.
-    pub fn is_single_valued(&self) -> bool {
+    pub fn is_single_valued(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_single_valued(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1336,12 +1681,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_strict_subset`.
-    pub fn is_strict_subset(&self, umap2: &UnionMap) -> bool {
+    pub fn is_strict_subset(&self, umap2: &UnionMap) -> Result<bool, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let umap1 = umap1.ptr;
         let umap2 = umap2.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_strict_subset(umap1, umap2) };
@@ -1350,12 +1700,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_is_subset`.
-    pub fn is_subset(&self, umap2: &UnionMap) -> bool {
+    pub fn is_subset(&self, umap2: &UnionMap) -> Result<bool, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let umap1 = umap1.ptr;
         let umap2 = umap2.ptr;
         let isl_rs_result = unsafe { isl_union_map_is_subset(umap1, umap2) };
@@ -1364,12 +1719,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_isa_map`.
-    pub fn isa_map(&self) -> bool {
+    pub fn isa_map(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_isa_map(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1377,12 +1737,18 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_ge_at_multi_union_pw_aff`.
-    pub fn lex_ge_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff) -> UnionMap {
+    pub fn lex_ge_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff)
+                                        -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1392,12 +1758,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_ge_at_multi_union_pw_aff(umap, mupa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_ge_union_map`.
-    pub fn lex_ge_union_map(self, umap2: UnionMap) -> UnionMap {
+    pub fn lex_ge_union_map(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -1407,12 +1778,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_ge_union_map(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_gt_at_multi_union_pw_aff`.
-    pub fn lex_gt_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff) -> UnionMap {
+    pub fn lex_gt_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff)
+                                        -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1422,12 +1799,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_gt_at_multi_union_pw_aff(umap, mupa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_gt_union_map`.
-    pub fn lex_gt_union_map(self, umap2: UnionMap) -> UnionMap {
+    pub fn lex_gt_union_map(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -1437,12 +1819,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_gt_union_map(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_le_at_multi_union_pw_aff`.
-    pub fn lex_le_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff) -> UnionMap {
+    pub fn lex_le_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff)
+                                        -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1452,12 +1840,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_le_at_multi_union_pw_aff(umap, mupa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_le_union_map`.
-    pub fn lex_le_union_map(self, umap2: UnionMap) -> UnionMap {
+    pub fn lex_le_union_map(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -1467,12 +1860,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_le_union_map(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_lt_at_multi_union_pw_aff`.
-    pub fn lex_lt_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff) -> UnionMap {
+    pub fn lex_lt_at_multi_union_pw_aff(self, mupa: MultiUnionPwAff)
+                                        -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1482,12 +1881,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_lt_at_multi_union_pw_aff(umap, mupa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lex_lt_union_map`.
-    pub fn lex_lt_union_map(self, umap2: UnionMap) -> UnionMap {
+    pub fn lex_lt_union_map(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -1497,268 +1901,81 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_lex_lt_union_map(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lexmax`.
-    pub fn lexmax(self) -> UnionMap {
+    pub fn lexmax(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_lexmax(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_lexmin`.
-    pub fn lexmin(self) -> UnionMap {
+    pub fn lexmin(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_lexmin(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_add`.
-    pub fn list_add(list: UnionMapList, el: UnionMap) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_add(list, el) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> UnionMapList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_alloc(ctx, n) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_clear`.
-    pub fn list_clear(list: UnionMapList) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_clear(list) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_concat`.
-    pub fn list_concat(list1: UnionMapList, list2: UnionMapList) -> UnionMapList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_concat(list1, list2) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_copy`.
-    pub fn list_copy(list: &UnionMapList) -> UnionMapList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_copy(list) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_drop`.
-    pub fn list_drop(list: UnionMapList, first: u32, n: u32) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_drop(list, first, n) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_dump`.
-    pub fn list_dump(list: &UnionMapList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_free`.
-    pub fn list_free(list: UnionMapList) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_free(list) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_from_union_map`.
-    pub fn list_from_union_map(self) -> UnionMapList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_from_union_map(el) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_get_at`.
-    pub fn list_get_at(list: &UnionMapList, index: i32) -> UnionMap {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_get_at(list, index) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_get_ctx`.
-    pub fn list_get_ctx(list: &UnionMapList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_get_union_map`.
-    pub fn list_get_union_map(list: &UnionMapList, index: i32) -> UnionMap {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_get_union_map(list, index) };
-        let isl_rs_result = UnionMap { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_insert`.
-    pub fn list_insert(list: UnionMapList, pos: u32, el: UnionMap) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_insert(list, pos, el) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_n_union_map`.
-    pub fn list_n_union_map(list: &UnionMapList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_n_union_map(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_reverse`.
-    pub fn list_reverse(list: UnionMapList) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_reverse(list) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_set_at`.
-    pub fn list_set_at(list: UnionMapList, index: i32, el: UnionMap) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_set_at(list, index, el) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_set_union_map`.
-    pub fn list_set_union_map(list: UnionMapList, index: i32, el: UnionMap) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_set_union_map(list, index, el) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_size`.
-    pub fn list_size(list: &UnionMapList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_swap`.
-    pub fn list_swap(list: UnionMapList, pos1: u32, pos2: u32) -> UnionMapList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_swap(list, pos1, pos2) };
-        let isl_rs_result = UnionMapList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_union_map_list_to_str`.
-    pub fn list_to_str(list: &UnionMapList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_union_map_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_n_map`.
-    pub fn n_map(&self) -> i32 {
+    pub fn n_map(&self) -> Result<i32, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_n_map(umap) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_params`.
-    pub fn params(self) -> Set {
+    pub fn params(self) -> Result<Set, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_params(umap) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_plain_is_empty`.
-    pub fn plain_is_empty(&self) -> bool {
+    pub fn plain_is_empty(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_plain_is_empty(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1766,12 +1983,17 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_plain_is_injective`.
-    pub fn plain_is_injective(&self) -> bool {
+    pub fn plain_is_injective(&self) -> Result<bool, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_plain_is_injective(umap) };
         let isl_rs_result = match isl_rs_result {
@@ -1779,36 +2001,51 @@ impl UnionMap {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_plain_unshifted_simple_hull`.
-    pub fn plain_unshifted_simple_hull(self) -> UnionMap {
+    pub fn plain_unshifted_simple_hull(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_plain_unshifted_simple_hull(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_polyhedral_hull`.
-    pub fn polyhedral_hull(self) -> UnionMap {
+    pub fn polyhedral_hull(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_polyhedral_hull(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_domain_multi_aff`.
-    pub fn preimage_domain_multi_aff(self, ma: MultiAff) -> UnionMap {
+    pub fn preimage_domain_multi_aff(self, ma: MultiAff) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1818,12 +2055,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_domain_multi_aff(umap, ma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_domain_multi_pw_aff`.
-    pub fn preimage_domain_multi_pw_aff(self, mpa: MultiPwAff) -> UnionMap {
+    pub fn preimage_domain_multi_pw_aff(self, mpa: MultiPwAff) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1833,12 +2075,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_domain_multi_pw_aff(umap, mpa) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_domain_pw_multi_aff`.
-    pub fn preimage_domain_pw_multi_aff(self, pma: PwMultiAff) -> UnionMap {
+    pub fn preimage_domain_pw_multi_aff(self, pma: PwMultiAff) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1848,12 +2095,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_domain_pw_multi_aff(umap, pma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_domain_union_pw_multi_aff`.
-    pub fn preimage_domain_union_pw_multi_aff(self, upma: UnionPwMultiAff) -> UnionMap {
+    pub fn preimage_domain_union_pw_multi_aff(self, upma: UnionPwMultiAff)
+                                              -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1863,12 +2116,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_domain_union_pw_multi_aff(umap, upma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_range_multi_aff`.
-    pub fn preimage_range_multi_aff(self, ma: MultiAff) -> UnionMap {
+    pub fn preimage_range_multi_aff(self, ma: MultiAff) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1878,12 +2136,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_range_multi_aff(umap, ma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_range_pw_multi_aff`.
-    pub fn preimage_range_pw_multi_aff(self, pma: PwMultiAff) -> UnionMap {
+    pub fn preimage_range_pw_multi_aff(self, pma: PwMultiAff) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1893,12 +2156,18 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_range_pw_multi_aff(umap, pma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_preimage_range_union_pw_multi_aff`.
-    pub fn preimage_range_union_pw_multi_aff(self, upma: UnionPwMultiAff) -> UnionMap {
+    pub fn preimage_range_union_pw_multi_aff(self, upma: UnionPwMultiAff)
+                                             -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1908,12 +2177,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_preimage_range_union_pw_multi_aff(umap, upma) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_product`.
-    pub fn product(self, umap2: UnionMap) -> UnionMap {
+    pub fn product(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -1923,12 +2197,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_product(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_project_out`.
-    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> UnionMap {
+    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1936,24 +2215,34 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_project_out(umap, type_, first, n) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_project_out_all_params`.
-    pub fn project_out_all_params(self) -> UnionMap {
+    pub fn project_out_all_params(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_project_out_all_params(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_project_out_param_id`.
-    pub fn project_out_param_id(self, id: Id) -> UnionMap {
+    pub fn project_out_param_id(self, id: Id) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1963,12 +2252,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_project_out_param_id(umap, id) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_project_out_param_id_list`.
-    pub fn project_out_param_id_list(self, list: IdList) -> UnionMap {
+    pub fn project_out_param_id_list(self, list: IdList) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -1978,72 +2272,102 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_project_out_param_id_list(umap, list) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range`.
-    pub fn range(self) -> UnionSet {
+    pub fn range(self) -> Result<UnionSet, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_range(umap) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range_curry`.
-    pub fn range_curry(self) -> UnionMap {
+    pub fn range_curry(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_range_curry(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range_factor_domain`.
-    pub fn range_factor_domain(self) -> UnionMap {
+    pub fn range_factor_domain(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_range_factor_domain(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range_factor_range`.
-    pub fn range_factor_range(self) -> UnionMap {
+    pub fn range_factor_range(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_range_factor_range(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range_map`.
-    pub fn range_map(self) -> UnionMap {
+    pub fn range_map(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_range_map(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range_product`.
-    pub fn range_product(self, umap2: UnionMap) -> UnionMap {
+    pub fn range_product(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -2053,107 +2377,153 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_range_product(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_range_reverse`.
-    pub fn range_reverse(self) -> UnionMap {
+    pub fn range_reverse(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_range_reverse(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> UnionMap {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<UnionMap, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_union_map_read_from_str(ctx, str_) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_remove_divs`.
-    pub fn remove_divs(self) -> UnionMap {
+    pub fn remove_divs(self) -> Result<UnionMap, LibISLError> {
         let bmap = self;
+        let isl_rs_ctx = bmap.get_ctx();
         let mut bmap = bmap;
         bmap.do_not_free_on_drop();
         let bmap = bmap.ptr;
         let isl_rs_result = unsafe { isl_union_map_remove_divs(bmap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_remove_redundancies`.
-    pub fn remove_redundancies(self) -> UnionMap {
+    pub fn remove_redundancies(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_remove_redundancies(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_reset_user`.
-    pub fn reset_user(self) -> UnionMap {
+    pub fn reset_user(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_reset_user(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_reverse`.
-    pub fn reverse(self) -> UnionMap {
+    pub fn reverse(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_reverse(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_sample`.
-    pub fn sample(self) -> BasicMap {
+    pub fn sample(self) -> Result<BasicMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_sample(umap) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_simple_hull`.
-    pub fn simple_hull(self) -> UnionMap {
+    pub fn simple_hull(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_simple_hull(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_subtract`.
-    pub fn subtract(self, umap2: UnionMap) -> UnionMap {
+    pub fn subtract(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -2163,12 +2533,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_subtract(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_subtract_domain`.
-    pub fn subtract_domain(self, dom: UnionSet) -> UnionMap {
+    pub fn subtract_domain(self, dom: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -2178,12 +2553,17 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_subtract_domain(umap, dom) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_subtract_range`.
-    pub fn subtract_range(self, dom: UnionSet) -> UnionMap {
+    pub fn subtract_range(self, dom: UnionSet) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
@@ -2193,46 +2573,66 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_subtract_range(umap, dom) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_to_list`.
-    pub fn to_list(self) -> UnionMapList {
+    pub fn to_list(self) -> Result<UnionMapList, LibISLError> {
         let el = self;
+        let isl_rs_ctx = el.get_ctx();
         let mut el = el;
         el.do_not_free_on_drop();
         let el = el.ptr;
         let isl_rs_result = unsafe { isl_union_map_to_list(el) };
         let isl_rs_result = UnionMapList { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_to_str(umap) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_uncurry`.
-    pub fn uncurry(self) -> UnionMap {
+    pub fn uncurry(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_uncurry(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_union`.
-    pub fn union(self, umap2: UnionMap) -> UnionMap {
+    pub fn union(self, umap2: UnionMap) -> Result<UnionMap, LibISLError> {
         let umap1 = self;
+        let isl_rs_ctx = umap1.get_ctx();
         let mut umap1 = umap1;
         umap1.do_not_free_on_drop();
         let umap1 = umap1.ptr;
@@ -2242,43 +2642,62 @@ impl UnionMap {
         let isl_rs_result = unsafe { isl_union_map_union(umap1, umap2) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_universe`.
-    pub fn universe(self) -> UnionMap {
+    pub fn universe(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_universe(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_wrap`.
-    pub fn wrap(self) -> UnionSet {
+    pub fn wrap(self) -> Result<UnionSet, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_wrap(umap) };
         let isl_rs_result = UnionSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_union_map_zip`.
-    pub fn zip(self) -> UnionMap {
+    pub fn zip(self) -> Result<UnionMap, LibISLError> {
         let umap = self;
+        let isl_rs_ctx = umap.get_ctx();
         let mut umap = umap;
         umap.do_not_free_on_drop();
         let umap = umap.ptr;
         let isl_rs_result = unsafe { isl_union_map_zip(umap) };
         let isl_rs_result = UnionMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_union_map_free() on being dropped. (For internal use

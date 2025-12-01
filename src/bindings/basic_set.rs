@@ -2,8 +2,8 @@
 // LICENSE: MIT
 
 use super::{
-    Aff, BasicMap, BasicSetList, Constraint, ConstraintList, Context, DimType, Id, LocalSpace, Mat,
-    MultiAff, Point, Set, Space, Val, Vertices,
+    Aff, BasicMap, BasicSetList, Constraint, ConstraintList, Context, DimType, Error, Id,
+    LibISLError, LocalSpace, Mat, MultiAff, Point, Set, Space, Val, Vertices,
 };
 use libc::uintptr_t;
 use std::ffi::{CStr, CString};
@@ -137,50 +137,6 @@ extern "C" {
 
     fn isl_basic_set_lift(bset: uintptr_t) -> uintptr_t;
 
-    fn isl_basic_set_list_add(list: uintptr_t, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_alloc(ctx: uintptr_t, n: i32) -> uintptr_t;
-
-    fn isl_basic_set_list_clear(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_coefficients(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_concat(list1: uintptr_t, list2: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_copy(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_drop(list: uintptr_t, first: u32, n: u32) -> uintptr_t;
-
-    fn isl_basic_set_list_dump(list: uintptr_t) -> ();
-
-    fn isl_basic_set_list_free(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_from_basic_set(el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_get_at(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_basic_set_list_get_basic_set(list: uintptr_t, index: i32) -> uintptr_t;
-
-    fn isl_basic_set_list_get_ctx(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_insert(list: uintptr_t, pos: u32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_intersect(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_n_basic_set(list: uintptr_t) -> i32;
-
-    fn isl_basic_set_list_reverse(list: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_set_at(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_set_basic_set(list: uintptr_t, index: i32, el: uintptr_t) -> uintptr_t;
-
-    fn isl_basic_set_list_size(list: uintptr_t) -> i32;
-
-    fn isl_basic_set_list_swap(list: uintptr_t, pos1: u32, pos2: u32) -> uintptr_t;
-
-    fn isl_basic_set_list_to_str(list: uintptr_t) -> *const c_char;
-
     fn isl_basic_set_lower_bound_val(bset: uintptr_t, type_: i32, pos: u32, value: uintptr_t)
                                      -> uintptr_t;
 
@@ -267,8 +223,9 @@ extern "C" {
 
 impl BasicSet {
     /// Wraps `isl_basic_set_add_constraint`.
-    pub fn add_constraint(self, constraint: Constraint) -> BasicSet {
+    pub fn add_constraint(self, constraint: Constraint) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -278,12 +235,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_add_constraint(bset, constraint) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_add_dims`.
-    pub fn add_dims(self, type_: DimType, n: u32) -> BasicSet {
+    pub fn add_dims(self, type_: DimType, n: u32) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -291,24 +253,34 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_add_dims(bset, type_, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_affine_hull`.
-    pub fn affine_hull(self) -> BasicSet {
+    pub fn affine_hull(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_affine_hull(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_align_params`.
-    pub fn align_params(self, model: Space) -> BasicSet {
+    pub fn align_params(self, model: Space) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -318,12 +290,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_align_params(bset, model) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_apply`.
-    pub fn apply(self, bmap: BasicMap) -> BasicSet {
+    pub fn apply(self, bmap: BasicMap) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -333,11 +310,16 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_apply(bset, bmap) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_box_from_points`.
-    pub fn box_from_points(pnt1: Point, pnt2: Point) -> BasicSet {
+    pub fn box_from_points(pnt1: Point, pnt2: Point) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = pnt1.get_ctx();
         let mut pnt1 = pnt1;
         pnt1.do_not_free_on_drop();
         let pnt1 = pnt1.ptr;
@@ -347,98 +329,144 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_box_from_points(pnt1, pnt2) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_coefficients`.
-    pub fn coefficients(self) -> BasicSet {
+    pub fn coefficients(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_coefficients(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_compare_at`.
-    pub fn compare_at(&self, bset2: &BasicSet, pos: i32) -> i32 {
+    pub fn compare_at(&self, bset2: &BasicSet, pos: i32) -> Result<i32, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let bset1 = bset1.ptr;
         let bset2 = bset2.ptr;
         let isl_rs_result = unsafe { isl_basic_set_compare_at(bset1, bset2, pos) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_compute_divs`.
-    pub fn compute_divs(self) -> Set {
+    pub fn compute_divs(self) -> Result<Set, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_compute_divs(bset) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_compute_vertices`.
-    pub fn compute_vertices(&self) -> Vertices {
+    pub fn compute_vertices(&self) -> Result<Vertices, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_compute_vertices(bset) };
         let isl_rs_result = Vertices { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_copy`.
-    pub fn copy(&self) -> BasicSet {
+    pub fn copy(&self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_copy(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_detect_equalities`.
-    pub fn detect_equalities(self) -> BasicSet {
+    pub fn detect_equalities(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_detect_equalities(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_dim`.
-    pub fn dim(&self, type_: DimType) -> i32 {
+    pub fn dim(&self, type_: DimType) -> Result<i32, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_set_dim(bset, type_) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_dim_max_val`.
-    pub fn dim_max_val(self, pos: i32) -> Val {
+    pub fn dim_max_val(self, pos: i32) -> Result<Val, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_dim_max_val(bset, pos) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_drop_constraints_involving_dims`.
-    pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32) -> BasicSet {
+    pub fn drop_constraints_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                           -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -447,13 +475,18 @@ impl BasicSet {
             unsafe { isl_basic_set_drop_constraints_involving_dims(bset, type_, first, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_drop_constraints_not_involving_dims`.
     pub fn drop_constraints_not_involving_dims(self, type_: DimType, first: u32, n: u32)
-                                               -> BasicSet {
+                                               -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -462,32 +495,47 @@ impl BasicSet {
             unsafe { isl_basic_set_drop_constraints_not_involving_dims(bset, type_, first, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_drop_unused_params`.
-    pub fn drop_unused_params(self) -> BasicSet {
+    pub fn drop_unused_params(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_drop_unused_params(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_dump`.
-    pub fn dump(&self) -> () {
+    pub fn dump(&self) -> Result<(), LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_dump(bset) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_eliminate`.
-    pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> BasicSet {
+    pub fn eliminate(self, type_: DimType, first: u32, n: u32) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -495,23 +543,34 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_eliminate(bset, type_, first, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_empty`.
-    pub fn empty(space: Space) -> BasicSet {
+    pub fn empty(space: Space) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_set_empty(space) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_equalities_matrix`.
-    pub fn equalities_matrix(&self, c1: DimType, c2: DimType, c3: DimType, c4: DimType) -> Mat {
+    pub fn equalities_matrix(&self, c1: DimType, c2: DimType, c3: DimType, c4: DimType)
+                             -> Result<Mat, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let c1 = c1.to_i32();
         let c2 = c2.to_i32();
@@ -520,12 +579,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_equalities_matrix(bset, c1, c2, c3, c4) };
         let isl_rs_result = Mat { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_fix_si`.
-    pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> BasicSet {
+    pub fn fix_si(self, type_: DimType, pos: u32, value: i32) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -533,12 +597,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_fix_si(bset, type_, pos, value) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_fix_val`.
-    pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> BasicSet {
+    pub fn fix_val(self, type_: DimType, pos: u32, v: Val) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -549,12 +618,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_fix_val(bset, type_, pos, v) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_flat_product`.
-    pub fn flat_product(self, bset2: BasicSet) -> BasicSet {
+    pub fn flat_product(self, bset2: BasicSet) -> Result<BasicSet, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let mut bset1 = bset1;
         bset1.do_not_free_on_drop();
         let bset1 = bset1.ptr;
@@ -564,48 +638,68 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_flat_product(bset1, bset2) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_flatten`.
-    pub fn flatten(self) -> BasicSet {
+    pub fn flatten(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_flatten(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_free`.
-    pub fn free(self) -> BasicSet {
+    pub fn free(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_free(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_from_constraint`.
-    pub fn from_constraint(constraint: Constraint) -> BasicSet {
+    pub fn from_constraint(constraint: Constraint) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = constraint.get_ctx();
         let mut constraint = constraint;
         constraint.do_not_free_on_drop();
         let constraint = constraint.ptr;
         let isl_rs_result = unsafe { isl_basic_set_from_constraint(constraint) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_from_constraint_matrices`.
     pub fn from_constraint_matrices(space: Space, eq: Mat, ineq: Mat, c1: DimType, c2: DimType,
                                     c3: DimType, c4: DimType)
-                                    -> BasicSet {
+                                    -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
@@ -623,51 +717,75 @@ impl BasicSet {
             unsafe { isl_basic_set_from_constraint_matrices(space, eq, ineq, c1, c2, c3, c4) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_from_multi_aff`.
-    pub fn from_multi_aff(ma: MultiAff) -> BasicSet {
+    pub fn from_multi_aff(ma: MultiAff) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = ma.get_ctx();
         let mut ma = ma;
         ma.do_not_free_on_drop();
         let ma = ma.ptr;
         let isl_rs_result = unsafe { isl_basic_set_from_multi_aff(ma) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_from_params`.
-    pub fn from_params(self) -> BasicSet {
+    pub fn from_params(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_from_params(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_from_point`.
-    pub fn from_point(pnt: Point) -> BasicSet {
+    pub fn from_point(pnt: Point) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = pnt.get_ctx();
         let mut pnt = pnt;
         pnt.do_not_free_on_drop();
         let pnt = pnt.ptr;
         let isl_rs_result = unsafe { isl_basic_set_from_point(pnt) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_constraint_list`.
-    pub fn get_constraint_list(&self) -> ConstraintList {
+    pub fn get_constraint_list(&self) -> Result<ConstraintList, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_get_constraint_list(bset) };
         let isl_rs_result = ConstraintList { ptr: isl_rs_result,
                                              should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_ctx`.
@@ -681,70 +799,101 @@ impl BasicSet {
     }
 
     /// Wraps `isl_basic_set_get_dim_id`.
-    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Id {
+    pub fn get_dim_id(&self, type_: DimType, pos: u32) -> Result<Id, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_set_get_dim_id(bset, type_, pos) };
         let isl_rs_result = Id { ptr: isl_rs_result,
                                  should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_dim_name`.
-    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> &str {
+    pub fn get_dim_name(&self, type_: DimType, pos: u32) -> Result<&str, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_set_get_dim_name(bset, type_, pos) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_div`.
-    pub fn get_div(&self, pos: i32) -> Aff {
+    pub fn get_div(&self, pos: i32) -> Result<Aff, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_get_div(bset, pos) };
         let isl_rs_result = Aff { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_local_space`.
-    pub fn get_local_space(&self) -> LocalSpace {
+    pub fn get_local_space(&self) -> Result<LocalSpace, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_get_local_space(bset) };
         let isl_rs_result = LocalSpace { ptr: isl_rs_result,
                                          should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_space`.
-    pub fn get_space(&self) -> Space {
+    pub fn get_space(&self) -> Result<Space, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_get_space(bset) };
         let isl_rs_result = Space { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_get_tuple_name`.
-    pub fn get_tuple_name(&self) -> &str {
+    pub fn get_tuple_name(&self) -> Result<&str, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_get_tuple_name(bset) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_gist`.
-    pub fn gist(self, context: BasicSet) -> BasicSet {
+    pub fn gist(self, context: BasicSet) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -754,12 +903,18 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_gist(bset, context) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_inequalities_matrix`.
-    pub fn inequalities_matrix(&self, c1: DimType, c2: DimType, c3: DimType, c4: DimType) -> Mat {
+    pub fn inequalities_matrix(&self, c1: DimType, c2: DimType, c3: DimType, c4: DimType)
+                               -> Result<Mat, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let c1 = c1.to_i32();
         let c2 = c2.to_i32();
@@ -768,12 +923,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_inequalities_matrix(bset, c1, c2, c3, c4) };
         let isl_rs_result = Mat { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_insert_dims`.
-    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> BasicSet {
+    pub fn insert_dims(self, type_: DimType, pos: u32, n: u32) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -781,12 +941,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_insert_dims(bset, type_, pos, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_intersect`.
-    pub fn intersect(self, bset2: BasicSet) -> BasicSet {
+    pub fn intersect(self, bset2: BasicSet) -> Result<BasicSet, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let mut bset1 = bset1;
         bset1.do_not_free_on_drop();
         let bset1 = bset1.ptr;
@@ -796,12 +961,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_intersect(bset1, bset2) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_intersect_params`.
-    pub fn intersect_params(self, bset2: BasicSet) -> BasicSet {
+    pub fn intersect_params(self, bset2: BasicSet) -> Result<BasicSet, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let mut bset1 = bset1;
         bset1.do_not_free_on_drop();
         let bset1 = bset1.ptr;
@@ -811,12 +981,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_intersect_params(bset1, bset2) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_involves_dims`.
-    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> bool {
+    pub fn involves_dims(&self, type_: DimType, first: u32, n: u32) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let type_ = type_.to_i32();
         let isl_rs_result = unsafe { isl_basic_set_involves_dims(bset, type_, first, n) };
@@ -825,12 +1000,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_bounded`.
-    pub fn is_bounded(&self) -> bool {
+    pub fn is_bounded(&self) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_bounded(bset) };
         let isl_rs_result = match isl_rs_result {
@@ -838,12 +1018,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_disjoint`.
-    pub fn is_disjoint(&self, bset2: &BasicSet) -> bool {
+    pub fn is_disjoint(&self, bset2: &BasicSet) -> Result<bool, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let bset1 = bset1.ptr;
         let bset2 = bset2.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_disjoint(bset1, bset2) };
@@ -852,12 +1037,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_empty`.
-    pub fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_empty(bset) };
         let isl_rs_result = match isl_rs_result {
@@ -865,12 +1055,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_equal`.
-    pub fn is_equal(&self, bset2: &BasicSet) -> bool {
+    pub fn is_equal(&self, bset2: &BasicSet) -> Result<bool, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let bset1 = bset1.ptr;
         let bset2 = bset2.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_equal(bset1, bset2) };
@@ -879,20 +1074,30 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_rational`.
-    pub fn is_rational(&self) -> i32 {
+    pub fn is_rational(&self) -> Result<i32, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_rational(bset) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_subset`.
-    pub fn is_subset(&self, bset2: &BasicSet) -> bool {
+    pub fn is_subset(&self, bset2: &BasicSet) -> Result<bool, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let bset1 = bset1.ptr;
         let bset2 = bset2.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_subset(bset1, bset2) };
@@ -901,12 +1106,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_universe`.
-    pub fn is_universe(&self) -> bool {
+    pub fn is_universe(&self) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_universe(bset) };
         let isl_rs_result = match isl_rs_result {
@@ -914,12 +1124,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_is_wrapping`.
-    pub fn is_wrapping(&self) -> bool {
+    pub fn is_wrapping(&self) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_is_wrapping(bset) };
         let isl_rs_result = match isl_rs_result {
@@ -927,282 +1142,69 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_lexmax`.
-    pub fn lexmax(self) -> Set {
+    pub fn lexmax(self) -> Result<Set, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_lexmax(bset) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_lexmin`.
-    pub fn lexmin(self) -> Set {
+    pub fn lexmin(self) -> Result<Set, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_lexmin(bset) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_lift`.
-    pub fn lift(self) -> BasicSet {
+    pub fn lift(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_lift(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_add`.
-    pub fn list_add(list: BasicSetList, el: BasicSet) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_add(list, el) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_alloc`.
-    pub fn list_alloc(ctx: &Context, n: i32) -> BasicSetList {
-        let ctx = ctx.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_alloc(ctx, n) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_clear`.
-    pub fn list_clear(list: BasicSetList) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_clear(list) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_coefficients`.
-    pub fn list_coefficients(list: BasicSetList) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_coefficients(list) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_concat`.
-    pub fn list_concat(list1: BasicSetList, list2: BasicSetList) -> BasicSetList {
-        let mut list1 = list1;
-        list1.do_not_free_on_drop();
-        let list1 = list1.ptr;
-        let mut list2 = list2;
-        list2.do_not_free_on_drop();
-        let list2 = list2.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_concat(list1, list2) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_copy`.
-    pub fn list_copy(list: &BasicSetList) -> BasicSetList {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_copy(list) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_drop`.
-    pub fn list_drop(list: BasicSetList, first: u32, n: u32) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_drop(list, first, n) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_dump`.
-    pub fn list_dump(list: &BasicSetList) -> () {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_dump(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_free`.
-    pub fn list_free(list: BasicSetList) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_free(list) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_from_basic_set`.
-    pub fn list_from_basic_set(self) -> BasicSetList {
-        let el = self;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_from_basic_set(el) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_get_at`.
-    pub fn list_get_at(list: &BasicSetList, index: i32) -> BasicSet {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_get_at(list, index) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_get_basic_set`.
-    pub fn list_get_basic_set(list: &BasicSetList, index: i32) -> BasicSet {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_get_basic_set(list, index) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_get_ctx`.
-    pub fn list_get_ctx(list: &BasicSetList) -> Context {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_get_ctx(list) };
-        let isl_rs_result = Context { ptr: isl_rs_result,
-                                      should_free_on_drop: false };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_insert`.
-    pub fn list_insert(list: BasicSetList, pos: u32, el: BasicSet) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_insert(list, pos, el) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_intersect`.
-    pub fn list_intersect(list: BasicSetList) -> BasicSet {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_intersect(list) };
-        let isl_rs_result = BasicSet { ptr: isl_rs_result,
-                                       should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_n_basic_set`.
-    pub fn list_n_basic_set(list: &BasicSetList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_n_basic_set(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_reverse`.
-    pub fn list_reverse(list: BasicSetList) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_reverse(list) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_set_at`.
-    pub fn list_set_at(list: BasicSetList, index: i32, el: BasicSet) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_set_at(list, index, el) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_set_basic_set`.
-    pub fn list_set_basic_set(list: BasicSetList, index: i32, el: BasicSet) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let mut el = el;
-        el.do_not_free_on_drop();
-        let el = el.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_set_basic_set(list, index, el) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_size`.
-    pub fn list_size(list: &BasicSetList) -> i32 {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_size(list) };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_swap`.
-    pub fn list_swap(list: BasicSetList, pos1: u32, pos2: u32) -> BasicSetList {
-        let mut list = list;
-        list.do_not_free_on_drop();
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_swap(list, pos1, pos2) };
-        let isl_rs_result = BasicSetList { ptr: isl_rs_result,
-                                           should_free_on_drop: true };
-        isl_rs_result
-    }
-
-    /// Wraps `isl_basic_set_list_to_str`.
-    pub fn list_to_str(list: &BasicSetList) -> &str {
-        let list = list.ptr;
-        let isl_rs_result = unsafe { isl_basic_set_list_to_str(list) };
-        let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
-        let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_lower_bound_val`.
-    pub fn lower_bound_val(self, type_: DimType, pos: u32, value: Val) -> BasicSet {
+    pub fn lower_bound_val(self, type_: DimType, pos: u32, value: Val)
+                           -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1213,47 +1215,67 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_lower_bound_val(bset, type_, pos, value) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_max_lp_val`.
-    pub fn max_lp_val(&self, obj: &Aff) -> Val {
+    pub fn max_lp_val(&self, obj: &Aff) -> Result<Val, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let obj = obj.ptr;
         let isl_rs_result = unsafe { isl_basic_set_max_lp_val(bset, obj) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_max_val`.
-    pub fn max_val(&self, obj: &Aff) -> Val {
+    pub fn max_val(&self, obj: &Aff) -> Result<Val, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let obj = obj.ptr;
         let isl_rs_result = unsafe { isl_basic_set_max_val(bset, obj) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_min_lp_val`.
-    pub fn min_lp_val(&self, obj: &Aff) -> Val {
+    pub fn min_lp_val(&self, obj: &Aff) -> Result<Val, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let obj = obj.ptr;
         let isl_rs_result = unsafe { isl_basic_set_min_lp_val(bset, obj) };
         let isl_rs_result = Val { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_move_dims`.
     pub fn move_dims(self, dst_type: DimType, dst_pos: u32, src_type: DimType, src_pos: u32,
                      n: u32)
-                     -> BasicSet {
+                     -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1263,71 +1285,106 @@ impl BasicSet {
             unsafe { isl_basic_set_move_dims(bset, dst_type, dst_pos, src_type, src_pos, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_n_constraint`.
-    pub fn n_constraint(&self) -> i32 {
+    pub fn n_constraint(&self) -> Result<i32, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_n_constraint(bset) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_n_dim`.
-    pub fn n_dim(&self) -> i32 {
+    pub fn n_dim(&self) -> Result<i32, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_n_dim(bset) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_n_param`.
-    pub fn n_param(&self) -> i32 {
+    pub fn n_param(&self) -> Result<i32, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_n_param(bset) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_nat_universe`.
-    pub fn nat_universe(space: Space) -> BasicSet {
+    pub fn nat_universe(space: Space) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_set_nat_universe(space) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_neg`.
-    pub fn neg(self) -> BasicSet {
+    pub fn neg(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_neg(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_params`.
-    pub fn params(self) -> BasicSet {
+    pub fn params(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_params(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_plain_is_empty`.
-    pub fn plain_is_empty(&self) -> bool {
+    pub fn plain_is_empty(&self) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_plain_is_empty(bset) };
         let isl_rs_result = match isl_rs_result {
@@ -1335,12 +1392,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_plain_is_equal`.
-    pub fn plain_is_equal(&self, bset2: &BasicSet) -> bool {
+    pub fn plain_is_equal(&self, bset2: &BasicSet) -> Result<bool, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let bset1 = bset1.ptr;
         let bset2 = bset2.ptr;
         let isl_rs_result = unsafe { isl_basic_set_plain_is_equal(bset1, bset2) };
@@ -1349,12 +1411,17 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_plain_is_universe`.
-    pub fn plain_is_universe(&self) -> bool {
+    pub fn plain_is_universe(&self) -> Result<bool, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_plain_is_universe(bset) };
         let isl_rs_result = match isl_rs_result {
@@ -1362,23 +1429,33 @@ impl BasicSet {
             1 => true,
             _ => panic!("Got isl_bool = -1"),
         };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_positive_orthant`.
-    pub fn positive_orthant(space: Space) -> BasicSet {
+    pub fn positive_orthant(space: Space) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_set_positive_orthant(space) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_preimage_multi_aff`.
-    pub fn preimage_multi_aff(self, ma: MultiAff) -> BasicSet {
+    pub fn preimage_multi_aff(self, ma: MultiAff) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1388,12 +1465,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_preimage_multi_aff(bset, ma) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_project_out`.
-    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> BasicSet {
+    pub fn project_out(self, type_: DimType, first: u32, n: u32) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1401,33 +1483,49 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_project_out(bset, type_, first, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_read_from_str`.
-    pub fn read_from_str(ctx: &Context, str_: &str) -> BasicSet {
+    pub fn read_from_str(ctx: &Context, str_: &str) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = Context { ptr: ctx.ptr,
+                                   should_free_on_drop: false };
         let ctx = ctx.ptr;
         let str_ = CString::new(str_).unwrap();
         let str_ = str_.as_ptr();
         let isl_rs_result = unsafe { isl_basic_set_read_from_str(ctx, str_) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_reduced_basis`.
-    pub fn reduced_basis(&self) -> Mat {
+    pub fn reduced_basis(&self) -> Result<Mat, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_reduced_basis(bset) };
         let isl_rs_result = Mat { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_remove_dims`.
-    pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> BasicSet {
+    pub fn remove_dims(self, type_: DimType, first: u32, n: u32) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1435,24 +1533,35 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_remove_dims(bset, type_, first, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_remove_divs`.
-    pub fn remove_divs(self) -> BasicSet {
+    pub fn remove_divs(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_remove_divs(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_remove_divs_involving_dims`.
-    pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32) -> BasicSet {
+    pub fn remove_divs_involving_dims(self, type_: DimType, first: u32, n: u32)
+                                      -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1461,60 +1570,85 @@ impl BasicSet {
             unsafe { isl_basic_set_remove_divs_involving_dims(bset, type_, first, n) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_remove_redundancies`.
-    pub fn remove_redundancies(self) -> BasicSet {
+    pub fn remove_redundancies(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_remove_redundancies(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_remove_unknown_divs`.
-    pub fn remove_unknown_divs(self) -> BasicSet {
+    pub fn remove_unknown_divs(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_remove_unknown_divs(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_sample`.
-    pub fn sample(self) -> BasicSet {
+    pub fn sample(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_sample(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_sample_point`.
-    pub fn sample_point(self) -> Point {
+    pub fn sample_point(self) -> Result<Point, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_sample_point(bset) };
         let isl_rs_result = Point { ptr: isl_rs_result,
                                     should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_set_dim_name`.
-    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> BasicSet {
+    pub fn set_dim_name(self, type_: DimType, pos: u32, s: &str) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1524,12 +1658,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_set_dim_name(bset, type_, pos, s) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_set_tuple_id`.
-    pub fn set_tuple_id(self, id: Id) -> BasicSet {
+    pub fn set_tuple_id(self, id: Id) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1539,12 +1678,17 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_set_tuple_id(bset, id) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_set_tuple_name`.
-    pub fn set_tuple_name(self, s: &str) -> BasicSet {
+    pub fn set_tuple_name(self, s: &str) -> Result<BasicSet, LibISLError> {
         let set = self;
+        let isl_rs_ctx = set.get_ctx();
         let mut set = set;
         set.do_not_free_on_drop();
         let set = set.ptr;
@@ -1553,66 +1697,96 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_set_tuple_name(set, s) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_solutions`.
-    pub fn solutions(self) -> BasicSet {
+    pub fn solutions(self) -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_solutions(bset) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_to_list`.
-    pub fn to_list(self) -> BasicSetList {
+    pub fn to_list(self) -> Result<BasicSetList, LibISLError> {
         let el = self;
+        let isl_rs_ctx = el.get_ctx();
         let mut el = el;
         el.do_not_free_on_drop();
         let el = el.ptr;
         let isl_rs_result = unsafe { isl_basic_set_to_list(el) };
         let isl_rs_result = BasicSetList { ptr: isl_rs_result,
                                            should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_to_set`.
-    pub fn to_set(self) -> Set {
+    pub fn to_set(self) -> Result<Set, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_to_set(bset) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_to_str`.
-    pub fn to_str(&self) -> &str {
+    pub fn to_str(&self) -> Result<&str, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_to_str(bset) };
         let isl_rs_result = unsafe { CStr::from_ptr(isl_rs_result) };
         let isl_rs_result = isl_rs_result.to_str().unwrap();
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_total_dim`.
-    pub fn total_dim(&self) -> i32 {
+    pub fn total_dim(&self) -> Result<i32, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_total_dim(bset) };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_union`.
-    pub fn union(self, bset2: BasicSet) -> Set {
+    pub fn union(self, bset2: BasicSet) -> Result<Set, LibISLError> {
         let bset1 = self;
+        let isl_rs_ctx = bset1.get_ctx();
         let mut bset1 = bset1;
         bset1.do_not_free_on_drop();
         let bset1 = bset1.ptr;
@@ -1622,35 +1796,51 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_union(bset1, bset2) };
         let isl_rs_result = Set { ptr: isl_rs_result,
                                   should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_universe`.
-    pub fn universe(space: Space) -> BasicSet {
+    pub fn universe(space: Space) -> Result<BasicSet, LibISLError> {
+        let isl_rs_ctx = space.get_ctx();
         let mut space = space;
         space.do_not_free_on_drop();
         let space = space.ptr;
         let isl_rs_result = unsafe { isl_basic_set_universe(space) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_unwrap`.
-    pub fn unwrap(self) -> BasicMap {
+    pub fn unwrap(self) -> Result<BasicMap, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
         let isl_rs_result = unsafe { isl_basic_set_unwrap(bset) };
         let isl_rs_result = BasicMap { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Wraps `isl_basic_set_upper_bound_val`.
-    pub fn upper_bound_val(self, type_: DimType, pos: u32, value: Val) -> BasicSet {
+    pub fn upper_bound_val(self, type_: DimType, pos: u32, value: Val)
+                           -> Result<BasicSet, LibISLError> {
         let bset = self;
+        let isl_rs_ctx = bset.get_ctx();
         let mut bset = bset;
         bset.do_not_free_on_drop();
         let bset = bset.ptr;
@@ -1661,7 +1851,11 @@ impl BasicSet {
         let isl_rs_result = unsafe { isl_basic_set_upper_bound_val(bset, type_, pos, value) };
         let isl_rs_result = BasicSet { ptr: isl_rs_result,
                                        should_free_on_drop: true };
-        isl_rs_result
+        let err = isl_rs_ctx.last_error();
+        if err != Error::None_ {
+            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+        }
+        Ok(isl_rs_result)
     }
 
     /// Does not call isl_basic_set_free() on being dropped. (For internal use
