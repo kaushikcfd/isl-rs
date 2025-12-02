@@ -76,7 +76,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -91,7 +93,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -108,7 +112,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -129,7 +135,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -144,7 +152,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -161,7 +171,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -174,7 +186,9 @@ impl PwQPolynomialFoldList {
         let isl_rs_result = unsafe { isl_pw_qpolynomial_fold_list_dump(list) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -191,7 +205,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -208,7 +224,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -223,7 +241,9 @@ impl PwQPolynomialFoldList {
                                                 should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -249,7 +269,9 @@ impl PwQPolynomialFoldList {
                                                 should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -270,7 +292,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -283,7 +307,9 @@ impl PwQPolynomialFoldList {
         let isl_rs_result = unsafe { isl_pw_qpolynomial_fold_list_n_pw_qpolynomial_fold(list) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -300,7 +326,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -321,7 +349,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -343,7 +373,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -356,7 +388,9 @@ impl PwQPolynomialFoldList {
         let isl_rs_result = unsafe { isl_pw_qpolynomial_fold_list_size(list) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -373,7 +407,9 @@ impl PwQPolynomialFoldList {
                                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -388,7 +424,9 @@ impl PwQPolynomialFoldList {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }

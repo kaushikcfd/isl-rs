@@ -47,7 +47,9 @@ impl Id {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -60,7 +62,9 @@ impl Id {
         let isl_rs_result = unsafe { isl_id_dump(id) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -77,7 +81,9 @@ impl Id {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -100,7 +106,9 @@ impl Id {
         let isl_rs_result = unsafe { isl_id_get_free_user(id) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -113,7 +121,9 @@ impl Id {
         let isl_rs_result = unsafe { isl_id_get_hash(id) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -128,7 +138,9 @@ impl Id {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -145,7 +157,9 @@ impl Id {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -162,7 +176,9 @@ impl Id {
                                      should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -177,7 +193,9 @@ impl Id {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }

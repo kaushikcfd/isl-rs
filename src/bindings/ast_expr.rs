@@ -126,7 +126,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -146,7 +148,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -163,7 +167,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -183,7 +189,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -203,7 +211,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -223,7 +233,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -238,7 +250,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -258,7 +272,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -271,7 +287,9 @@ impl ASTExpr {
         let isl_rs_result = unsafe { isl_ast_expr_dump(expr) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -291,7 +309,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -308,7 +328,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -324,7 +346,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -340,7 +364,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -360,7 +386,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -385,7 +413,9 @@ impl ASTExpr {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -400,7 +430,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -413,7 +445,9 @@ impl ASTExpr {
         let isl_rs_result = unsafe { isl_ast_expr_get_op_n_arg(expr) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -427,7 +461,9 @@ impl ASTExpr {
         let isl_rs_result = ASTExprOpType::from_i32(isl_rs_result);
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -441,7 +477,9 @@ impl ASTExpr {
         let isl_rs_result = ASTExprType::from_i32(isl_rs_result);
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -456,7 +494,9 @@ impl ASTExpr {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -476,7 +516,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -491,7 +533,9 @@ impl ASTExpr {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -506,7 +550,9 @@ impl ASTExpr {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -521,11 +567,15 @@ impl ASTExpr {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -545,7 +595,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -565,7 +617,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -585,7 +639,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -602,7 +658,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -617,7 +675,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -630,7 +690,9 @@ impl ASTExpr {
         let isl_rs_result = unsafe { isl_ast_expr_op_get_n_arg(expr) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -644,7 +706,9 @@ impl ASTExpr {
         let isl_rs_result = ASTExprOpType::from_i32(isl_rs_result);
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -661,7 +725,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -681,7 +747,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -701,7 +769,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -721,7 +791,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -741,7 +813,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -761,7 +835,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -779,7 +855,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -799,7 +877,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -819,7 +899,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -839,7 +921,9 @@ impl ASTExpr {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -854,7 +938,9 @@ impl ASTExpr {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -871,7 +957,9 @@ impl ASTExpr {
                                           should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -886,7 +974,9 @@ impl ASTExpr {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }

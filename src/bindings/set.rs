@@ -403,7 +403,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -421,7 +423,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -438,7 +442,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -455,7 +461,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -475,7 +483,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -495,7 +505,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -512,7 +524,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -532,7 +546,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -549,7 +565,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -568,7 +586,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -585,7 +605,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -602,7 +624,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -619,7 +643,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -636,7 +662,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -653,7 +681,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -668,7 +698,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -683,7 +715,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -700,7 +734,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -714,7 +750,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_dim(set, type_) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -729,11 +767,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -748,11 +790,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -767,11 +813,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -786,11 +836,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -805,11 +859,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -826,7 +884,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -843,7 +903,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -860,7 +922,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -877,7 +941,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -897,7 +963,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -917,7 +985,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -934,7 +1004,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -947,7 +1019,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_dump(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -965,7 +1039,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -982,7 +1058,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -998,7 +1076,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1018,7 +1098,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1033,7 +1115,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_find_dim_by_id(set, type_, id) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1049,7 +1133,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_find_dim_by_name(set, type_, name) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1066,7 +1152,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1084,7 +1172,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1105,7 +1195,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1125,7 +1217,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1142,7 +1236,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1159,7 +1255,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1173,7 +1271,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_follows_at(set1, set2, pos) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1190,7 +1290,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1206,7 +1308,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1222,7 +1326,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1238,7 +1344,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1255,7 +1363,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1271,7 +1381,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1287,7 +1399,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1303,7 +1417,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1319,7 +1435,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1334,7 +1452,9 @@ impl Set {
                                            should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1360,7 +1480,9 @@ impl Set {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1376,7 +1498,9 @@ impl Set {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1389,7 +1513,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_get_hash(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1404,7 +1530,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1419,7 +1547,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1434,7 +1564,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1449,7 +1581,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1464,7 +1598,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1479,7 +1615,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1494,7 +1632,9 @@ impl Set {
                                  should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1509,7 +1649,9 @@ impl Set {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1529,7 +1671,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1549,7 +1693,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1569,7 +1715,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1584,11 +1732,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1603,11 +1755,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1622,11 +1778,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1640,11 +1800,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1658,11 +1822,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1679,7 +1847,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1696,7 +1866,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1714,7 +1886,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1734,7 +1908,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1754,7 +1930,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1774,7 +1952,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1794,7 +1974,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1814,7 +1996,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1829,11 +2013,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1847,11 +2035,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1865,11 +2057,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1883,11 +2079,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1902,11 +2102,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1920,11 +2124,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1939,11 +2147,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1957,11 +2169,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1975,11 +2191,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -1994,11 +2214,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2013,11 +2237,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2031,11 +2259,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2055,7 +2287,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2075,7 +2309,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2095,7 +2331,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2115,7 +2353,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2132,7 +2372,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2149,7 +2391,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2166,7 +2410,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2183,7 +2429,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2200,7 +2448,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2220,7 +2470,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2240,7 +2492,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2258,7 +2512,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2279,7 +2535,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2296,7 +2554,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2313,7 +2573,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2329,7 +2591,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2346,7 +2610,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2362,7 +2628,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2384,7 +2652,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2397,7 +2667,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_n_basic_set(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2410,7 +2682,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_n_dim(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2423,7 +2697,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_n_param(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2439,7 +2715,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2456,7 +2734,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2476,7 +2756,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2493,7 +2775,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2507,7 +2791,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_plain_cmp(set1, set2) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2523,7 +2809,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2538,11 +2826,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2556,11 +2848,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2575,11 +2871,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2593,11 +2893,15 @@ impl Set {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2614,7 +2918,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2631,7 +2937,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2651,7 +2959,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2671,7 +2981,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2691,7 +3003,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2711,7 +3025,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2729,7 +3045,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2747,7 +3065,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2764,7 +3084,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2784,7 +3106,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2804,7 +3128,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2824,7 +3150,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2844,7 +3172,9 @@ impl Set {
                                          should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2861,7 +3191,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2879,7 +3211,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2896,7 +3230,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2915,7 +3251,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2932,7 +3270,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2949,7 +3289,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2969,7 +3311,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -2986,7 +3330,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3003,7 +3349,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3020,7 +3368,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3037,7 +3387,9 @@ impl Set {
                                     should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3058,7 +3410,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3078,7 +3432,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3098,7 +3454,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3117,7 +3475,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3134,7 +3494,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3147,7 +3509,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_size(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3164,7 +3528,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3182,7 +3548,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3202,7 +3570,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3222,7 +3592,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3239,7 +3611,9 @@ impl Set {
                                       should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3254,7 +3628,9 @@ impl Set {
         let isl_rs_result = isl_rs_result.to_str().unwrap();
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3271,7 +3647,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3288,7 +3666,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3301,7 +3681,9 @@ impl Set {
         let isl_rs_result = unsafe { isl_set_tuple_dim(set) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3321,7 +3703,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3341,7 +3725,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3361,7 +3747,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3381,7 +3769,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3397,7 +3787,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3414,7 +3806,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3435,7 +3829,9 @@ impl Set {
                                        should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3452,7 +3848,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3472,7 +3870,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3492,7 +3892,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3510,7 +3912,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3531,7 +3935,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3548,7 +3954,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -3565,7 +3973,9 @@ impl Set {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }

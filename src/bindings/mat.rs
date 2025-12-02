@@ -121,7 +121,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -138,7 +140,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -155,7 +159,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -175,7 +181,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -190,7 +198,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -203,7 +213,9 @@ impl Mat {
         let isl_rs_result = unsafe { isl_mat_col_add(mat, dst_col, src_col) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -216,7 +228,9 @@ impl Mat {
         let isl_rs_result = unsafe { isl_mat_cols(mat) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -236,7 +250,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -251,7 +267,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -271,7 +289,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -288,7 +308,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -305,7 +327,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -318,7 +342,9 @@ impl Mat {
         let isl_rs_result = unsafe { isl_mat_dump(mat) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -335,7 +361,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -352,7 +380,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -368,7 +398,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -393,7 +425,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -408,11 +442,15 @@ impl Mat {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -427,7 +465,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -440,7 +480,9 @@ impl Mat {
         let isl_rs_result = unsafe { isl_mat_initial_non_zero_cols(mat) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -457,7 +499,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -474,7 +518,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -491,7 +537,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -508,7 +556,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -528,7 +578,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -543,11 +595,15 @@ impl Mat {
         let isl_rs_result = match isl_rs_result {
             0 => false,
             1 => true,
-            _ => panic!("Got isl_bool = -1"),
+            _ => {
+                return Err(LibISLError::new(Error::Unknown, "Got isl_bool = -1"));
+            }
         };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -564,7 +620,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -581,7 +639,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -598,7 +658,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -615,7 +677,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -635,7 +699,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -648,7 +714,9 @@ impl Mat {
         let isl_rs_result = unsafe { isl_mat_rank(mat) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -665,7 +733,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -682,7 +752,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -699,7 +771,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -719,7 +793,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -732,7 +808,9 @@ impl Mat {
         let isl_rs_result = unsafe { isl_mat_rows(mat) };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -749,7 +827,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -769,7 +849,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -786,7 +868,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -803,7 +887,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -820,7 +906,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -837,7 +925,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -857,7 +947,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -877,7 +969,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
@@ -897,7 +991,9 @@ impl Mat {
                                   should_free_on_drop: true };
         let err = isl_rs_ctx.last_error();
         if err != Error::None_ {
-            return Err(LibISLError::new(err, isl_rs_ctx.last_error_msg()));
+            let err_msg = isl_rs_ctx.last_error_msg();
+            isl_rs_ctx.reset_error();
+            return Err(LibISLError::new(err, err_msg));
         }
         Ok(isl_rs_result)
     }
